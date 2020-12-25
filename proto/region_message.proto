@@ -1,0 +1,17 @@
+syntax = "proto3";
+package wiradata.users;
+
+option go_package = "pb;users";
+
+import "google/protobuf/timestamp.proto";
+
+message Region {
+  string id = 1;
+  string company_id = 2;
+  string name = 3;
+  string code = 4;
+  timestamp created_at =  5;
+  string created_by = 6;
+  timestamp updated_at = 7;
+  string updated_by = 8;
+}

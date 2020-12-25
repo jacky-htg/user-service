@@ -1,0 +1,23 @@
+syntax = "proto3";
+package wiradata.users;
+
+option go_package = "pb;users";
+
+import "google/protobuf/timestamp.proto";
+import "user_message.proto";
+import "access_message.proto";
+
+message LoginRequest {
+  string username = 1;
+  string password = 2;
+}
+
+message LoginResponse {
+  string token = 1;
+  User user = 2;
+  repeated Access access = 3; 
+}
+
+service AuthService {
+  rpc Login(LoginRequest) returns (LoginResponse) {}
+}
