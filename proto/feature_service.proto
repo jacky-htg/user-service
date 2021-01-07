@@ -1,0 +1,31 @@
+syntax = "proto3";
+package wiradata.users;
+
+option go_package = "pb;users";
+
+import "google/protobuf/timestamp.proto";
+import "feature_message.proto";
+import "generic_message.proto";
+
+message ListFeatureResponse {
+  repeated Feature features = 1;
+}
+
+message PackageFeatureRequest {
+  string id = 1;
+  string feature_id = 2;
+}
+
+service FeatureService {
+  rpc Create(Feature) returns (Feature) {}
+  rpc Update(Feature) returns (Feature) {}
+  rpc View(Id) returns (Feature) {}
+  rpc Delete(Id) returns (Boolean) {}
+  rpc List() returns (ListFeatureResponse) {}
+}
+
+service PackageFeatureService {
+  rpc View(Id) returns (PackageOfFeature) {}
+  rpc Revoke(PackageFeatureRequest) returns (Boolean) {}
+  rpc Grant(PackageFeatureRequest) returns (Boolean) {}
+}

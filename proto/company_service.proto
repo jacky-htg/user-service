@@ -1,0 +1,36 @@
+syntax = "proto3";
+package wiradata.users;
+
+option go_package = "pb;users";
+
+import "google/protobuf/timestamp.proto";
+import "company_message.proto";
+import "generic_message.proto";
+import "user_message";
+
+message ListCompanyRequest {
+  Pagination pagination = 1;
+}
+
+message CompanyPaginationResponse {
+  Pagination pagination = 1;
+  uint32 count = 4;
+}
+
+message ListCompanyResponse {
+  CompanyPaginationResponse pagination = 1;
+  repeated Company companies = 2; 
+}
+
+message CompanyRegister {
+  Company company = 1;
+  User user = 2;
+}
+ 
+service CompanyService {
+  rpc Register(CompanyRegister) returns (CompanyRegister) {}
+  rpc Update(Company) returns (Company) {}
+  rpc View(Id) returns (Company) {}
+  rpc Delete(Id) returns (Boolean) {}
+  rpc List(ListCompanyRequest) returns (ListCompanyResponse) {}
+}

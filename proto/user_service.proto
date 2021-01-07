@@ -13,7 +13,7 @@ message ListUserRequest {
   string branch_id = 3;
 }
 
-message PaginationResponse {
+message UserPaginationResponse {
   Pagination pagination = 1;
   string company_id = 2;
   string branch_id = 3;
@@ -21,7 +21,7 @@ message PaginationResponse {
 }
 
 message ListUserResponse {
-  PaginationResponse pagination = 1;
+  UserPaginationResponse pagination = 1;
   repeated User users = 2; 
 }
 
@@ -29,6 +29,7 @@ service UserService {
   rpc Create(User) returns (User) {}
   rpc Update(User) returns (User) {}
   rpc View(Id) returns (User) {}
-  rpc Delete(Id) returns (Empty) {}
+  rpc Delete(Id) returns (Boolean) {}
   rpc List(ListUserRequest) returns (ListUserResponse) {}
+  rpc GetByToken(Empty) returns (User) {}
 }

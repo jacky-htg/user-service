@@ -1,0 +1,34 @@
+syntax = "proto3";
+package wiradata.users;
+
+option go_package = "pb;users";
+
+import "google/protobuf/timestamp.proto";
+import "employee_message.proto";
+import "generic_message.proto";
+
+message ListEmployeeRequest {
+  Pagination pagination = 1;
+  string company_id = 2;
+  string branch_id = 3;
+}
+
+message EmployeePaginationResponse {
+  Pagination pagination = 1;
+  string company_id = 2;
+  string branch_id = 3;
+  uint32 count = 4;
+}
+
+message ListEmployeeResponse {
+  EmployeePaginationResponse pagination = 1;
+  repeated Employee employees = 2; 
+}
+
+service EmployeeService {
+  rpc Create(Employee) returns (Employee) {}
+  rpc Update(Employee) returns (Employee) {}
+  rpc View(Id) returns (Employee) {}
+  rpc Delete(Id) returns (Boolean) {}
+  rpc List(ListEmployeeRequest) returns (ListEmployeeResponse) {}
+}

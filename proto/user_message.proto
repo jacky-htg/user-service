@@ -1,0 +1,21 @@
+syntax = "proto3";
+package wiradata.users;
+
+option go_package = "pb;users";
+
+import "google/protobuf/timestamp.proto";
+import "group_message";
+
+message User {
+  string id = 1;
+  string company_id = 2;
+  string branch_id = 3;
+  string username = 4;
+  string name = 5;
+  string email = 6;
+  repeated Group groups = 7;
+  timestamp created_at =  11;
+  string created_by = 12;
+  timestamp updated_at = 13;
+  string updated_by = 14;
+}

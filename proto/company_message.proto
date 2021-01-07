@@ -4,6 +4,7 @@ package wiradata.users;
 option go_package = "pb;users";
 
 import "google/protobuf/timestamp.proto";
+import "feature_message";
 
 message Company {
   string id = 1;
@@ -17,8 +18,10 @@ message Company {
   string pic = 9;
   string pic_phone = 10;
   string logo = 11;
-  timestamp created_at =  12;
-  string created_by = 13;
-  timestamp updated_at = 14;
-  string updated_by = 15;
+  EnumPackageOfFeature package_of_feature = 12;
+  repeated Feature features = 13;
+  timestamp created_at =  14;
+  string created_by = 15;
+  timestamp updated_at = 16;
+  string updated_by = 17;
 }
