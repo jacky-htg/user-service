@@ -137,7 +137,7 @@ var migrations = []darwin.Migration{
 			CREATE TABLE access (
 				id char(36) NOT NULL PRIMARY KEY,
 				parent_id char(36) NULL,
-				name varchar(100) NOT NULL,
+				name varchar(100) NOT NULL UNIQUE,
 				created_at timestamp NOT NULL DEFAULT NOW(),
 				created_by char(36) NOT NULL,
 				updated_at timestamp NOT NULL DEFAULT NOW(),
