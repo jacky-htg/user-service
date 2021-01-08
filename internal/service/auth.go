@@ -152,12 +152,81 @@ func (u *Auth) ResetPassword(ctx context.Context, in *users.ResetPasswordRequest
 
 // ChangePassword service
 func (u *Auth) ChangePassword(ctx context.Context, in *users.ChangePasswordRequest) (*users.Message, error) {
-	return &users.Message{}, nil
+	var output users.Message
+	output.Message = "Failed"
+
+	ctx, err := getMetadata(ctx)
+	if err != nil {
+		return &output, err
+	}
+
+	if len(in.GetOldPassword()) == 0 {
+		return &output, status.Error(codes.InvalidArgument, "Please supply valid current password")
+	}
+
+	if len(in.GetNewPassword()) == 0 {
+		return &output, status.Error(codes.InvalidArgument, "Please supply valid new password")
+	}
+
+	if len(in.GetRePassword()) == 0 {
+		return &output, status.Error(codes.InvalidArgument, "Please supply valid re password")
+	}
+
+	if in.GetNewPassword() != in.GetRePassword() {
+		return &output, status.Error(codes.InvalidArgument, "new password not match with re password")
+	}
+
+	var userModel model.User
+	userModel.Pb.Id = ctx.Value(app.Ctx("userID")).(string)
+	err = userModel.GetByPassword(ctx, u.Db, in.GetOldPassword())
+	if err != nil {
+		return &output, err
+	}
+
+	pass, err := bcrypt.GenerateFromPassword([]byte(in.GetNewPassword()), bcrypt.DefaultCost)
+	if err != nil {
+		return &output, status.Errorf(codes.Internal, "hash password: %v", err)
+	}
+
+	tx, err := u.Db.BeginTx(ctx, nil)
+	if err != nil {
+		return &output, status.Errorf(codes.Internal, "begin tx: %v", err)
+	}
+
+	err = userModel.ChangePassword(ctx, tx, string(pass))
+	if err != nil {
+		tx.Rollback()
+		return &output, err
+	}
+
+	tx.Commit()
+	output.Message = "success"
+
+	return &output, nil
 }
 
 // IsAuth service
-func (u *Auth) IsAuth(ctx context.Context, in *users.Id) (*users.Boolean, error) {
-	return &users.Boolean{}, nil
+func (u *Auth) IsAuth(ctx context.Context, in *users.String) (*users.Boolean, error) {
+	output := users.Boolean{Boolean: false}
+
+	ctx, err := getMetadata(ctx)
+	if err != nil {
+		return &output, err
+	}
+
+	if len(in.GetString_()) == 0 {
+		return &output, status.Error(codes.InvalidArgument, "Please supply valid access")
+	}
+
+	var userModel model.User
+	userModel.Pb.Id = ctx.Value(app.Ctx("userID")).(string)
+	err = userModel.IsAuth(ctx, u.Db, in.GetString_())
+	if err != nil {
+		return &output, err
+	}
+
+	output.Boolean = true
+	return &output, nil
 }
 
 func getMetadataToken(ctx context.Context) (context.Context, error) {

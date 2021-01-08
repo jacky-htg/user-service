@@ -6,8 +6,9 @@ option go_package = "pb;users";
 message Empty {}
 
 message Id { string id = 1; } 
+message String { string string = 1; } 
 
-message Message {string message = 1; }
+message Message { string message = 1; }
 
 message Pagination {
   enum Sort {
@@ -22,6 +23,4 @@ message Pagination {
   Sort sort = 6;
 }
 
-message Boolean {
-  bool boolean = 1; 
-}
+message Boolean { bool boolean = 1; }
