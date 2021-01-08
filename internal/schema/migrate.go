@@ -264,6 +264,19 @@ var migrations = []darwin.Migration{
 			);
 		`,
 	},
+	{
+		Version:     15,
+		Description: "Create request_passwords Table",
+		Script: `
+			CREATE TABLE request_passwords (
+				id char(36) NOT NULL PRIMARY KEY,
+				user_id char(36) NOT NULL,
+				is_used boolean NOT NULL DEFAULT false,
+				created_at timestamp NOT NULL DEFAULT NOW(),
+				CONSTRAINT fk_request_passwords_to_users FOREIGN KEY(user_id) REFERENCES users(id)
+			);
+		`,
+	},
 }
 
 // Migrate attempts to bring the schema for db up to date with the migrations
