@@ -24,7 +24,7 @@ func initSeed(ctx context.Context, tx *sql.Tx) error {
 	}
 
 	// seed company
-	var packageFeatureID, companyID, userID string
+	var packageFeatureID, companyID, userID, groupID, accessID string
 	err = tx.QueryRowContext(ctx, `SELECT id FROM package_features WHERE name='ALL'`).Scan(&packageFeatureID)
 	if err != nil {
 		return err
@@ -78,6 +78,59 @@ func initSeed(ctx context.Context, tx *sql.Tx) error {
 	defer stmt.Close()
 
 	_, err = stmt.ExecContext(ctx, userID, companyID)
+	if err != nil {
+		return err
+	}
+
+	// seed group
+	query = `
+		INSERT INTO groups (id, name, created_by, updated_by)
+		VALUES ($1, 'Super Admin', $2, $2)
+		RETURNING id
+	`
+
+	stmt, err = tx.PrepareContext(ctx, query)
+	if err != nil {
+		return err
+	}
+	defer stmt.Close()
+
+	err = stmt.QueryRowContext(ctx, uuid.New().String(), userID).Scan(&groupID)
+	if err != nil {
+		return err
+	}
+
+	// seed access
+	query = `
+		INSERT INTO access (id, name, created_by, updated_by)
+		VALUES ($1, 'root', $2, $2)
+		RETURNING id
+	`
+
+	stmt, err = tx.PrepareContext(ctx, query)
+	if err != nil {
+		return err
+	}
+	defer stmt.Close()
+
+	err = stmt.QueryRowContext(ctx, uuid.New().String(), userID).Scan(&accessID)
+	if err != nil {
+		return err
+	}
+
+	// seed grant access
+	query = `
+		INSERT INTO access_groups (id, group_id, access_id, created_by, updated_by)
+		VALUES ($1, $2, $3, $4, $4)
+	`
+
+	stmt, err = tx.PrepareContext(ctx, query)
+	if err != nil {
+		return err
+	}
+	defer stmt.Close()
+
+	_, err = stmt.ExecContext(ctx, uuid.New().String(), groupID, accessID, userID)
 	if err != nil {
 		return err
 	}
