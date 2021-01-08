@@ -1,0 +1,15 @@
+syntax = "proto3";
+package wiradata.users;
+
+option go_package = "pb;users";
+
+import "google/protobuf/timestamp.proto";
+import "access_message.proto";
+import "generic_message.proto";
+
+service AccessService {
+  rpc Create(Access) returns (Access) {}
+  rpc Update(Access) returns (Access) {}
+  rpc View(Id) returns (Access) {}
+  rpc Delete(Id) returns (Boolean) {}
+}
