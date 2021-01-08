@@ -11,14 +11,14 @@ import (
 
 func initSeed(ctx context.Context, tx *sql.Tx) error {
 	// seed package features
-	query := fmt.Sprintf(`
-		INSERT INTO package_features (id, name) VALUES
-		(%s, 'ALL'),
-		(%s, 'SIMPLE'),
-		(%s, 'CUSTOME')
-	`, uuid.New().String(), uuid.New().String(), uuid.New().String())
+	stmt, err := tx.PrepareContext(ctx,
+		`INSERT INTO package_features (id, name) VALUES ($1, 'ALL'), ($2, 'SIMPLE'), ($3, 'CUSTOME')`)
+	if err != nil {
+		return err
+	}
+	defer stmt.Close()
 
-	_, err := tx.ExecContext(ctx, query)
+	_, err = stmt.ExecContext(ctx, uuid.New().String(), uuid.New().String(), uuid.New().String())
 	if err != nil {
 		return err
 	}
@@ -30,13 +30,19 @@ func initSeed(ctx context.Context, tx *sql.Tx) error {
 		return err
 	}
 
-	query = fmt.Sprintf(`
+	query := `
 		INSERT INTO companies (id, name, code, address, city, province, phone, pic, pic_phone, package_of_feature_id)
-		VALUES (%s, 'Wiradata Sistem', 'WIRA', 'Pondok Aren', 'Tangerang Selatan', 'Banten', '08122222222', 'Jacky', '08133333333', %s)
+		VALUES ($1, 'Wiradata Sistem', 'WIRA', 'Pondok Aren', 'Tangerang Selatan', 'Banten', '08122222222', 'Jacky', '08133333333', $2)
 		RETURNING id
-	`, uuid.New().String(), packageFeatureID)
+	`
 
-	err = tx.QueryRowContext(ctx, query).Scan(&companyID)
+	stmt, err = tx.PrepareContext(ctx, query)
+	if err != nil {
+		return err
+	}
+	defer stmt.Close()
+
+	err = stmt.QueryRowContext(ctx, uuid.New().String(), packageFeatureID).Scan(&companyID)
 	if err != nil {
 		return err
 	}
@@ -46,20 +52,32 @@ func initSeed(ctx context.Context, tx *sql.Tx) error {
 	if err != nil {
 		return err
 	}
-	query = fmt.Sprintf(`
-		INSERT INTO users (id, company_id, username, name, email, password)
-		VALUES (%s, %s, 'wira-admin', 'Administrator', 'rijal.asep.nugroho@gmail.com', %s)
-		RETURNING id
-	`, uuid.New().String(), companyID, password)
 
-	err = tx.QueryRowContext(ctx, query).Scan(&userID)
+	query = `
+		INSERT INTO users (id, company_id, username, name, email, password)
+		VALUES ($1, $2, 'wira-admin', 'Administrator', 'rijal.asep.nugroho@gmail.com', $3)
+		RETURNING id
+	`
+
+	stmt, err = tx.PrepareContext(ctx, query)
+	if err != nil {
+		return err
+	}
+	defer stmt.Close()
+
+	err = stmt.QueryRowContext(ctx, uuid.New().String(), companyID, password).Scan(&userID)
 	if err != nil {
 		return err
 	}
 
 	// update company
-	query = fmt.Sprintf(`UPDATE companies SET update_by = %s WHERE id=%s`, userID, companyID)
-	_, err = tx.ExecContext(ctx, query)
+	stmt, err = tx.PrepareContext(ctx, `UPDATE companies SET updated_by = $1 WHERE id=$2`)
+	if err != nil {
+		return err
+	}
+	defer stmt.Close()
+
+	_, err = stmt.ExecContext(ctx, userID, companyID)
 	if err != nil {
 		return err
 	}
