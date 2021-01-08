@@ -10,8 +10,8 @@ message Region {
   string company_id = 2;
   string name = 3;
   string code = 4;
-  timestamp created_at =  5;
+  google.protobuf.Timestamp created_at =  5;
   string created_by = 6;
-  timestamp updated_at = 7;
+  google.protobuf.Timestamp updated_at = 7;
   string updated_by = 8;
 }

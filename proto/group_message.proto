@@ -10,8 +10,8 @@ message Group {
   string id = 1;
   string name = 2;
   repeated Access access = 3;
-  timestamp created_at =  4;
+  google.protobuf.Timestamp created_at =  4;
   string created_by = 5;
-  timestamp updated_at = 6;
+  google.protobuf.Timestamp updated_at = 6;
   string updated_by = 7;
 }

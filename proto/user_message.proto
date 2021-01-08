@@ -14,7 +14,7 @@ message User {
   string name = 5;
   string email = 6;
   repeated Group groups = 7;
-  timestamp created_at =  8;
-  timestamp updated_at = 9;
+  google.protobuf.Timestamp created_at =  8;
+  google.protobuf.Timestamp updated_at = 9;
   string updated_by = 10;
 }
