@@ -3,6 +3,7 @@ package service
 import (
 	"context"
 	"database/sql"
+	"user-service/internal/model"
 
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/metadata"
@@ -10,6 +11,7 @@ import (
 
 	"user-service/internal/pkg/app"
 	"user-service/internal/pkg/db/redis"
+	"user-service/internal/pkg/token"
 	users "user-service/pb"
 )
 
@@ -20,27 +22,49 @@ type Auth struct {
 }
 
 // Login service
-func (u *Auth) Login(context.Context, *users.LoginRequest) (*users.LoginResponse, error) {
-	return &users.LoginResponse{}, nil
+func (u *Auth) Login(ctx context.Context, in *users.LoginRequest) (*users.LoginResponse, error) {
+	var output users.LoginResponse
+	if len(in.GetUsername()) <= 0 {
+		return &output, status.Error(codes.InvalidArgument, "Please supply valid username")
+	}
+
+	if len(in.GetPassword()) <= 0 {
+		return &output, status.Error(codes.InvalidArgument, "Please supply valid password")
+	}
+
+	var userModel model.User
+	userModel.Pb.Username = in.GetUsername()
+	err := userModel.GetByUserNamePassword(ctx, u.Db, in.GetPassword())
+	if err != nil {
+		return &output, err
+	}
+
+	output.User = &userModel.Pb
+	output.Token, err = token.ClaimToken(output.User.GetEmail())
+	if err != nil {
+		return &output, status.Errorf(codes.Internal, "claim token: %v", err)
+	}
+
+	return &output, nil
 }
 
 // ForgotPassword service
-func (u *Auth) ForgotPassword(context.Context, *users.ForgotPasswordRequest) (*users.Message, error) {
+func (u *Auth) ForgotPassword(ctx context.Context, in *users.ForgotPasswordRequest) (*users.Message, error) {
 	return &users.Message{}, nil
 }
 
 // ResetPassword service
-func (u *Auth) ResetPassword(context.Context, *users.ResetPasswordRequest) (*users.Message, error) {
+func (u *Auth) ResetPassword(ctx context.Context, in *users.ResetPasswordRequest) (*users.Message, error) {
 	return &users.Message{}, nil
 }
 
 // ChangePassword service
-func (u *Auth) ChangePassword(context.Context, *users.ChangePasswordRequest) (*users.Message, error) {
+func (u *Auth) ChangePassword(ctx context.Context, in *users.ChangePasswordRequest) (*users.Message, error) {
 	return &users.Message{}, nil
 }
 
 // IsAuth service
-func (u *Auth) IsAuth(context.Context, *users.Id) (*users.Boolean, error) {
+func (u *Auth) IsAuth(ctx context.Context, in *users.Id) (*users.Boolean, error) {
 	return &users.Boolean{}, nil
 }
 
