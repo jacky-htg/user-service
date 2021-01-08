@@ -70,3 +70,90 @@ func (u *User) GetByUserNamePassword(ctx context.Context, db *sql.DB, password s
 
 	return nil
 }
+
+// Get func
+func (u *User) Get(ctx context.Context, db *sql.DB) error {
+	var regionID, branchID sql.NullString
+	query := `
+		SELECT users.id, users.company_id, users.region_id, users.branch_id, users.name, users.email,
+		groups.id groups_id, groups.name groups_name
+		FROM users
+		JOIN groups ON users.group_id = groups.id
+		WHERE users.id = $1 
+	`
+	stmt, err := db.PrepareContext(ctx, query)
+	if err != nil {
+		return status.Errorf(codes.Internal, "Prepare statement: %v", err)
+	}
+	defer stmt.Close()
+
+	group := users.Group{}
+	err = stmt.QueryRowContext(ctx, u.Pb.GetId()).Scan(
+		&u.Pb.Id, &u.Pb.CompanyId, &regionID, &branchID, &u.Pb.Name, &u.Pb.Email, &group.Id, &group.Name)
+
+	if err == sql.ErrNoRows {
+		return status.Errorf(codes.NotFound, "Query Raw: %v", err)
+	}
+
+	if err != nil {
+		return status.Errorf(codes.Internal, "Query Raw: %v", err)
+	}
+
+	u.Pb.RegionId = regionID.String
+	u.Pb.BranchId = branchID.String
+	u.Pb.Group = &group
+
+	return nil
+}
+
+// GetByEmail func
+func (u *User) GetByEmail(ctx context.Context, db *sql.DB) error {
+	var regionID, branchID sql.NullString
+	query := `
+		SELECT users.id, users.company_id, users.region_id, users.branch_id, users.name, users.email,
+		groups.id groups_id, groups.name groups_name
+		FROM users
+		JOIN groups ON users.group_id = groups.id
+		WHERE users.email = $1 
+	`
+	stmt, err := db.PrepareContext(ctx, query)
+	if err != nil {
+		return status.Errorf(codes.Internal, "Prepare statement: %v", err)
+	}
+	defer stmt.Close()
+
+	group := users.Group{}
+	err = stmt.QueryRowContext(ctx, u.Pb.GetEmail()).Scan(
+		&u.Pb.Id, &u.Pb.CompanyId, &regionID, &branchID, &u.Pb.Name, &u.Pb.Email, &group.Id, &group.Name)
+
+	if err == sql.ErrNoRows {
+		return status.Errorf(codes.NotFound, "Query Raw: %v", err)
+	}
+
+	if err != nil {
+		return status.Errorf(codes.Internal, "Query Raw: %v", err)
+	}
+
+	u.Pb.RegionId = regionID.String
+	u.Pb.BranchId = branchID.String
+	u.Pb.Group = &group
+
+	return nil
+}
+
+// ChangePassword func
+func (u *User) ChangePassword(ctx context.Context, tx *sql.Tx, password string) error {
+
+	stmt, err := tx.PrepareContext(ctx, `UPDATE users SET password = $1 WHERE id = $2`)
+	defer stmt.Close()
+	if err != nil {
+		return status.Errorf(codes.Internal, "prepare update: %v", err)
+	}
+
+	_, err = stmt.ExecContext(ctx, password, u.Pb.GetId())
+	if err != nil {
+		return status.Errorf(codes.Internal, "exec update: %v", err)
+	}
+
+	return nil
+}
