@@ -10,6 +10,12 @@ import (
 )
 
 func initSeed(ctx context.Context, tx *sql.Tx) error {
+	packageFeatureID := uuid.New().String()
+	companyID := uuid.New().String()
+	userID := uuid.New().String()
+	groupID := uuid.New().String()
+	accessID := uuid.New().String()
+
 	// seed package features
 	stmt, err := tx.PrepareContext(ctx,
 		`INSERT INTO package_features (id, name) VALUES ($1, 'ALL'), ($2, 'SIMPLE'), ($3, 'CUSTOME')`)
@@ -18,22 +24,15 @@ func initSeed(ctx context.Context, tx *sql.Tx) error {
 	}
 	defer stmt.Close()
 
-	_, err = stmt.ExecContext(ctx, uuid.New().String(), uuid.New().String(), uuid.New().String())
+	_, err = stmt.ExecContext(ctx, packageFeatureID, uuid.New().String(), uuid.New().String())
 	if err != nil {
 		return err
 	}
 
 	// seed company
-	var packageFeatureID, companyID, userID, groupID, accessID string
-	err = tx.QueryRowContext(ctx, `SELECT id FROM package_features WHERE name='ALL'`).Scan(&packageFeatureID)
-	if err != nil {
-		return err
-	}
-
 	query := `
-		INSERT INTO companies (id, name, code, address, city, province, phone, pic, pic_phone, package_of_feature_id)
-		VALUES ($1, 'Wiradata Sistem', 'WIRA', 'Pondok Aren', 'Tangerang Selatan', 'Banten', '08122222222', 'Jacky', '08133333333', $2)
-		RETURNING id
+		INSERT INTO companies (id, name, code, address, city, province, phone, pic, pic_phone, package_of_feature_id, updated_by)
+		VALUES ($1, 'Wiradata Sistem', 'WIRA', 'Pondok Aren', 'Tangerang Selatan', 'Banten', '08122222222', 'Jacky', '08133333333', $2, $3)
 	`
 
 	stmt, err = tx.PrepareContext(ctx, query)
@@ -42,7 +41,24 @@ func initSeed(ctx context.Context, tx *sql.Tx) error {
 	}
 	defer stmt.Close()
 
-	err = stmt.QueryRowContext(ctx, uuid.New().String(), packageFeatureID).Scan(&companyID)
+	_, err = stmt.ExecContext(ctx, companyID, packageFeatureID, userID)
+	if err != nil {
+		return err
+	}
+
+	// seed group
+	query = `
+		INSERT INTO groups (id, company_id, is_mutable, name, created_by, updated_by)
+		VALUES ($1, $2, true, 'Super Admin', $3, $3)
+	`
+
+	stmt, err = tx.PrepareContext(ctx, query)
+	if err != nil {
+		return err
+	}
+	defer stmt.Close()
+
+	_, err = stmt.ExecContext(ctx, groupID, companyID, userID)
 	if err != nil {
 		return err
 	}
@@ -54,9 +70,8 @@ func initSeed(ctx context.Context, tx *sql.Tx) error {
 	}
 
 	query = `
-		INSERT INTO users (id, company_id, username, name, email, password)
-		VALUES ($1, $2, 'wira-admin', 'Administrator', 'rijal.asep.nugroho@gmail.com', $3)
-		RETURNING id
+		INSERT INTO users (id, company_id, group_id, username, name, email, password)
+		VALUES ($1, $2, $3, 'wira-admin', 'Administrator', 'rijal.asep.nugroho@gmail.com', $4)
 	`
 
 	stmt, err = tx.PrepareContext(ctx, query)
@@ -65,37 +80,7 @@ func initSeed(ctx context.Context, tx *sql.Tx) error {
 	}
 	defer stmt.Close()
 
-	err = stmt.QueryRowContext(ctx, uuid.New().String(), companyID, password).Scan(&userID)
-	if err != nil {
-		return err
-	}
-
-	// update company
-	stmt, err = tx.PrepareContext(ctx, `UPDATE companies SET updated_by = $1 WHERE id=$2`)
-	if err != nil {
-		return err
-	}
-	defer stmt.Close()
-
-	_, err = stmt.ExecContext(ctx, userID, companyID)
-	if err != nil {
-		return err
-	}
-
-	// seed group
-	query = `
-		INSERT INTO groups (id, name, created_by, updated_by)
-		VALUES ($1, 'Super Admin', $2, $2)
-		RETURNING id
-	`
-
-	stmt, err = tx.PrepareContext(ctx, query)
-	if err != nil {
-		return err
-	}
-	defer stmt.Close()
-
-	err = stmt.QueryRowContext(ctx, uuid.New().String(), userID).Scan(&groupID)
+	_, err = stmt.ExecContext(ctx, userID, companyID, groupID, password)
 	if err != nil {
 		return err
 	}
@@ -104,7 +89,6 @@ func initSeed(ctx context.Context, tx *sql.Tx) error {
 	query = `
 		INSERT INTO access (id, name, created_by, updated_by)
 		VALUES ($1, 'root', $2, $2)
-		RETURNING id
 	`
 
 	stmt, err = tx.PrepareContext(ctx, query)
@@ -113,7 +97,7 @@ func initSeed(ctx context.Context, tx *sql.Tx) error {
 	}
 	defer stmt.Close()
 
-	err = stmt.QueryRowContext(ctx, uuid.New().String(), userID).Scan(&accessID)
+	_, err = stmt.ExecContext(ctx, accessID, userID)
 	if err != nil {
 		return err
 	}

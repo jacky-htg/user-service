@@ -95,11 +95,14 @@ var migrations = []darwin.Migration{
 		Script: `
 			CREATE TABLE groups (
 				id char(36) NOT NULL PRIMARY KEY,
+				company_id char(36) NOT NULL,
 				name varchar(100) NOT NULL,
+				is_mutable bool NOT NULL DEFAULT false,
 				created_at timestamp NOT NULL DEFAULT NOW(),
 				created_by char(36) NOT NULL,
 				updated_at timestamp NOT NULL DEFAULT NOW(),
-				updated_by char(36) NOT NULL
+				updated_by char(36) NOT NULL,
+				CONSTRAINT fk_groups_to_companies FOREIGN KEY(company_id) REFERENCES companies(id)
 			);
 		`,
 	},
@@ -112,6 +115,7 @@ var migrations = []darwin.Migration{
 				company_id char(36) NOT NULL,
 				region_id char(36) NULL,
 				branch_id char(36) NULL,
+				group_id char(36) NOT NULL,
 				username varchar(20) NOT NULL UNIQUE,
 				password varchar NOT NULL,
 				name varchar(100) NOT NULL,
@@ -121,30 +125,13 @@ var migrations = []darwin.Migration{
 				updated_by char(36) NULL,
 				CONSTRAINT fk_users_to_companies FOREIGN KEY(company_id) REFERENCES companies(id),
 				CONSTRAINT fk_users_to_regions FOREIGN KEY(region_id) REFERENCES regions(id),
-				CONSTRAINT fk_users_to_branches FOREIGN KEY(branch_id) REFERENCES branches(id)
+				CONSTRAINT fk_users_to_branches FOREIGN KEY(branch_id) REFERENCES branches(id),
+				CONSTRAINT fk_users_to_groups FOREIGN KEY(group_id) REFERENCES groups(id)
 			);
 		`,
 	},
 	{
 		Version:     7,
-		Description: "Create groups_users Table",
-		Script: `
-			CREATE TABLE groups_users (
-				id char(36) NOT NULL PRIMARY KEY,
-				group_id char(36) NOT NULL,
-				user_id char(36) NOT NULL,
-				created_at timestamp NOT NULL DEFAULT NOW(),
-				created_by char(36) NOT NULL,
-				updated_at timestamp NOT NULL DEFAULT NOW(),
-				updated_by char(36) NOT NULL,
-				UNIQUE(group_id, user_id),
-				CONSTRAINT fk_groups_users_to_groups FOREIGN KEY(group_id) REFERENCES groups(id) ON DELETE CASCADE,
-				CONSTRAINT fk_groups_users_to_users FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE
-			);
-		`,
-	},
-	{
-		Version:     8,
 		Description: "Create access Table",
 		Script: `
 			CREATE TABLE access (
@@ -160,7 +147,7 @@ var migrations = []darwin.Migration{
 		`,
 	},
 	{
-		Version:     9,
+		Version:     8,
 		Description: "Create access_groups Table",
 		Script: `
 			CREATE TABLE access_groups (
@@ -178,7 +165,7 @@ var migrations = []darwin.Migration{
 		`,
 	},
 	{
-		Version:     10,
+		Version:     9,
 		Description: "Create employees Table",
 		Script: `
 			CREATE TABLE employees (
@@ -203,7 +190,7 @@ var migrations = []darwin.Migration{
 		`,
 	},
 	{
-		Version:     11,
+		Version:     10,
 		Description: "Create package_features Table",
 		Script: `
 			CREATE TABLE package_features (
@@ -215,7 +202,7 @@ var migrations = []darwin.Migration{
 		`,
 	},
 	{
-		Version:     12,
+		Version:     11,
 		Description: "Create features Table",
 		Script: `
 			CREATE TABLE features (
@@ -229,7 +216,7 @@ var migrations = []darwin.Migration{
 		`,
 	},
 	{
-		Version:     13,
+		Version:     12,
 		Description: "Create features_package_features Table",
 		Script: `
 			CREATE TABLE features_package_features (
@@ -247,7 +234,7 @@ var migrations = []darwin.Migration{
 		`,
 	},
 	{
-		Version:     14,
+		Version:     13,
 		Description: "Create companies_features Table",
 		Script: `
 			CREATE TABLE companies_features (
@@ -265,7 +252,7 @@ var migrations = []darwin.Migration{
 		`,
 	},
 	{
-		Version:     15,
+		Version:     14,
 		Description: "Create request_passwords Table",
 		Script: `
 			CREATE TABLE request_passwords (
