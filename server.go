@@ -12,6 +12,7 @@ import (
 	"user-service/internal/config"
 	"user-service/internal/pkg/db/postgres"
 	"user-service/internal/pkg/db/redis"
+	"user-service/internal/pkg/log/logruslog"
 	"user-service/internal/route"
 )
 
