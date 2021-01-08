@@ -3,8 +3,8 @@ package wiradata.users;
 
 option go_package = "pb;users";
 
-import "google/protobuf/timestamp.proto";
 import "user_message.proto";
+import "generic_message.proto";
 
 message LoginRequest {
   string username = 1;

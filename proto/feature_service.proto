@@ -3,7 +3,6 @@ package wiradata.users;
 
 option go_package = "pb;users";
 
-import "google/protobuf/timestamp.proto";
 import "feature_message.proto";
 import "generic_message.proto";
 
@@ -21,7 +20,7 @@ service FeatureService {
   rpc Update(Feature) returns (Feature) {}
   rpc View(Id) returns (Feature) {}
   rpc Delete(Id) returns (Boolean) {}
-  rpc List() returns (ListFeatureResponse) {}
+  rpc List(Empty) returns (ListFeatureResponse) {}
 }
 
 service PackageFeatureService {

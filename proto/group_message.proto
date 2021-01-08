@@ -4,7 +4,7 @@ package wiradata.users;
 option go_package = "pb;users";
 
 import "google/protobuf/timestamp.proto";
-import "access_message";
+import "access_message.proto";
 
 message Group {
   string id = 1;
