@@ -14,8 +14,7 @@ message User {
   string name = 5;
   string email = 6;
   repeated Group groups = 7;
-  timestamp created_at =  11;
-  string created_by = 12;
-  timestamp updated_at = 13;
-  string updated_by = 14;
+  timestamp created_at =  8;
+  timestamp updated_at = 9;
+  string updated_by = 10;
 }

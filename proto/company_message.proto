@@ -21,7 +21,6 @@ message Company {
   EnumPackageOfFeature package_of_feature = 12;
   repeated Feature features = 13;
   timestamp created_at =  14;
-  string created_by = 15;
-  timestamp updated_at = 16;
-  string updated_by = 17;
+  timestamp updated_at = 15;
+  string updated_by = 16;
 }
