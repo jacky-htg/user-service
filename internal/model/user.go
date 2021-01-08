@@ -45,6 +45,10 @@ func (u *User) GetByUserNamePassword(ctx context.Context, db *sql.DB, password s
 		&u.Pb.Id, &u.Pb.CompanyId, &regionID, &branchID, &u.Pb.Name, &u.Pb.Email, &strPassword,
 		&group.Id, &group.Name, &tmpAccess)
 
+	if err == sql.ErrNoRows {
+		return status.Errorf(codes.NotFound, "Query Raw: %v", err)
+	}
+
 	if err != nil {
 		return status.Errorf(codes.Internal, "Query Raw: %v", err)
 	}
@@ -54,7 +58,7 @@ func (u *User) GetByUserNamePassword(ctx context.Context, db *sql.DB, password s
 
 	err = bcrypt.CompareHashAndPassword([]byte(strPassword), []byte(password))
 	if err != nil {
-		return status.Errorf(codes.InvalidArgument, "Invalid Password: %v", err)
+		return status.Errorf(codes.NotFound, "Invalid Password: %v", err)
 	}
 
 	err = json.Unmarshal([]byte(tmpAccess), &group.Access)
