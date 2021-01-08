@@ -209,9 +209,7 @@ var migrations = []darwin.Migration{
 				id char(36) NOT NULL PRIMARY KEY,
 				name varchar(100) NOT NULL,
 				created_at timestamp NOT NULL DEFAULT NOW(),
-				created_by char(36) NOT NULL,
-				updated_at timestamp NOT NULL DEFAULT NOW(),
-				updated_by char(36) NOT NULL
+				updated_at timestamp NOT NULL DEFAULT NOW()
 			);
 		`,
 	},
