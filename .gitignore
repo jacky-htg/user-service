@@ -17,3 +17,4 @@
 .env
 go.mod
 go.sum
+log/*
