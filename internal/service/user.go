@@ -25,20 +25,23 @@ func (u *User) Create(ctx context.Context, in *users.User) (*users.User, error) 
 	var err error
 	var userModel model.User
 
-	if in == nil {
-		return &output, status.Error(codes.InvalidArgument, "Please supply valid argument")
-	}
+	// basic validation
+	{
+		if in == nil {
+			return &output, status.Error(codes.InvalidArgument, "Please supply valid argument")
+		}
 
-	if len(in.GetEmail()) == 0 {
-		return &output, status.Error(codes.InvalidArgument, "Please supply valid email")
-	}
+		if len(in.GetEmail()) == 0 {
+			return &output, status.Error(codes.InvalidArgument, "Please supply valid email")
+		}
 
-	if len(in.GetGroup().GetId()) == 0 {
-		return &output, status.Error(codes.InvalidArgument, "Please supply valid group_id")
-	}
+		if len(in.GetGroup().GetId()) == 0 {
+			return &output, status.Error(codes.InvalidArgument, "Please supply valid group_id")
+		}
 
-	if len(in.GetName()) == 0 {
-		return &output, status.Error(codes.InvalidArgument, "Please supply valid name")
+		if len(in.GetName()) == 0 {
+			return &output, status.Error(codes.InvalidArgument, "Please supply valid name")
+		}
 	}
 
 	// username validation
@@ -97,11 +100,14 @@ func (u *User) Create(ctx context.Context, in *users.User) (*users.User, error) 
 	}
 
 	// company validation
-	if len(in.GetCompanyId()) > 0 && in.GetCompanyId() != ctx.Value(app.Ctx("companyID")).(string) {
-		return &output, status.Error(codes.PermissionDenied, "Please supply valid company id")
+	{
+		if len(in.GetCompanyId()) > 0 && in.GetCompanyId() != ctx.Value(app.Ctx("companyID")).(string) {
+			return &output, status.Error(codes.PermissionDenied, "Please supply valid company id")
+		}
+		in.CompanyId = ctx.Value(app.Ctx("companyID")).(string)
 	}
-	in.CompanyId = ctx.Value(app.Ctx("companyID")).(string)
 
+	// get user login
 	var userLogin model.User
 	userLogin.Pb.Id = ctx.Value(app.Ctx("userID")).(string)
 	err = userLogin.Get(ctx, u.Db)
@@ -110,65 +116,71 @@ func (u *User) Create(ctx context.Context, in *users.User) (*users.User, error) 
 	}
 
 	// region validation
-	var regionModel model.Region
-	if len(in.GetRegionId()) > 0 {
-		if len(userLogin.Pb.GetRegionId()) == 0 {
-			// check is region belongsto company
-			regionModel.Pb.Id = in.GetRegionId()
-			err = regionModel.Get(ctx, u.Db)
-			if err != nil {
-				return &output, err
-			}
+	{
+		var regionModel model.Region
+		if len(in.GetRegionId()) > 0 {
+			if len(userLogin.Pb.GetRegionId()) == 0 {
+				// check is region belongsto company
+				regionModel.Pb.Id = in.GetRegionId()
+				err = regionModel.Get(ctx, u.Db)
+				if err != nil {
+					return &output, err
+				}
 
-			if regionModel.Pb.GetCompanyId() != in.GetCompanyId() {
-				return &output, status.Error(codes.PermissionDenied, "Please supply valid region id")
+				if regionModel.Pb.GetCompanyId() != in.GetCompanyId() {
+					return &output, status.Error(codes.PermissionDenied, "Please supply valid region id")
+				}
+			} else {
+				if in.GetRegionId() != userLogin.Pb.GetRegionId() {
+					return &output, status.Error(codes.PermissionDenied, "Please supply valid region id")
+				}
 			}
 		} else {
-			if in.GetRegionId() != userLogin.Pb.GetRegionId() {
-				return &output, status.Error(codes.PermissionDenied, "Please supply valid region id")
+			if len(userLogin.Pb.GetRegionId()) > 0 {
+				in.RegionId = userLogin.Pb.GetRegionId()
 			}
-		}
-	} else {
-		if len(userLogin.Pb.GetRegionId()) > 0 {
-			in.RegionId = userLogin.Pb.GetRegionId()
 		}
 	}
 
 	// branch validation
-	if len(in.GetBranchId()) > 0 {
-		if len(userLogin.Pb.GetBranchId()) == 0 {
-			// check is branch belongsto region
-			var branchModel model.Branch
-			branchModel.Pb.Id = in.GetBranchId()
-			err = branchModel.Get(ctx, u.Db)
-			if err != nil {
-				return &output, err
-			}
+	{
+		if len(in.GetBranchId()) > 0 {
+			if len(userLogin.Pb.GetBranchId()) == 0 {
+				// check is branch belongsto region
+				var branchModel model.Branch
+				branchModel.Pb.Id = in.GetBranchId()
+				err = branchModel.Get(ctx, u.Db)
+				if err != nil {
+					return &output, err
+				}
 
-			if branchModel.Pb.GetRegionId() != in.GetRegionId() {
-				return &output, status.Error(codes.PermissionDenied, "Please supply valid branch id")
+				if branchModel.Pb.GetRegionId() != in.GetRegionId() {
+					return &output, status.Error(codes.PermissionDenied, "Please supply valid branch id")
+				}
+			} else {
+				if in.GetBranchId() != userLogin.Pb.GetBranchId() {
+					return &output, status.Error(codes.PermissionDenied, "Please supply valid branch id")
+				}
 			}
 		} else {
-			if in.GetBranchId() != userLogin.Pb.GetBranchId() {
-				return &output, status.Error(codes.PermissionDenied, "Please supply valid branch id")
+			if len(userLogin.Pb.GetBranchId()) > 0 {
+				in.BranchId = userLogin.Pb.GetBranchId()
 			}
-		}
-	} else {
-		if len(userLogin.Pb.GetBranchId()) > 0 {
-			in.BranchId = userLogin.Pb.GetBranchId()
 		}
 	}
 
 	// group validation
-	var groupModel model.Group
-	groupModel.Pb.Id = in.GetGroup().GetId()
-	err = groupModel.Get(ctx, u.Db)
-	if err != nil {
-		return &output, err
-	}
+	{
+		var groupModel model.Group
+		groupModel.Pb.Id = in.GetGroup().GetId()
+		err = groupModel.Get(ctx, u.Db)
+		if err != nil {
+			return &output, err
+		}
 
-	if groupModel.Pb.GetCompanyId() != in.GetCompanyId() {
-		return &output, status.Error(codes.PermissionDenied, "Please supply valid group id")
+		if groupModel.Pb.GetCompanyId() != in.GetCompanyId() {
+			return &output, status.Error(codes.PermissionDenied, "Please supply valid group id")
+		}
 	}
 
 	userModel = model.User{}
@@ -196,8 +208,125 @@ func (u *User) Create(ctx context.Context, in *users.User) (*users.User, error) 
 // Update func
 func (u *User) Update(ctx context.Context, in *users.User) (*users.User, error) {
 	var output users.User
+	var err error
+	var userModel model.User
 
-	return &output, nil
+	// basic validation
+	{
+		if len(in.GetId()) == 0 {
+			return &output, status.Error(codes.InvalidArgument, "Please supply valid id")
+		}
+		userModel.Pb.Id = in.GetId()
+	}
+
+	ctx, err = getMetadata(ctx)
+	if err != nil {
+		return &output, err
+	}
+
+	// get user login
+	var userLogin model.User
+	userLogin.Pb.Id = ctx.Value(app.Ctx("userID")).(string)
+	err = userLogin.Get(ctx, u.Db)
+	if err != nil {
+		return &output, err
+	}
+
+	// region validation
+	if len(in.GetRegionId()) > 0 {
+		var regionModel model.Region
+		if len(in.GetRegionId()) > 0 {
+			if len(userLogin.Pb.GetRegionId()) == 0 {
+				// check is region belongsto company
+				regionModel.Pb.Id = in.GetRegionId()
+				err = regionModel.Get(ctx, u.Db)
+				if err != nil {
+					return &output, err
+				}
+
+				if regionModel.Pb.GetCompanyId() != in.GetCompanyId() {
+					return &output, status.Error(codes.PermissionDenied, "Please supply valid region id")
+				}
+			} else {
+				if in.GetRegionId() != userLogin.Pb.GetRegionId() {
+					return &output, status.Error(codes.PermissionDenied, "Please supply valid region id")
+				}
+			}
+		} else {
+			if len(userLogin.Pb.GetRegionId()) > 0 {
+				in.RegionId = userLogin.Pb.GetRegionId()
+			}
+		}
+	}
+
+	// branch validation
+	if len(in.GetBranchId()) > 0 {
+		if len(in.GetBranchId()) > 0 {
+			if len(userLogin.Pb.GetBranchId()) == 0 {
+				// check is branch belongsto region
+				var branchModel model.Branch
+				branchModel.Pb.Id = in.GetBranchId()
+				err = branchModel.Get(ctx, u.Db)
+				if err != nil {
+					return &output, err
+				}
+
+				if branchModel.Pb.GetRegionId() != in.GetRegionId() {
+					return &output, status.Error(codes.PermissionDenied, "Please supply valid branch id")
+				}
+			} else {
+				if in.GetBranchId() != userLogin.Pb.GetBranchId() {
+					return &output, status.Error(codes.PermissionDenied, "Please supply valid branch id")
+				}
+			}
+		} else {
+			if len(userLogin.Pb.GetBranchId()) > 0 {
+				in.BranchId = userLogin.Pb.GetBranchId()
+			}
+		}
+	}
+
+	// group validation
+	if len(in.GetGroup().GetId()) > 0 {
+		var groupModel model.Group
+		groupModel.Pb.Id = in.GetGroup().GetId()
+		err = groupModel.Get(ctx, u.Db)
+		if err != nil {
+			return &output, err
+		}
+
+		if groupModel.Pb.GetCompanyId() != in.GetCompanyId() {
+			return &output, status.Error(codes.PermissionDenied, "Please supply valid group id")
+		}
+	}
+
+	err = userModel.Get(ctx, u.Db)
+	if err != nil {
+		return &output, err
+	}
+
+	if len(in.GetName()) > 0 {
+		userModel.Pb.Name = in.GetName()
+	}
+
+	if len(in.GetRegionId()) > 0 {
+		userModel.Pb.RegionId = in.GetRegionId()
+	}
+
+	if len(in.GetBranchId()) > 0 {
+		userModel.Pb.BranchId = in.GetBranchId()
+	}
+
+	if len(in.GetGroup().GetId()) > 0 {
+		userModel.Pb.Name = in.GetGroup().GetId()
+	}
+
+	err = userModel.Update(ctx, u.Db)
+	if err != nil {
+		return &output, err
+	}
+
+	return &userModel.Pb, nil
 }
 
 // View func

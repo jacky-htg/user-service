@@ -5,6 +5,8 @@ import (
 	"database/sql"
 	"encoding/json"
 	"strings"
+	"time"
+	"user-service/internal/pkg/app"
 	users "user-service/pb"
 
 	"github.com/google/uuid"
@@ -279,8 +281,8 @@ func (u *User) IsAuth(ctx context.Context, db *sql.DB, access string) error {
 // Create new user
 func (u *User) Create(ctx context.Context, db *sql.DB) error {
 	query := `
-		INSERT INTO users (id, company_id, region_id, branch_id, group_id, username, name, email, password)
-		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+		INSERT INTO users (id, company_id, region_id, branch_id, group_id, username, name, email, password, updated_by)
+		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
 	`
 	var regionID, branchID *string
 	if len(u.Pb.GetRegionId()) > 0 {
@@ -314,9 +316,53 @@ func (u *User) Create(ctx context.Context, db *sql.DB) error {
 		u.Pb.GetName(),
 		u.Pb.GetEmail(),
 		string(pass),
+		ctx.Value(app.Ctx("userID")).(string),
 	)
 	if err != nil {
 		return status.Errorf(codes.Internal, "Exec insert: %v", err)
+	}
+
+	return nil
+}
+
+// Update user
+func (u *User) Update(ctx context.Context, db *sql.DB) error {
+	query := `
+		UPDATE users SET 
+		region_id = $1, 
+		branch_id = $2, 
+		group_id = $3, 
+		name = $4,
+		updated_by = $5,
+		updated_at = $6
+		WHERE id = $7
+	`
+	var regionID, branchID *string
+	if len(u.Pb.GetRegionId()) > 0 {
+		regionID = &u.Pb.RegionId
+	}
+
+	if len(u.Pb.GetBranchId()) > 0 {
+		branchID = &u.Pb.BranchId
+	}
+
+	stmt, err := db.PrepareContext(ctx, query)
+	if err != nil {
+		return status.Errorf(codes.Internal, "Prepare update: %v", err)
+	}
+	defer stmt.Close()
+
+	_, err = stmt.ExecContext(ctx,
+		regionID,
+		branchID,
+		u.Pb.GetGroup().GetId(),
+		u.Pb.GetName(),
+		ctx.Value(app.Ctx("userID")).(string),
+		time.Now().UTC(),
+		u.Pb.GetId(),
+	)
+	if err != nil {
+		return status.Errorf(codes.Internal, "Exec update: %v", err)
 	}
 
 	return nil
