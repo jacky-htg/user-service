@@ -367,3 +367,19 @@ func (u *User) Update(ctx context.Context, db *sql.DB) error {
 
 	return nil
 }
+
+// Delete user
+func (u *User) Delete(ctx context.Context, db *sql.DB) error {
+	stmt, err := db.PrepareContext(ctx, `DELETE FROM users WHERE id = $1`)
+	if err != nil {
+		return status.Errorf(codes.Internal, "Prepare delete: %v", err)
+	}
+	defer stmt.Close()
+
+	_, err = stmt.ExecContext(ctx, u.Pb.GetId())
+	if err != nil {
+		return status.Errorf(codes.Internal, "Exec delete: %v", err)
+	}
+
+	return nil
+}

@@ -375,6 +375,41 @@ func (u *User) View(ctx context.Context, in *users.Id) (*users.User, error) {
 func (u *User) Delete(ctx context.Context, in *users.Id) (*users.Boolean, error) {
 	var output users.Boolean
 	output.Boolean = false
+	var err error
+	var userModel model.User
+
+	if len(in.GetId()) == 0 {
+		return &output, status.Error(codes.InvalidArgument, "Please supply valid id")
+	}
+
+	ctx, err = getMetadata(ctx)
+	if err != nil {
+		return &output, err
+	}
+
+	// get user login
+	var userLogin model.User
+	userLogin.Pb.Id = ctx.Value(app.Ctx("userID")).(string)
+	err = userLogin.Get(ctx, u.Db)
+	if err != nil {
+		return &output, err
+	}
+
+	userModel.Pb.Id = in.GetId()
+	err = userModel.Get(ctx, u.Db)
+	if err != nil {
+		return &output, err
+	}
+
+	err = u.checkFilteringContent(ctx, &userLogin, &userModel)
+	if err != nil {
+		return &output, err
+	}
+
+	err = userModel.Delete(ctx, u.Db)
+	if err != nil {
+		return &output, err
+	}
 
 	output.Boolean = true
 	return &output, nil
