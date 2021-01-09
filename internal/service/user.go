@@ -7,6 +7,7 @@ import (
 	"user-service/internal/model"
 	"user-service/internal/pkg/app"
 	"user-service/internal/pkg/db/redis"
+	"user-service/internal/pkg/token"
 	users "user-service/pb"
 
 	"google.golang.org/grpc/codes"
@@ -425,8 +426,26 @@ func (u *User) List(ctx context.Context, in *users.ListUserRequest) (*users.List
 // GetByToken func
 func (u *User) GetByToken(ctx context.Context, in *users.Empty) (*users.User, error) {
 	var output users.User
+	var err error
+	var userModel model.User
 
-	return &output, nil
+	ctx, err = getMetadataToken(ctx)
+	if err != nil {
+		return &output, err
+	}
+
+	// validate token
+	isValid, email := token.ValidateToken(ctx.Value(app.Ctx("token")).(string))
+	if !isValid {
+		return &output, status.Error(codes.Unauthenticated, "invalid token")
+	}
+	userModel.Pb.Email = email
+	err = userModel.GetByEmail(ctx, u.Db)
+	if err != nil {
+		return &output, err
+	}
+
+	return &userModel.Pb, nil
 }
 
 func (u *User) checkFilteringContent(ctx context.Context, userLogin *model.User, userModel *model.User) error {
