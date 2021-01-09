@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"encoding/json"
+	"fmt"
 	"strings"
 	"time"
 	"user-service/internal/pkg/app"
@@ -382,4 +383,70 @@ func (u *User) Delete(ctx context.Context, db *sql.DB) error {
 	}
 
 	return nil
+}
+
+// ListQuery builder
+func (u *User) ListQuery(ctx context.Context, db *sql.DB, in *users.ListUserRequest) (string, []interface{}, *users.UserPaginationResponse, error) {
+	var paginationResponse users.UserPaginationResponse
+	query := `
+		SELECT users.id, users.company_id, users.region_id, users.branch_id, users.name, users.email,
+			groups.id groups_id, groups.name groups_name
+		FROM users
+		JOIN groups ON users.group_id = groups.id
+	`
+	where := []string{}
+	paramQueries := []interface{}{}
+
+	if len(in.GetBranchId()) > 0 {
+		paramQueries = append(paramQueries, in.GetBranchId)
+		where = append(where, fmt.Sprintf(`users.branch_id = $%d`, len(paramQueries)))
+	}
+
+	if len(in.GetCompanyId()) > 0 {
+		paramQueries = append(paramQueries, in.GetCompanyId)
+		where = append(where, fmt.Sprintf(`users.company_id = $%d`, len(paramQueries)))
+	}
+
+	if len(in.GetPagination().GetSearch()) > 0 {
+		paramQueries = append(paramQueries, in.GetPagination().GetSearch())
+		where = append(where, fmt.Sprintf(`(users.name ILIKE $%d OR users.email ILIKE $%d OR groups.name ILIKE $%d)`,
+			len(paramQueries), len(paramQueries), len(paramQueries)))
+	}
+
+	{
+		qCount := `SELECT COUNT(*) FROM users JOIN groups ON users.group_id = groups.id`
+		if len(where) > 0 {
+			qCount += " WHERE " + strings.Join(where, " AND ")
+		}
+		var count int
+		err := db.QueryRowContext(ctx, qCount, paramQueries...).Scan(&count)
+		if err != nil && err != sql.ErrNoRows {
+			return query, paramQueries, &paginationResponse, status.Error(codes.Internal, err.Error())
+		}
+
+		paginationResponse.Count = uint32(count)
+	}
+
+	if len(where) > 0 {
+		query += `WHERE ` + strings.Join(where, " AND ")
+	}
+
+	if len(in.GetPagination().GetOrderBy()) == 0 || !(in.GetPagination().GetOrderBy() == "users.name" ||
+		in.GetPagination().GetOrderBy() == "users.email" ||
+		in.GetPagination().GetOrderBy() == "groups.name") {
+		if in.GetPagination() == nil {
+			in.Pagination = &users.Pagination{OrderBy: "users.created_at"}
+		} else {
+			in.GetPagination().OrderBy = "users.created_at"
+		}
+	}
+
+	query += ` ORDER BY ` + in.GetPagination().GetOrderBy() + ` ` + in.GetPagination().GetSort().String()
+
+	if in.GetPagination().GetLimit() > 0 {
+		query += fmt.Sprintf(` LIMIT $%d OFFSET $%d`, (len(paramQueries) + 1), (len(paramQueries) + 2))
+		paramQueries = append(paramQueries, in.GetPagination().GetLimit(), in.GetPagination().GetOffset())
+	}
+
+	return query, paramQueries, &paginationResponse, nil
 }
