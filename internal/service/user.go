@@ -305,6 +305,11 @@ func (u *User) Update(ctx context.Context, in *users.User) (*users.User, error) 
 		return &output, err
 	}
 
+	err = u.checkFilteringContent(ctx, &userLogin, &userModel)
+	if err != nil {
+		return &output, err
+	}
+
 	if len(in.GetName()) > 0 {
 		userModel.Pb.Name = in.GetName()
 	}
@@ -332,8 +337,38 @@ func (u *User) Update(ctx context.Context, in *users.User) (*users.User, error) 
 // View func
 func (u *User) View(ctx context.Context, in *users.Id) (*users.User, error) {
 	var output users.User
+	var err error
+	var userModel model.User
 
-	return &output, nil
+	if len(in.GetId()) == 0 {
+		return &output, status.Error(codes.InvalidArgument, "Please supply valid id")
+	}
+
+	ctx, err = getMetadata(ctx)
+	if err != nil {
+		return &output, err
+	}
+
+	// get user login
+	var userLogin model.User
+	userLogin.Pb.Id = ctx.Value(app.Ctx("userID")).(string)
+	err = userLogin.Get(ctx, u.Db)
+	if err != nil {
+		return &output, err
+	}
+
+	userModel.Pb.Id = in.GetId()
+	err = userModel.Get(ctx, u.Db)
+	if err != nil {
+		return &output, err
+	}
+
+	err = u.checkFilteringContent(ctx, &userLogin, &userModel)
+	if err != nil {
+		return &output, err
+	}
+
+	return &userModel.Pb, nil
 }
 
 // Delete func
@@ -357,4 +392,51 @@ func (u *User) GetByToken(ctx context.Context, in *users.Empty) (*users.User, er
 	var output users.User
 
 	return &output, nil
+}
+
+func (u *User) checkFilteringContent(ctx context.Context, userLogin *model.User, userModel *model.User) error {
+	var err error
+	if userModel.Pb.GetCompanyId() != userLogin.Pb.GetCompanyId() {
+		return status.Error(codes.PermissionDenied, "user not in your company")
+	}
+
+	if len(userLogin.Pb.GetRegionId()) > 0 && userModel.Pb.GetRegionId() != userLogin.Pb.GetRegionId() {
+		return status.Error(codes.PermissionDenied, "user not in your region")
+	}
+
+	if len(userLogin.Pb.GetRegionId()) == 0 && len(userModel.Pb.GetRegionId()) > 0 {
+		// check is region belongsto company
+		var regionModel model.Region
+		regionModel.Pb.Id = userModel.Pb.GetRegionId()
+		err = regionModel.Get(ctx, u.Db)
+		if err != nil {
+			return err
+		}
+		if regionModel.Pb.GetCompanyId() != userLogin.Pb.GetCompanyId() {
+			return status.Error(codes.PermissionDenied, "user not in your region")
+		}
+	}
+
+	if len(userLogin.Pb.GetBranchId()) > 0 && userModel.Pb.GetBranchId() != userLogin.Pb.GetBranchId() {
+		return status.Error(codes.PermissionDenied, "user not in your branch")
+	}
+
+	if len(userLogin.Pb.GetBranchId()) == 0 && len(userModel.Pb.GetBranchId()) > 0 {
+		var branchModel model.Branch
+		branchModel.Pb.Id = userModel.Pb.GetBranchId()
+		err = branchModel.Get(ctx, u.Db)
+		if err != nil {
+			return err
+		}
+
+		if len(userLogin.Pb.GetRegionId()) > 0 && branchModel.Pb.GetRegionId() != userLogin.Pb.GetRegionId() {
+			return status.Error(codes.PermissionDenied, "user not in your branch")
+		}
+
+		if branchModel.Pb.GetCompanyId() != userLogin.Pb.GetCompanyId() {
+			return status.Error(codes.PermissionDenied, "user not in your branch")
+		}
+	}
+
+	return nil
 }
