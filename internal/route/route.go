@@ -15,4 +15,7 @@ import (
 func GrpcRoute(grpcServer *grpc.Server, db *sql.DB, log *logrus.Entry, cache *redis.Cache) {
 	authServer := service.Auth{Db: db, Cache: cache}
 	users.RegisterAuthServiceServer(grpcServer, &authServer)
+
+	userServer := service.User{Db: db, Cache: cache}
+	users.RegisterUserServiceServer(grpcServer, &userServer)
 }

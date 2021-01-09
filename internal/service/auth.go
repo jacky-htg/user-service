@@ -4,14 +4,13 @@ import (
 	"context"
 	"database/sql"
 	"time"
-	"user-service/internal/model"
 
 	"github.com/golang/protobuf/ptypes"
-	"golang.org/x/crypto/bcrypt"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/metadata"
 	"google.golang.org/grpc/status"
 
+	"user-service/internal/model"
 	"user-service/internal/pkg/app"
 	"user-service/internal/pkg/db/redis"
 	"user-service/internal/pkg/token"
@@ -37,7 +36,8 @@ func (u *Auth) Login(ctx context.Context, in *users.LoginRequest) (*users.LoginR
 
 	var userModel model.User
 	userModel.Pb.Username = in.GetUsername()
-	err := userModel.GetByUserNamePassword(ctx, u.Db, in.GetPassword())
+	userModel.Password = in.GetPassword()
+	err := userModel.GetByUserNamePassword(ctx, u.Db)
 	if err != nil {
 		return &output, err
 	}
@@ -99,6 +99,8 @@ func (u *Auth) ResetPassword(ctx context.Context, in *users.ResetPasswordRequest
 		return &output, status.Error(codes.InvalidArgument, "new password not match with re password")
 	}
 
+	// TODO : check strong password
+
 	var requestPasswordModel model.RequestPassword
 	requestPasswordModel.Pb.Id = in.GetToken()
 	err := requestPasswordModel.Get(ctx, u.Db)
@@ -119,19 +121,15 @@ func (u *Auth) ResetPassword(ctx context.Context, in *users.ResetPasswordRequest
 		return &output, status.Error(codes.PermissionDenied, "token has been expired")
 	}
 
-	pass, err := bcrypt.GenerateFromPassword([]byte(in.GetNewPassword()), bcrypt.DefaultCost)
-	if err != nil {
-		return &output, status.Errorf(codes.Internal, "hash password: %v", err)
-	}
-
 	var userModel model.User
 	userModel.Pb.Id = requestPasswordModel.Pb.GetUserId()
+	userModel.Password = in.GetNewPassword()
 	tx, err := u.Db.BeginTx(ctx, nil)
 	if err != nil {
 		return &output, status.Errorf(codes.Internal, "begin tx: %v", err)
 	}
 
-	err = userModel.ChangePassword(ctx, tx, string(pass))
+	err = userModel.ChangePassword(ctx, tx)
 	if err != nil {
 		tx.Rollback()
 		return &output, err
@@ -176,24 +174,23 @@ func (u *Auth) ChangePassword(ctx context.Context, in *users.ChangePasswordReque
 		return &output, status.Error(codes.InvalidArgument, "new password not match with re password")
 	}
 
+	// TODO : check strong password
+
 	var userModel model.User
 	userModel.Pb.Id = ctx.Value(app.Ctx("userID")).(string)
-	err = userModel.GetByPassword(ctx, u.Db, in.GetOldPassword())
+	userModel.Password = in.GetOldPassword()
+	err = userModel.GetByPassword(ctx, u.Db)
 	if err != nil {
 		return &output, err
 	}
 
-	pass, err := bcrypt.GenerateFromPassword([]byte(in.GetNewPassword()), bcrypt.DefaultCost)
-	if err != nil {
-		return &output, status.Errorf(codes.Internal, "hash password: %v", err)
-	}
-
+	userModel.Password = in.GetNewPassword()
 	tx, err := u.Db.BeginTx(ctx, nil)
 	if err != nil {
 		return &output, status.Errorf(codes.Internal, "begin tx: %v", err)
 	}
 
-	err = userModel.ChangePassword(ctx, tx, string(pass))
+	err = userModel.ChangePassword(ctx, tx)
 	if err != nil {
 		tx.Rollback()
 		return &output, err

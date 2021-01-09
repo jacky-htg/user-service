@@ -7,6 +7,7 @@ import (
 	"strings"
 	users "user-service/pb"
 
+	"github.com/google/uuid"
 	"golang.org/x/crypto/bcrypt"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -14,11 +15,12 @@ import (
 
 // User struct
 type User struct {
-	Pb users.User
+	Pb       users.User
+	Password string
 }
 
 // GetByUserNamePassword func
-func (u *User) GetByUserNamePassword(ctx context.Context, db *sql.DB, password string) error {
+func (u *User) GetByUserNamePassword(ctx context.Context, db *sql.DB) error {
 	var strPassword, tmpAccess string
 	var regionID, branchID sql.NullString
 	query := `
@@ -57,7 +59,7 @@ func (u *User) GetByUserNamePassword(ctx context.Context, db *sql.DB, password s
 	u.Pb.RegionId = regionID.String
 	u.Pb.BranchId = branchID.String
 
-	err = bcrypt.CompareHashAndPassword([]byte(strPassword), []byte(password))
+	err = bcrypt.CompareHashAndPassword([]byte(strPassword), []byte(u.Password))
 	if err != nil {
 		return status.Errorf(codes.NotFound, "Invalid Password: %v", err)
 	}
@@ -108,7 +110,7 @@ func (u *User) Get(ctx context.Context, db *sql.DB) error {
 }
 
 // GetByPassword func
-func (u *User) GetByPassword(ctx context.Context, db *sql.DB, password string) error {
+func (u *User) GetByPassword(ctx context.Context, db *sql.DB) error {
 	var regionID, branchID sql.NullString
 	var strPassword string
 	query := `
@@ -136,7 +138,7 @@ func (u *User) GetByPassword(ctx context.Context, db *sql.DB, password string) e
 		return status.Errorf(codes.Internal, "Query Raw: %v", err)
 	}
 
-	err = bcrypt.CompareHashAndPassword([]byte(strPassword), []byte(password))
+	err = bcrypt.CompareHashAndPassword([]byte(strPassword), []byte(u.Password))
 	if err != nil {
 		return status.Errorf(codes.NotFound, "Invalid Password: %v", err)
 	}
@@ -183,8 +185,43 @@ func (u *User) GetByEmail(ctx context.Context, db *sql.DB) error {
 	return nil
 }
 
+// GetByUsername func
+func (u *User) GetByUsername(ctx context.Context, db *sql.DB) error {
+	var regionID, branchID sql.NullString
+	query := `
+		SELECT users.id, users.company_id, users.region_id, users.branch_id, users.name, users.email,
+		groups.id groups_id, groups.name groups_name
+		FROM users
+		JOIN groups ON users.group_id = groups.id
+		WHERE users.username = $1 
+	`
+	stmt, err := db.PrepareContext(ctx, query)
+	if err != nil {
+		return status.Errorf(codes.Internal, "Prepare statement: %v", err)
+	}
+	defer stmt.Close()
+
+	group := users.Group{}
+	err = stmt.QueryRowContext(ctx, u.Pb.GetUsername()).Scan(
+		&u.Pb.Id, &u.Pb.CompanyId, &regionID, &branchID, &u.Pb.Name, &u.Pb.Email, &group.Id, &group.Name)
+
+	if err == sql.ErrNoRows {
+		return status.Errorf(codes.NotFound, "Query Raw: %v", err)
+	}
+
+	if err != nil {
+		return status.Errorf(codes.Internal, "Query Raw: %v", err)
+	}
+
+	u.Pb.RegionId = regionID.String
+	u.Pb.BranchId = branchID.String
+	u.Pb.Group = &group
+
+	return nil
+}
+
 // ChangePassword func
-func (u *User) ChangePassword(ctx context.Context, tx *sql.Tx, password string) error {
+func (u *User) ChangePassword(ctx context.Context, tx *sql.Tx) error {
 
 	stmt, err := tx.PrepareContext(ctx, `UPDATE users SET password = $1 WHERE id = $2`)
 	defer stmt.Close()
@@ -192,7 +229,11 @@ func (u *User) ChangePassword(ctx context.Context, tx *sql.Tx, password string) 
 		return status.Errorf(codes.Internal, "prepare update: %v", err)
 	}
 
-	_, err = stmt.ExecContext(ctx, password, u.Pb.GetId())
+	pass, err := bcrypt.GenerateFromPassword([]byte(u.Password), bcrypt.DefaultCost)
+	if err != nil {
+		return status.Errorf(codes.Internal, "hash password: %v", err)
+	}
+	_, err = stmt.ExecContext(ctx, string(pass), u.Pb.GetId())
 	if err != nil {
 		return status.Errorf(codes.Internal, "exec update: %v", err)
 	}
@@ -230,6 +271,52 @@ func (u *User) IsAuth(ctx context.Context, db *sql.DB, access string) error {
 
 	if err != nil {
 		return status.Errorf(codes.Internal, "Query Raw: %v", err)
+	}
+
+	return nil
+}
+
+// Create new user
+func (u *User) Create(ctx context.Context, db *sql.DB) error {
+	query := `
+		INSERT INTO users (id, company_id, region_id, branch_id, group_id, username, name, email, password)
+		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+	`
+	var regionID, branchID *string
+	if len(u.Pb.GetRegionId()) > 0 {
+		regionID = &u.Pb.RegionId
+	}
+
+	if len(u.Pb.GetBranchId()) > 0 {
+		branchID = &u.Pb.BranchId
+	}
+
+	u.Pb.Id = uuid.New().String()
+
+	pass, err := bcrypt.GenerateFromPassword([]byte(u.Password), bcrypt.DefaultCost)
+	if err != nil {
+		return status.Errorf(codes.Internal, "hash password: %v", err)
+	}
+
+	stmt, err := db.PrepareContext(ctx, query)
+	if err != nil {
+		return status.Errorf(codes.Internal, "Prepare insert: %v", err)
+	}
+	defer stmt.Close()
+
+	_, err = stmt.ExecContext(ctx,
+		u.Pb.GetId(),
+		u.Pb.GetCompanyId(),
+		regionID,
+		branchID,
+		u.Pb.GetGroup().GetId(),
+		u.Pb.GetUsername(),
+		u.Pb.GetName(),
+		u.Pb.GetEmail(),
+		string(pass),
+	)
+	if err != nil {
+		return status.Errorf(codes.Internal, "Exec insert: %v", err)
 	}
 
 	return nil
