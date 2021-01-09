@@ -21,7 +21,7 @@ message UserPaginationResponse {
 
 message ListUserResponse {
   UserPaginationResponse pagination = 1;
-  repeated User users = 2; 
+  User user = 2; 
 }
 
 service UserService {
@@ -29,6 +29,6 @@ service UserService {
   rpc Update(User) returns (User) {}
   rpc View(Id) returns (User) {}
   rpc Delete(Id) returns (Boolean) {}
-  rpc List(ListUserRequest) returns (ListUserResponse) {}
+  rpc List(ListUserRequest) returns (stream ListUserResponse) {}
   rpc GetByToken(Empty) returns (User) {}
 }
