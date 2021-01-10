@@ -18,4 +18,4 @@
 go.mod
 go.sum
 log/*
-client.go
+client
