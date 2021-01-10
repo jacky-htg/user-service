@@ -21,8 +21,8 @@ user service using grpc go, postgresql and redis. The service is designed to be 
 - [ ] Role Base Access Control (RBAC)
 
 ### Companies
-- [ ] Multi companies
-- [ ] Company registration and verifications
+- [X] Multi companies
+- [X] Company registration
 - [ ] Companies CRUD
 
 ### Regions
@@ -55,7 +55,7 @@ user service using grpc go, postgresql and redis. The service is designed to be 
 ### Features
 - [ ] CRUD Features
 - [ ] CRUD Pacakage Feature
-- [ ] Company Feature Setting : The company can use the whole of features, or cherry pick part of features.
+- [X] Company Feature Setting : The company can use the whole of features, or cherry pick part of features.
 
 ## License
 [The license of application is GPL-3.0](https://github.com/jacky-htg/user-service/blob/main/LICENSE), You can use this apllication for commercial use, distribution or modification. But there is no liability and warranty. Please read the license details carefully.

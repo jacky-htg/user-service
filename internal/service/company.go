@@ -7,6 +7,7 @@ import (
 	users "user-service/pb"
 
 	"user-service/internal/model"
+	"user-service/internal/pkg/app"
 	"user-service/internal/pkg/db/redis"
 
 	"google.golang.org/grpc/codes"
@@ -182,7 +183,7 @@ func (u *Company) Registration(ctx context.Context, in *users.CompanyRegistratio
 		return &output, status.Errorf(codes.Internal, "begin tx: %v", err)
 	}
 
-	err = companyRegisterModel.Registration(ctx, tx)
+	err = companyRegisterModel.Registration(ctx, u.Db, tx)
 	if err != nil {
 		tx.Rollback()
 		return &output, err
@@ -199,8 +200,140 @@ func (u *Company) Registration(ctx context.Context, in *users.CompanyRegistratio
 func (u *Company) Update(ctx context.Context, in *users.Company) (*users.Company, error) {
 	var output users.Company
 	var err error
+	var companyModel model.Company
 
-	return &output, err
+	// basic validation
+	{
+		if len(in.GetId()) == 0 {
+			return &output, status.Error(codes.InvalidArgument, "Please supply valid id")
+		}
+		companyModel.Pb.Id = in.GetId()
+	}
+
+	ctx, err = getMetadata(ctx)
+	if err != nil {
+		return &output, err
+	}
+
+	// get user login
+	var userLogin model.User
+	userLogin.Pb.Id = ctx.Value(app.Ctx("userID")).(string)
+	err = userLogin.Get(ctx, u.Db)
+	if err != nil {
+		return &output, err
+	}
+
+	if userLogin.Pb.GetCompanyId() != in.GetId() {
+		return &output, status.Error(codes.Unauthenticated, "its not your company")
+	}
+
+	if len(userLogin.Pb.GetBranchId()) > 0 || len(userLogin.Pb.GetRegionId()) > 0 {
+		return &output, status.Error(codes.Unauthenticated, "only user company can update the company")
+	}
+
+	err = companyModel.Get(ctx, u.Db)
+	if err != nil {
+		return &output, err
+	}
+
+	if len(in.GetName()) > 0 {
+		companyModel.Pb.Name = in.GetName()
+	}
+
+	if len(in.GetAddress()) > 0 {
+		companyModel.Pb.Address = in.GetAddress()
+	}
+
+	if len(in.GetCity()) > 0 {
+		companyModel.Pb.City = in.GetCity()
+	}
+
+	if len(in.GetProvince()) > 0 {
+		companyModel.Pb.Province = in.GetProvince()
+	}
+
+	if len(in.GetPhone()) > 0 {
+		companyModel.Pb.Phone = in.GetPhone()
+	}
+
+	if len(in.GetPic()) > 0 {
+		companyModel.Pb.Pic = in.GetPic()
+	}
+
+	if len(in.GetPicPhone()) > 0 {
+		companyModel.Pb.PicPhone = in.GetPicPhone()
+	}
+
+	if in.GetPackageOfFeature() != companyModel.Pb.GetPackageOfFeature() {
+		companyModel.UpdateFeatures = true
+		switch in.GetPackageOfFeature().String() {
+		case "ALL":
+			var featurePackageModel model.FeaturePackage
+			featurePackageModel.Pb.Name = in.GetPackageOfFeature()
+			err = featurePackageModel.GetByName(ctx, u.Db)
+			if err != nil {
+				return &output, err
+			}
+
+			companyModel.Pb.Features = featurePackageModel.Pb.Features
+		case "SIMPLE":
+			var featurePackageModel model.FeaturePackage
+			featurePackageModel.Pb.Name = in.GetPackageOfFeature()
+			err = featurePackageModel.GetByName(ctx, u.Db)
+			if err != nil {
+				return &output, err
+			}
+
+			companyModel.Pb.Features = featurePackageModel.Pb.Features
+		case "CUSTOME":
+			if len(in.GetFeatures()) == 0 {
+				return &output, status.Error(codes.InvalidArgument, "Please supply valid company features")
+			}
+
+			for _, feature := range in.GetFeatures() {
+				var featureModel model.Feature
+				featureModel.Pb.Id = feature.GetId()
+				err = featureModel.Get(ctx, u.Db)
+				if err != nil {
+					return &output, err
+				}
+			}
+
+			companyModel.Pb.Features = in.GetFeatures()
+		}
+		companyModel.Pb.PackageOfFeature = in.GetPackageOfFeature()
+	} else {
+		if in.GetPackageOfFeature() == companyModel.Pb.GetPackageOfFeature() && companyModel.Pb.GetPackageOfFeature().String() == "CUSTOME" {
+			if len(in.GetFeatures()) > 0 {
+				companyModel.UpdateFeatures = true
+				for _, feature := range in.GetFeatures() {
+					var featureModel model.Feature
+					featureModel.Pb.Id = feature.GetId()
+					err = featureModel.Get(ctx, u.Db)
+					if err != nil {
+						return &output, err
+					}
+				}
+
+				companyModel.Pb.Features = in.GetFeatures()
+			}
+		}
+	}
+
+	tx, err := u.Db.BeginTx(ctx, nil)
+	if err != nil {
+		return &output, status.Errorf(codes.Internal, "begin tx: %v", err)
+	}
+
+	err = companyModel.Update(ctx, u.Db, tx)
+	if err != nil {
+		tx.Rollback()
+		return &output, err
+	}
+
+	tx.Commit()
+
+	return &companyModel.Pb, nil
 }
 
 // View Company

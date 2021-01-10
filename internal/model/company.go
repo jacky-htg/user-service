@@ -3,6 +3,8 @@ package model
 import (
 	"context"
 	"database/sql"
+	"time"
+	"user-service/internal/pkg/app"
 	users "user-service/pb"
 
 	"github.com/google/uuid"
@@ -13,7 +15,8 @@ import (
 
 // Company struct
 type Company struct {
-	Pb users.Company
+	Pb             users.Company
+	UpdateFeatures bool
 }
 
 // CompanyRegister struct
@@ -23,7 +26,7 @@ type CompanyRegister struct {
 }
 
 // Registration Company
-func (u *CompanyRegister) Registration(ctx context.Context, tx *sql.Tx) error {
+func (u *CompanyRegister) Registration(ctx context.Context, db *sql.DB, tx *sql.Tx) error {
 	u.Pb.GetCompany().Id = uuid.New().String()
 	u.Pb.GetUser().Id = uuid.New().String()
 	groupID := uuid.New().String()
@@ -41,6 +44,13 @@ func (u *CompanyRegister) Registration(ctx context.Context, tx *sql.Tx) error {
 		}
 		defer stmt.Close()
 
+		packageFeature := FeaturePackage{}
+		packageFeature.Pb.Name = u.Pb.GetCompany().GetPackageOfFeature()
+		err = packageFeature.GetByName(ctx, db)
+		if err != nil {
+			return err
+		}
+
 		_, err = stmt.ExecContext(ctx,
 			u.Pb.GetCompany().GetId(),
 			u.Pb.GetCompany().GetName(),
@@ -51,7 +61,7 @@ func (u *CompanyRegister) Registration(ctx context.Context, tx *sql.Tx) error {
 			u.Pb.GetCompany().GetPhone(),
 			u.Pb.GetCompany().GetPic(),
 			u.Pb.GetCompany().GetPicPhone(),
-			u.Pb.GetCompany().GetPackageOfFeature().Number(),
+			packageFeature.Pb.GetId(),
 			u.Pb.GetUser().GetId(),
 			u.Pb.GetCompany().GetNpwp(),
 			u.Pb.GetCompany().GetLogo(),
@@ -136,6 +146,14 @@ func (u *CompanyRegister) Registration(ctx context.Context, tx *sql.Tx) error {
 		}
 	}
 
+	if len(u.Pb.GetCompany().GetFeatures()) > 0 {
+		modelCompany := Company{}
+		err := modelCompany.featureSetting(ctx, tx, u.Pb.GetCompany().GetFeatures())
+		if err != nil {
+			return err
+		}
+	}
+
 	return nil
 }
 
@@ -168,6 +186,125 @@ func (u *Company) GetByCode(ctx context.Context, db *sql.DB) error {
 	u.Pb.Logo = logo.String
 	if value, ok := users.EnumPackageOfFeature_value[enumPackage]; ok {
 		u.Pb.PackageOfFeature = users.EnumPackageOfFeature(value)
+	}
+
+	return nil
+}
+
+// Get company
+func (u *Company) Get(ctx context.Context, db *sql.DB) error {
+	query := `SELECT id, name, code, address, city, province, npwp, phone, pic, pic_phone, logo, package_of_feature_id 
+	FROM companies WHERE id = $1`
+	stmt, err := db.PrepareContext(ctx, query)
+	if err != nil {
+		return status.Errorf(codes.Internal, "Prepare statement: %v", err)
+	}
+	defer stmt.Close()
+
+	var npwp, logo sql.NullString
+	var enumPackage string
+	err = stmt.QueryRowContext(ctx, u.Pb.GetId()).Scan(
+		&u.Pb.Id, &u.Pb.Name, &u.Pb.Code,
+		&u.Pb.Address, &u.Pb.City, &u.Pb.Province,
+		&npwp, &u.Pb.Phone, &u.Pb.Pic, &u.Pb.PicPhone, &logo, &enumPackage)
+
+	if err == sql.ErrNoRows {
+		return status.Errorf(codes.NotFound, "Query Raw: %v", err)
+	}
+
+	if err != nil {
+		return status.Errorf(codes.Internal, "Query Raw: %v", err)
+	}
+
+	u.Pb.Npwp = npwp.String
+	u.Pb.Logo = logo.String
+	if value, ok := users.EnumPackageOfFeature_value[enumPackage]; ok {
+		u.Pb.PackageOfFeature = users.EnumPackageOfFeature(value)
+	}
+
+	return nil
+}
+
+// Update Company
+func (u *Company) Update(ctx context.Context, db *sql.DB, tx *sql.Tx) error {
+	query := `
+		UPDATE companies SET 
+		name = $1,
+		address = $2, 
+		city = $3, 
+		province = $4, 
+		npwp = $5, 
+		phone = $6, 
+		pic = $7, 
+		pic_phone = $8, 
+		logo = $9, 
+		package_of_feature_id = $10,
+		updated_by = $11,
+		updated_at = $12
+		WHERE id = $13
+	`
+	stmt, err := tx.PrepareContext(ctx, query)
+	if err != nil {
+		return status.Errorf(codes.Internal, "Prepare update: %v", err)
+	}
+	defer stmt.Close()
+
+	packageFeature := FeaturePackage{}
+	packageFeature.Pb.Name = u.Pb.GetPackageOfFeature()
+	err = packageFeature.GetByName(ctx, db)
+	if err != nil {
+		return err
+	}
+
+	_, err = stmt.ExecContext(ctx,
+		u.Pb.GetName(),
+		u.Pb.GetAddress(),
+		u.Pb.GetCity(),
+		u.Pb.GetProvince(),
+		u.Pb.GetNpwp(),
+		u.Pb.GetPhone(),
+		u.Pb.GetPic(),
+		u.Pb.GetPicPhone(),
+		u.Pb.GetLogo(),
+		packageFeature.Pb.GetId(),
+		ctx.Value(app.Ctx("userID")).(string),
+		time.Now().UTC(),
+		u.Pb.GetId(),
+	)
+	if err != nil {
+		return status.Errorf(codes.Internal, "Exec update: %v", err)
+	}
+
+	if u.UpdateFeatures && len(u.Pb.GetFeatures()) > 0 {
+		err = u.featureSetting(ctx, tx, u.Pb.GetFeatures())
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (u *Company) featureSetting(ctx context.Context, tx *sql.Tx, features []*users.Feature) error {
+	for _, feature := range features {
+		query := `INSERT INTO companies_features (id, company_id, feature_id, created_by, updated_by)
+		VALUES ($1, $2, $3, $4, $4)`
+
+		stmt, err := tx.PrepareContext(ctx, query)
+		if err != nil {
+			return status.Errorf(codes.Internal, "Prepare insert companies_features: %v", err)
+		}
+		defer stmt.Close()
+
+		_, err = stmt.ExecContext(ctx,
+			uuid.New().String(),
+			u.Pb.GetId(),
+			feature.GetId(),
+			ctx.Value(app.Ctx("userID")).(string),
+		)
+		if err != nil {
+			return status.Errorf(codes.Internal, "exec insert companies_features: %v", err)
+		}
 	}
 
 	return nil
