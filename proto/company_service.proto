@@ -18,7 +18,7 @@ message CompanyPaginationResponse {
 
 message ListCompanyResponse {
   CompanyPaginationResponse pagination = 1;
-  repeated Company companies = 2; 
+  Company company = 2; 
 }
 
 message CompanyRegister {
@@ -31,5 +31,5 @@ service CompanyService {
   rpc Update(Company) returns (Company) {}
   rpc View(Id) returns (Company) {}
   rpc Delete(Id) returns (Boolean) {}
-  rpc List(ListCompanyRequest) returns (ListCompanyResponse) {}
+  rpc List(ListCompanyRequest) returns (stream ListCompanyResponse) {}
 }
