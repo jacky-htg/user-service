@@ -10,7 +10,7 @@ user service using grpc go, postgresql and redis. The service is designed to be 
 - make server
 
 ## Features
-- [ ] Companies
+- [X] Companies
 - [ ] Regions
 - [ ] Branches
 - [ ] Employees
@@ -23,7 +23,7 @@ user service using grpc go, postgresql and redis. The service is designed to be 
 ### Companies
 - [X] Multi companies
 - [X] Company registration
-- [ ] Companies CRUD
+- [X] Companies CRUD
 
 ### Regions
 - [ ] Multi Regions
