@@ -190,12 +190,96 @@ func (u *Region) Update(ctx context.Context, in *users.Region) (*users.Region, e
 
 // View Region
 func (u *Region) View(ctx context.Context, in *users.Id) (*users.Region, error) {
-	return &users.Region{}, nil
+	var output users.Region
+	var err error
+	var regionModel model.Region
+
+	// basic validation
+	{
+		if len(in.GetId()) == 0 {
+			return &output, status.Error(codes.InvalidArgument, "Please supply valid id")
+		}
+		regionModel.Pb.Id = in.GetId()
+	}
+
+	ctx, err = getMetadata(ctx)
+	if err != nil {
+		return &output, err
+	}
+
+	// get user login
+	var userLogin model.User
+	userLogin.Pb.Id = ctx.Value(app.Ctx("userID")).(string)
+	err = userLogin.Get(ctx, u.Db)
+	if err != nil {
+		return &output, err
+	}
+
+	err = regionModel.Get(ctx, u.Db)
+	if err != nil {
+		return &output, err
+	}
+
+	if userLogin.Pb.GetCompanyId() != regionModel.Pb.GetCompanyId() {
+		return &output, status.Error(codes.Unauthenticated, "its not your company")
+	}
+
+	if len(userLogin.Pb.GetRegionId()) > 0 && userLogin.Pb.GetRegionId() != regionModel.Pb.GetId() {
+		return &output, status.Error(codes.Unauthenticated, "its not your region")
+	}
+
+	return &regionModel.Pb, nil
 }
 
 // Delete Region
 func (u *Region) Delete(ctx context.Context, in *users.Id) (*users.Boolean, error) {
-	return &users.Boolean{}, nil
+	var output users.Boolean
+	output.Boolean = false
+
+	var err error
+	var regionModel model.Region
+
+	// basic validation
+	{
+		if len(in.GetId()) == 0 {
+			return &output, status.Error(codes.InvalidArgument, "Please supply valid id")
+		}
+		regionModel.Pb.Id = in.GetId()
+	}
+
+	ctx, err = getMetadata(ctx)
+	if err != nil {
+		return &output, err
+	}
+
+	// get user login
+	var userLogin model.User
+	userLogin.Pb.Id = ctx.Value(app.Ctx("userID")).(string)
+	err = userLogin.Get(ctx, u.Db)
+	if err != nil {
+		return &output, err
+	}
+
+	if len(userLogin.Pb.GetRegionId()) > 0 || len(userLogin.Pb.GetBranchId()) > 0 {
+		return &output, status.Error(codes.Unauthenticated, "only user company can delete region")
+	}
+
+	err = regionModel.Get(ctx, u.Db)
+	if err != nil {
+		return &output, err
+	}
+
+	if userLogin.Pb.GetCompanyId() != regionModel.Pb.GetCompanyId() {
+		return &output, status.Error(codes.Unauthenticated, "its not your company")
+	}
+
+	err = regionModel.Delete(ctx, u.Db)
+	if err != nil {
+		return &output, err
+	}
+
+	output.Boolean = true
+	return &output, nil
 }
 
 // List Region

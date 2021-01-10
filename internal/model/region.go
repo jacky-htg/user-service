@@ -131,6 +131,22 @@ func (u *Region) Update(ctx context.Context, db *sql.DB, tx *sql.Tx) error {
 	return nil
 }
 
+// Delete region
+func (u *Region) Delete(ctx context.Context, db *sql.DB) error {
+	stmt, err := db.PrepareContext(ctx, `DELETE FROM regions WHERE id = $1`)
+	if err != nil {
+		return status.Errorf(codes.Internal, "Prepare delete region: %v", err)
+	}
+	defer stmt.Close()
+
+	_, err = stmt.ExecContext(ctx, u.Pb.GetId())
+	if err != nil {
+		return status.Errorf(codes.Internal, "Exec delete region: %v", err)
+	}
+
+	return nil
+}
+
 func (u *Region) regionBranches(ctx context.Context, tx *sql.Tx, branches []*users.Branch) error {
 	for _, branch := range branches {
 		query := `INSERT INTO branches_regions (id, region_id, branch_id, created_by, updated_by)
