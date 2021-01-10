@@ -8,3 +8,54 @@ user service using grpc go, postgresql and redis
 - make migrate
 - make seed
 - make server
+
+## Features
+- [ ] Companies
+- [ ] Regions
+- [ ] Branches
+- [ ] Employees
+- [ ] Company Features
+- [X] Users
+- [ ] Groups
+- [X] Auths
+- [ ] Role Base Access Control (RBAC)
+
+### Companies
+- [ ] Multi companies
+- [ ] Company registration and verifications
+- [ ] Companies CRUD
+
+### Regions
+- [ ] Multi Regions
+- [ ] One region can be assigned to many branches.
+- [ ] Regions CRUD
+
+### Branches
+- [ ] Multi Branches
+- [ ] Branches CRUD
+
+### Employees
+- [ ] Employees CRUD
+
+### Auths
+- [X] Login
+- [X] Forgot Password
+- [X] Reset Password
+- [X] Change Password
+- [X] Check Authorization 
+
+### Users, Groups, Access and RBAC
+- [X] Users CRUD
+- [ ] Group CRUD
+- [ ] Access CRUD
+- [ ] Multi users, multi roles and multi access
+- [ ] One role can be assigned multi access
+- [ ] Role Base Access Control (RBAC)
+
+### Features
+- [ ] CRUD Features
+- [ ] CRUD Pacakage Feature
+- [ ] Company Feature Setting : The company can use the whole of features, or cherry pick part of features.
+
+## License
+[The license of application is GPL-3.0](https://github.com/jacky-htg/user-service/blob/main/LICENSE), You can use this apllication for commercial use, distribution or modification. But there is no liability and warranty. Please read the license details carefully.
