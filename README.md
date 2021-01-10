@@ -1,5 +1,5 @@
 # user-service
-user service using grpc go, postgresql and redis
+user service using grpc go, postgresql and redis. The service is designed to be accessed by the internal network so that the grpc connection used is an insecure connection.
 
 ## Get Started
 - git clone git@github.com:jacky-htg/user-service.git
