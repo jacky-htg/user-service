@@ -112,7 +112,80 @@ func (u *Region) Create(ctx context.Context, in *users.Region) (*users.Region, e
 
 // Update region
 func (u *Region) Update(ctx context.Context, in *users.Region) (*users.Region, error) {
-	return &users.Region{}, nil
+	var output users.Region
+	var err error
+	var regionModel model.Region
+
+	// basic validation
+	{
+		if len(in.GetId()) == 0 {
+			return &output, status.Error(codes.InvalidArgument, "Please supply valid id")
+		}
+		regionModel.Pb.Id = in.GetId()
+	}
+
+	ctx, err = getMetadata(ctx)
+	if err != nil {
+		return &output, err
+	}
+
+	// get user login
+	var userLogin model.User
+	userLogin.Pb.Id = ctx.Value(app.Ctx("userID")).(string)
+	err = userLogin.Get(ctx, u.Db)
+	if err != nil {
+		return &output, err
+	}
+
+	if len(userLogin.Pb.GetBranchId()) > 0 {
+		return &output, status.Error(codes.Unauthenticated, "only user company/region can update the region")
+	}
+
+	if len(userLogin.Pb.GetRegionId()) > 0 && userLogin.Pb.GetRegionId() != in.GetId() {
+		return &output, status.Error(codes.Unauthenticated, "its not your region")
+	}
+
+	err = regionModel.Get(ctx, u.Db)
+	if err != nil {
+		return &output, err
+	}
+
+	if userLogin.Pb.GetCompanyId() != regionModel.Pb.GetCompanyId() {
+		return &output, status.Error(codes.Unauthenticated, "its not your company")
+	}
+
+	if len(in.GetName()) > 0 {
+		regionModel.Pb.Name = in.GetName()
+	}
+
+	if len(in.GetBranches()) > 0 {
+		regionModel.UpdateBranches = true
+		for _, branch := range in.GetBranches() {
+			var branchModel model.Branch
+			branchModel.Pb.Id = branch.GetId()
+			err = branchModel.Get(ctx, u.Db)
+			if err != nil {
+				return &output, err
+			}
+		}
+
+		regionModel.Pb.Branches = in.GetBranches()
+	}
+
+	tx, err := u.Db.BeginTx(ctx, nil)
+	if err != nil {
+		return &output, status.Errorf(codes.Internal, "begin tx: %v", err)
+	}
+
+	err = regionModel.Update(ctx, u.Db, tx)
+	if err != nil {
+		tx.Rollback()
+		return &output, err
+	}
+
+	tx.Commit()
+
+	return &regionModel.Pb, nil
 }
 
 // View Region

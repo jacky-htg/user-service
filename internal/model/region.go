@@ -3,6 +3,7 @@ package model
 import (
 	"context"
 	"database/sql"
+	"time"
 	"user-service/internal/pkg/app"
 	users "user-service/pb"
 
@@ -13,7 +14,8 @@ import (
 
 // Region model
 type Region struct {
-	Pb users.Region
+	Pb             users.Region
+	UpdateBranches bool
 }
 
 // Get func
@@ -85,6 +87,41 @@ func (u *Region) Create(ctx context.Context, db *sql.DB, tx *sql.Tx) error {
 	}
 
 	if len(u.Pb.GetBranches()) > 0 {
+		err = u.regionBranches(ctx, tx, u.Pb.GetBranches())
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+// Update Region
+func (u *Region) Update(ctx context.Context, db *sql.DB, tx *sql.Tx) error {
+	query := `
+		UPDATE regions SET 
+		name = $1,
+		updated_by = $2,
+		updated_at = $3
+		WHERE id = $4
+	`
+	stmt, err := tx.PrepareContext(ctx, query)
+	if err != nil {
+		return status.Errorf(codes.Internal, "Prepare update region: %v", err)
+	}
+	defer stmt.Close()
+
+	_, err = stmt.ExecContext(ctx,
+		u.Pb.GetName(),
+		ctx.Value(app.Ctx("userID")).(string),
+		time.Now().UTC(),
+		u.Pb.GetId(),
+	)
+	if err != nil {
+		return status.Errorf(codes.Internal, "Exec update region: %v", err)
+	}
+
+	if u.UpdateBranches && len(u.Pb.GetBranches()) > 0 {
 		err = u.regionBranches(ctx, tx, u.Pb.GetBranches())
 		if err != nil {
 			return err
