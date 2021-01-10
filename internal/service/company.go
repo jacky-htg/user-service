@@ -374,17 +374,3 @@ func (u *Company) View(ctx context.Context, in *users.Id) (*users.Company, error
 
 	return &companyModel.Pb, err
 }
-
-// Delete Company
-func (u *Company) Delete(ctx context.Context, in *users.Id) (*users.Boolean, error) {
-	var output users.Boolean
-	var err error
-
-	return &output, err
-}
-
-// List Companies
-func (u *Company) List(in *users.ListCompanyRequest, stream users.CompanyService_ListServer) error {
-	var err error
-	return err
-}

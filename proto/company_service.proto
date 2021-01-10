@@ -7,20 +7,6 @@ import "company_message.proto";
 import "generic_message.proto";
 import "user_message.proto";
 
-message ListCompanyRequest {
-  Pagination pagination = 1;
-}
-
-message CompanyPaginationResponse {
-  Pagination pagination = 1;
-  uint32 count = 4;
-}
-
-message ListCompanyResponse {
-  CompanyPaginationResponse pagination = 1;
-  Company company = 2; 
-}
-
 message CompanyRegistration {
   Company company = 1;
   User user = 2;
@@ -30,6 +16,4 @@ service CompanyService {
   rpc Registration(CompanyRegistration) returns (CompanyRegistration) {}
   rpc Update(Company) returns (Company) {}
   rpc View(Id) returns (Company) {}
-  rpc Delete(Id) returns (Boolean) {}
-  rpc List(ListCompanyRequest) returns (stream ListCompanyResponse) {}
 }
