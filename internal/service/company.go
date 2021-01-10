@@ -340,8 +340,39 @@ func (u *Company) Update(ctx context.Context, in *users.Company) (*users.Company
 func (u *Company) View(ctx context.Context, in *users.Id) (*users.Company, error) {
 	var output users.Company
 	var err error
+	var companyModel model.Company
 
-	return &output, err
+	// basic validation
+	{
+		if len(in.GetId()) == 0 {
+			return &output, status.Error(codes.InvalidArgument, "Please supply valid id")
+		}
+		companyModel.Pb.Id = in.GetId()
+	}
+
+	ctx, err = getMetadata(ctx)
+	if err != nil {
+		return &output, err
+	}
+
+	// get user login
+	var userLogin model.User
+	userLogin.Pb.Id = ctx.Value(app.Ctx("userID")).(string)
+	err = userLogin.Get(ctx, u.Db)
+	if err != nil {
+		return &output, err
+	}
+
+	if userLogin.Pb.GetCompanyId() != in.GetId() {
+		return &output, status.Error(codes.Unauthenticated, "its not your company")
+	}
+
+	err = companyModel.Get(ctx, u.Db)
+	if err != nil {
+		return &output, err
+	}
+
+	return &companyModel.Pb, err
 }
 
 // Delete Company
