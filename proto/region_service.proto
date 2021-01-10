@@ -19,7 +19,7 @@ message RegionPaginationResponse {
 
 message ListRegionResponse {
   RegionPaginationResponse pagination = 1;
-  repeated Region regions = 2; 
+  Region region = 2; 
 }
 
 service RegionService {
@@ -27,5 +27,5 @@ service RegionService {
   rpc Update(Region) returns (Region) {}
   rpc View(Id) returns (Region) {}
   rpc Delete(Id) returns (Boolean) {}
-  rpc List(ListRegionRequest) returns (ListRegionResponse) {}
+  rpc List(ListRegionRequest) returns (stream ListRegionResponse) {}
 }

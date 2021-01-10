@@ -283,6 +283,50 @@ func (u *Region) Delete(ctx context.Context, in *users.Id) (*users.Boolean, erro
 }
 
 // List Region
-func (u *Region) List(ctx context.Context, in *users.ListRegionRequest) (*users.ListRegionResponse, error) {
-	return &users.ListRegionResponse{}, nil
+func (u *Region) List(in *users.ListRegionRequest, stream users.RegionService_ListServer) error {
+	ctx := stream.Context()
+	ctx, err := getMetadata(ctx)
+	if err != nil {
+		return err
+	}
+
+	if len(in.GetCompanyId()) > 0 && in.GetCompanyId() != ctx.Value(app.Ctx("companyID")).(string) {
+		return status.Error(codes.InvalidArgument, "its not your company")
+	}
+
+	var regionModel model.Region
+	query, paramQueries, paginationResponse, err := regionModel.ListQuery(ctx, u.Db, in)
+
+	rows, err := u.Db.QueryContext(ctx, query, paramQueries...)
+	if err != nil {
+		return status.Error(codes.Internal, err.Error())
+	}
+	defer rows.Close()
+	paginationResponse.CompanyId = in.GetCompanyId()
+	paginationResponse.Pagination = in.GetPagination()
+
+	for rows.Next() {
+		err := contextError(ctx)
+		if err != nil {
+			return err
+		}
+
+		var pbRegion users.Region
+		err = rows.Scan(&pbRegion.Id, &pbRegion.CompanyId, &pbRegion.Name, &pbRegion.Code)
+		if err != nil {
+			return err
+		}
+
+		res := &users.ListRegionResponse{
+			Pagination: paginationResponse,
+			Region:     &pbRegion,
+		}
+
+		err = stream.Send(res)
+		if err != nil {
+			return status.Errorf(codes.Unknown, "cannot send stream response: %v", err)
+		}
+	}
+
+	return nil
 }

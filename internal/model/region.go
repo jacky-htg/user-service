@@ -3,6 +3,8 @@ package model
 import (
 	"context"
 	"database/sql"
+	"fmt"
+	"strings"
 	"time"
 	"user-service/internal/pkg/app"
 	users "user-service/pb"
@@ -145,6 +147,56 @@ func (u *Region) Delete(ctx context.Context, db *sql.DB) error {
 	}
 
 	return nil
+}
+
+// ListQuery builder
+func (u *Region) ListQuery(ctx context.Context, db *sql.DB, in *users.ListRegionRequest) (string, []interface{}, *users.RegionPaginationResponse, error) {
+	var paginationResponse users.RegionPaginationResponse
+	query := `SELECT id, company_id, name, code FROM regions`
+	where := []string{"company_id = $1"}
+	paramQueries := []interface{}{ctx.Value(app.Ctx("companyID")).(string)}
+
+	if len(in.GetPagination().GetSearch()) > 0 {
+		paramQueries = append(paramQueries, in.GetPagination().GetSearch())
+		where = append(where, fmt.Sprintf(`(name ILIKE $%d OR code ILIKE $%d)`,
+			len(paramQueries), len(paramQueries)))
+	}
+
+	{
+		qCount := `SELECT COUNT(*) FROM regions`
+		if len(where) > 0 {
+			qCount += " WHERE " + strings.Join(where, " AND ")
+		}
+		var count int
+		err := db.QueryRowContext(ctx, qCount, paramQueries...).Scan(&count)
+		if err != nil && err != sql.ErrNoRows {
+			return query, paramQueries, &paginationResponse, status.Error(codes.Internal, err.Error())
+		}
+
+		paginationResponse.Count = uint32(count)
+	}
+
+	if len(where) > 0 {
+		query += ` WHERE ` + strings.Join(where, " AND ")
+	}
+
+	if len(in.GetPagination().GetOrderBy()) == 0 || !(in.GetPagination().GetOrderBy() == "name" ||
+		in.GetPagination().GetOrderBy() == "code") {
+		if in.GetPagination() == nil {
+			in.Pagination = &users.Pagination{OrderBy: "created_at"}
+		} else {
+			in.GetPagination().OrderBy = "created_at"
+		}
+	}
+
+	query += ` ORDER BY ` + in.GetPagination().GetOrderBy() + ` ` + in.GetPagination().GetSort().String()
+
+	if in.GetPagination().GetLimit() > 0 {
+		query += fmt.Sprintf(` LIMIT $%d OFFSET $%d`, (len(paramQueries) + 1), (len(paramQueries) + 2))
+		paramQueries = append(paramQueries, in.GetPagination().GetLimit(), in.GetPagination().GetOffset())
+	}
+
+	return query, paramQueries, &paginationResponse, nil
 }
 
 func (u *Region) regionBranches(ctx context.Context, tx *sql.Tx, branches []*users.Branch) error {
