@@ -186,7 +186,7 @@ func (x *ListCompanyResponse) GetCompany() *Company {
 	return nil
 }
 
-type CompanyRegister struct {
+type CompanyRegistration struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
@@ -195,8 +195,8 @@ type CompanyRegister struct {
 	User    *User    `protobuf:"bytes,2,opt,name=user,proto3" json:"user,omitempty"`
 }
 
-func (x *CompanyRegister) Reset() {
-	*x = CompanyRegister{}
+func (x *CompanyRegistration) Reset() {
+	*x = CompanyRegistration{}
 	if protoimpl.UnsafeEnabled {
 		mi := &file_company_service_proto_msgTypes[3]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -204,13 +204,13 @@ func (x *CompanyRegister) Reset() {
 	}
 }
 
-func (x *CompanyRegister) String() string {
+func (x *CompanyRegistration) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*CompanyRegister) ProtoMessage() {}
+func (*CompanyRegistration) ProtoMessage() {}
 
-func (x *CompanyRegister) ProtoReflect() protoreflect.Message {
+func (x *CompanyRegistration) ProtoReflect() protoreflect.Message {
 	mi := &file_company_service_proto_msgTypes[3]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -222,19 +222,19 @@ func (x *CompanyRegister) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use CompanyRegister.ProtoReflect.Descriptor instead.
-func (*CompanyRegister) Descriptor() ([]byte, []int) {
+// Deprecated: Use CompanyRegistration.ProtoReflect.Descriptor instead.
+func (*CompanyRegistration) Descriptor() ([]byte, []int) {
 	return file_company_service_proto_rawDescGZIP(), []int{3}
 }
 
-func (x *CompanyRegister) GetCompany() *Company {
+func (x *CompanyRegistration) GetCompany() *Company {
 	if x != nil {
 		return x.Company
 	}
 	return nil
 }
 
-func (x *CompanyRegister) GetUser() *User {
+func (x *CompanyRegistration) GetUser() *User {
 	if x != nil {
 		return x.User
 	}
@@ -272,20 +272,21 @@ var file_company_service_proto_rawDesc = []byte{
 	0x07, 0x63, 0x6f, 0x6d, 0x70, 0x61, 0x6e, 0x79, 0x18, 0x02, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x17,
 	0x2e, 0x77, 0x69, 0x72, 0x61, 0x64, 0x61, 0x74, 0x61, 0x2e, 0x75, 0x73, 0x65, 0x72, 0x73, 0x2e,
 	0x43, 0x6f, 0x6d, 0x70, 0x61, 0x6e, 0x79, 0x52, 0x07, 0x63, 0x6f, 0x6d, 0x70, 0x61, 0x6e, 0x79,
-	0x22, 0x6e, 0x0a, 0x0f, 0x43, 0x6f, 0x6d, 0x70, 0x61, 0x6e, 0x79, 0x52, 0x65, 0x67, 0x69, 0x73,
-	0x74, 0x65, 0x72, 0x12, 0x31, 0x0a, 0x07, 0x63, 0x6f, 0x6d, 0x70, 0x61, 0x6e, 0x79, 0x18, 0x01,
-	0x20, 0x01, 0x28, 0x0b, 0x32, 0x17, 0x2e, 0x77, 0x69, 0x72, 0x61, 0x64, 0x61, 0x74, 0x61, 0x2e,
-	0x75, 0x73, 0x65, 0x72, 0x73, 0x2e, 0x43, 0x6f, 0x6d, 0x70, 0x61, 0x6e, 0x79, 0x52, 0x07, 0x63,
-	0x6f, 0x6d, 0x70, 0x61, 0x6e, 0x79, 0x12, 0x28, 0x0a, 0x04, 0x75, 0x73, 0x65, 0x72, 0x18, 0x02,
-	0x20, 0x01, 0x28, 0x0b, 0x32, 0x14, 0x2e, 0x77, 0x69, 0x72, 0x61, 0x64, 0x61, 0x74, 0x61, 0x2e,
-	0x75, 0x73, 0x65, 0x72, 0x73, 0x2e, 0x55, 0x73, 0x65, 0x72, 0x52, 0x04, 0x75, 0x73, 0x65, 0x72,
-	0x32, 0xe3, 0x02, 0x0a, 0x0e, 0x43, 0x6f, 0x6d, 0x70, 0x61, 0x6e, 0x79, 0x53, 0x65, 0x72, 0x76,
-	0x69, 0x63, 0x65, 0x12, 0x4e, 0x0a, 0x08, 0x52, 0x65, 0x67, 0x69, 0x73, 0x74, 0x65, 0x72, 0x12,
-	0x1f, 0x2e, 0x77, 0x69, 0x72, 0x61, 0x64, 0x61, 0x74, 0x61, 0x2e, 0x75, 0x73, 0x65, 0x72, 0x73,
-	0x2e, 0x43, 0x6f, 0x6d, 0x70, 0x61, 0x6e, 0x79, 0x52, 0x65, 0x67, 0x69, 0x73, 0x74, 0x65, 0x72,
-	0x1a, 0x1f, 0x2e, 0x77, 0x69, 0x72, 0x61, 0x64, 0x61, 0x74, 0x61, 0x2e, 0x75, 0x73, 0x65, 0x72,
-	0x73, 0x2e, 0x43, 0x6f, 0x6d, 0x70, 0x61, 0x6e, 0x79, 0x52, 0x65, 0x67, 0x69, 0x73, 0x74, 0x65,
-	0x72, 0x22, 0x00, 0x12, 0x3c, 0x0a, 0x06, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x12, 0x17, 0x2e,
+	0x22, 0x72, 0x0a, 0x13, 0x43, 0x6f, 0x6d, 0x70, 0x61, 0x6e, 0x79, 0x52, 0x65, 0x67, 0x69, 0x73,
+	0x74, 0x72, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x12, 0x31, 0x0a, 0x07, 0x63, 0x6f, 0x6d, 0x70, 0x61,
+	0x6e, 0x79, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x17, 0x2e, 0x77, 0x69, 0x72, 0x61, 0x64,
+	0x61, 0x74, 0x61, 0x2e, 0x75, 0x73, 0x65, 0x72, 0x73, 0x2e, 0x43, 0x6f, 0x6d, 0x70, 0x61, 0x6e,
+	0x79, 0x52, 0x07, 0x63, 0x6f, 0x6d, 0x70, 0x61, 0x6e, 0x79, 0x12, 0x28, 0x0a, 0x04, 0x75, 0x73,
+	0x65, 0x72, 0x18, 0x02, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x14, 0x2e, 0x77, 0x69, 0x72, 0x61, 0x64,
+	0x61, 0x74, 0x61, 0x2e, 0x75, 0x73, 0x65, 0x72, 0x73, 0x2e, 0x55, 0x73, 0x65, 0x72, 0x52, 0x04,
+	0x75, 0x73, 0x65, 0x72, 0x32, 0xef, 0x02, 0x0a, 0x0e, 0x43, 0x6f, 0x6d, 0x70, 0x61, 0x6e, 0x79,
+	0x53, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x12, 0x5a, 0x0a, 0x0c, 0x52, 0x65, 0x67, 0x69, 0x73,
+	0x74, 0x72, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x12, 0x23, 0x2e, 0x77, 0x69, 0x72, 0x61, 0x64, 0x61,
+	0x74, 0x61, 0x2e, 0x75, 0x73, 0x65, 0x72, 0x73, 0x2e, 0x43, 0x6f, 0x6d, 0x70, 0x61, 0x6e, 0x79,
+	0x52, 0x65, 0x67, 0x69, 0x73, 0x74, 0x72, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x1a, 0x23, 0x2e, 0x77,
+	0x69, 0x72, 0x61, 0x64, 0x61, 0x74, 0x61, 0x2e, 0x75, 0x73, 0x65, 0x72, 0x73, 0x2e, 0x43, 0x6f,
+	0x6d, 0x70, 0x61, 0x6e, 0x79, 0x52, 0x65, 0x67, 0x69, 0x73, 0x74, 0x72, 0x61, 0x74, 0x69, 0x6f,
+	0x6e, 0x22, 0x00, 0x12, 0x3c, 0x0a, 0x06, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x12, 0x17, 0x2e,
 	0x77, 0x69, 0x72, 0x61, 0x64, 0x61, 0x74, 0x61, 0x2e, 0x75, 0x73, 0x65, 0x72, 0x73, 0x2e, 0x43,
 	0x6f, 0x6d, 0x70, 0x61, 0x6e, 0x79, 0x1a, 0x17, 0x2e, 0x77, 0x69, 0x72, 0x61, 0x64, 0x61, 0x74,
 	0x61, 0x2e, 0x75, 0x73, 0x65, 0x72, 0x73, 0x2e, 0x43, 0x6f, 0x6d, 0x70, 0x61, 0x6e, 0x79, 0x22,
@@ -322,7 +323,7 @@ var file_company_service_proto_goTypes = []interface{}{
 	(*ListCompanyRequest)(nil),        // 0: wiradata.users.ListCompanyRequest
 	(*CompanyPaginationResponse)(nil), // 1: wiradata.users.CompanyPaginationResponse
 	(*ListCompanyResponse)(nil),       // 2: wiradata.users.ListCompanyResponse
-	(*CompanyRegister)(nil),           // 3: wiradata.users.CompanyRegister
+	(*CompanyRegistration)(nil),       // 3: wiradata.users.CompanyRegistration
 	(*Pagination)(nil),                // 4: wiradata.users.Pagination
 	(*Company)(nil),                   // 5: wiradata.users.Company
 	(*User)(nil),                      // 6: wiradata.users.User
@@ -334,14 +335,14 @@ var file_company_service_proto_depIdxs = []int32{
 	4,  // 1: wiradata.users.CompanyPaginationResponse.pagination:type_name -> wiradata.users.Pagination
 	1,  // 2: wiradata.users.ListCompanyResponse.pagination:type_name -> wiradata.users.CompanyPaginationResponse
 	5,  // 3: wiradata.users.ListCompanyResponse.company:type_name -> wiradata.users.Company
-	5,  // 4: wiradata.users.CompanyRegister.company:type_name -> wiradata.users.Company
-	6,  // 5: wiradata.users.CompanyRegister.user:type_name -> wiradata.users.User
-	3,  // 6: wiradata.users.CompanyService.Register:input_type -> wiradata.users.CompanyRegister
+	5,  // 4: wiradata.users.CompanyRegistration.company:type_name -> wiradata.users.Company
+	6,  // 5: wiradata.users.CompanyRegistration.user:type_name -> wiradata.users.User
+	3,  // 6: wiradata.users.CompanyService.Registration:input_type -> wiradata.users.CompanyRegistration
 	5,  // 7: wiradata.users.CompanyService.Update:input_type -> wiradata.users.Company
 	7,  // 8: wiradata.users.CompanyService.View:input_type -> wiradata.users.Id
 	7,  // 9: wiradata.users.CompanyService.Delete:input_type -> wiradata.users.Id
 	0,  // 10: wiradata.users.CompanyService.List:input_type -> wiradata.users.ListCompanyRequest
-	3,  // 11: wiradata.users.CompanyService.Register:output_type -> wiradata.users.CompanyRegister
+	3,  // 11: wiradata.users.CompanyService.Registration:output_type -> wiradata.users.CompanyRegistration
 	5,  // 12: wiradata.users.CompanyService.Update:output_type -> wiradata.users.Company
 	5,  // 13: wiradata.users.CompanyService.View:output_type -> wiradata.users.Company
 	8,  // 14: wiradata.users.CompanyService.Delete:output_type -> wiradata.users.Boolean
@@ -399,7 +400,7 @@ func file_company_service_proto_init() {
 			}
 		}
 		file_company_service_proto_msgTypes[3].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*CompanyRegister); i {
+			switch v := v.(*CompanyRegistration); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -443,7 +444,7 @@ const _ = grpc.SupportPackageIsVersion6
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type CompanyServiceClient interface {
-	Register(ctx context.Context, in *CompanyRegister, opts ...grpc.CallOption) (*CompanyRegister, error)
+	Registration(ctx context.Context, in *CompanyRegistration, opts ...grpc.CallOption) (*CompanyRegistration, error)
 	Update(ctx context.Context, in *Company, opts ...grpc.CallOption) (*Company, error)
 	View(ctx context.Context, in *Id, opts ...grpc.CallOption) (*Company, error)
 	Delete(ctx context.Context, in *Id, opts ...grpc.CallOption) (*Boolean, error)
@@ -458,9 +459,9 @@ func NewCompanyServiceClient(cc grpc.ClientConnInterface) CompanyServiceClient {
 	return &companyServiceClient{cc}
 }
 
-func (c *companyServiceClient) Register(ctx context.Context, in *CompanyRegister, opts ...grpc.CallOption) (*CompanyRegister, error) {
-	out := new(CompanyRegister)
-	err := c.cc.Invoke(ctx, "/wiradata.users.CompanyService/Register", in, out, opts...)
+func (c *companyServiceClient) Registration(ctx context.Context, in *CompanyRegistration, opts ...grpc.CallOption) (*CompanyRegistration, error) {
+	out := new(CompanyRegistration)
+	err := c.cc.Invoke(ctx, "/wiradata.users.CompanyService/Registration", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -528,7 +529,7 @@ func (x *companyServiceListClient) Recv() (*ListCompanyResponse, error) {
 
 // CompanyServiceServer is the server API for CompanyService service.
 type CompanyServiceServer interface {
-	Register(context.Context, *CompanyRegister) (*CompanyRegister, error)
+	Registration(context.Context, *CompanyRegistration) (*CompanyRegistration, error)
 	Update(context.Context, *Company) (*Company, error)
 	View(context.Context, *Id) (*Company, error)
 	Delete(context.Context, *Id) (*Boolean, error)
@@ -539,8 +540,8 @@ type CompanyServiceServer interface {
 type UnimplementedCompanyServiceServer struct {
 }
 
-func (*UnimplementedCompanyServiceServer) Register(context.Context, *CompanyRegister) (*CompanyRegister, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Register not implemented")
+func (*UnimplementedCompanyServiceServer) Registration(context.Context, *CompanyRegistration) (*CompanyRegistration, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Registration not implemented")
 }
 func (*UnimplementedCompanyServiceServer) Update(context.Context, *Company) (*Company, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Update not implemented")
@@ -559,20 +560,20 @@ func RegisterCompanyServiceServer(s *grpc.Server, srv CompanyServiceServer) {
 	s.RegisterService(&_CompanyService_serviceDesc, srv)
 }
 
-func _CompanyService_Register_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(CompanyRegister)
+func _CompanyService_Registration_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CompanyRegistration)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(CompanyServiceServer).Register(ctx, in)
+		return srv.(CompanyServiceServer).Registration(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/wiradata.users.CompanyService/Register",
+		FullMethod: "/wiradata.users.CompanyService/Registration",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(CompanyServiceServer).Register(ctx, req.(*CompanyRegister))
+		return srv.(CompanyServiceServer).Registration(ctx, req.(*CompanyRegistration))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -657,8 +658,8 @@ var _CompanyService_serviceDesc = grpc.ServiceDesc{
 	HandlerType: (*CompanyServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "Register",
-			Handler:    _CompanyService_Register_Handler,
+			MethodName: "Registration",
+			Handler:    _CompanyService_Registration_Handler,
 		},
 		{
 			MethodName: "Update",

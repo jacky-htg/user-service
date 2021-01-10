@@ -18,4 +18,7 @@ func GrpcRoute(grpcServer *grpc.Server, db *sql.DB, log *logrus.Entry, cache *re
 
 	userServer := service.User{Db: db, Cache: cache}
 	users.RegisterUserServiceServer(grpcServer, &userServer)
+
+	companyServer := service.Company{Db: db, Cache: cache}
+	users.RegisterCompanyServiceServer(grpcServer, &companyServer)
 }

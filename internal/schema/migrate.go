@@ -195,7 +195,7 @@ var migrations = []darwin.Migration{
 		Script: `
 			CREATE TABLE package_features (
 				id char(36) NOT NULL PRIMARY KEY,
-				name varchar(100) NOT NULL,
+				name varchar(100) NOT NULL UNIQUE,
 				created_at timestamp NOT NULL DEFAULT NOW(),
 				updated_at timestamp NOT NULL DEFAULT NOW()
 			);

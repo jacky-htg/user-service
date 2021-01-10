@@ -21,13 +21,13 @@ message ListCompanyResponse {
   Company company = 2; 
 }
 
-message CompanyRegister {
+message CompanyRegistration {
   Company company = 1;
   User user = 2;
 }
  
 service CompanyService {
-  rpc Register(CompanyRegister) returns (CompanyRegister) {}
+  rpc Registration(CompanyRegistration) returns (CompanyRegistration) {}
   rpc Update(Company) returns (Company) {}
   rpc View(Id) returns (Company) {}
   rpc Delete(Id) returns (Boolean) {}

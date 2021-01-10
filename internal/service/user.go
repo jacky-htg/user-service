@@ -194,8 +194,7 @@ func (u *User) Create(ctx context.Context, in *users.User) (*users.User, error) 
 		RegionId:  in.GetRegionId(),
 		Username:  in.GetUsername(),
 	}
-	// TODO generate random password
-	userModel.Password = "1234"
+	userModel.Password = generateRandomPassword()
 	err = userModel.Create(ctx, u.Db)
 	if err != nil {
 		return &output, err

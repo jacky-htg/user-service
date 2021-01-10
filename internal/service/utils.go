@@ -58,3 +58,8 @@ func getMetadata(ctx context.Context) (context.Context, error) {
 
 	return ctx, nil
 }
+
+func generateRandomPassword() string {
+	// TODO generate random password
+	return "1234"
+}
