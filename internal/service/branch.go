@@ -263,8 +263,47 @@ func (u *Branch) Update(ctx context.Context, in *users.Branch) (*users.Branch, e
 func (u *Branch) View(ctx context.Context, in *users.Id) (*users.Branch, error) {
 	var output users.Branch
 	var err error
+	var branchModel model.Branch
 
-	return &output, err
+	// basic validation
+	{
+		if len(in.GetId()) == 0 {
+			return &output, status.Error(codes.InvalidArgument, "Please supply valid id")
+		}
+		branchModel.Pb.Id = in.GetId()
+	}
+
+	ctx, err = getMetadata(ctx)
+	if err != nil {
+		return &output, err
+	}
+
+	// get user login
+	var userLogin model.User
+	userLogin.Pb.Id = ctx.Value(app.Ctx("userID")).(string)
+	err = userLogin.Get(ctx, u.Db)
+	if err != nil {
+		return &output, err
+	}
+
+	err = branchModel.Get(ctx, u.Db)
+	if err != nil {
+		return &output, err
+	}
+
+	if userLogin.Pb.GetCompanyId() != branchModel.Pb.GetCompanyId() {
+		return &output, status.Error(codes.Unauthenticated, "its not your company")
+	}
+
+	if len(userLogin.Pb.GetRegionId()) > 0 && userLogin.Pb.GetRegionId() != branchModel.Pb.GetRegionId() {
+		return &output, status.Error(codes.Unauthenticated, "its not your region")
+	}
+
+	if len(userLogin.Pb.GetBranchId()) > 0 && userLogin.Pb.GetBranchId() != branchModel.Pb.GetId() {
+		return &output, status.Error(codes.Unauthenticated, "its not your branch")
+	}
+
+	return &branchModel.Pb, err
 }
 
 // Delete branch
@@ -272,7 +311,48 @@ func (u *Branch) Delete(ctx context.Context, in *users.Id) (*users.Boolean, erro
 	var output users.Boolean
 	output.Boolean = false
 	var err error
+	var branchModel model.Branch
 
+	// basic validation
+	{
+		if len(in.GetId()) == 0 {
+			return &output, status.Error(codes.InvalidArgument, "Please supply valid id")
+		}
+		branchModel.Pb.Id = in.GetId()
+	}
+
+	ctx, err = getMetadata(ctx)
+	if err != nil {
+		return &output, err
+	}
+
+	// get user login
+	var userLogin model.User
+	userLogin.Pb.Id = ctx.Value(app.Ctx("userID")).(string)
+	err = userLogin.Get(ctx, u.Db)
+	if err != nil {
+		return &output, err
+	}
+
+	err = branchModel.Get(ctx, u.Db)
+	if err != nil {
+		return &output, err
+	}
+
+	if userLogin.Pb.GetCompanyId() != branchModel.Pb.GetCompanyId() {
+		return &output, status.Error(codes.Unauthenticated, "its not your company")
+	}
+
+	if len(userLogin.Pb.GetRegionId()) > 0 && userLogin.Pb.GetRegionId() != branchModel.Pb.GetRegionId() {
+		return &output, status.Error(codes.Unauthenticated, "its not your region")
+	}
+
+	err = branchModel.Delete(ctx, u.Db)
+	if err != nil {
+		return &output, err
+	}
+
+	output.Boolean = true
 	return &output, err
 }
 

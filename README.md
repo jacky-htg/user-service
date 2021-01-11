@@ -12,7 +12,7 @@ user service using grpc go, postgresql and redis. The service is designed to be 
 ## Features
 - [X] Companies
 - [X] Regions
-- [ ] Branches
+- [X] Branches
 - [ ] Employees
 - [ ] Company Features
 - [X] Users
@@ -31,8 +31,8 @@ user service using grpc go, postgresql and redis. The service is designed to be 
 - [X] Regions CRUD
 
 ### Branches
-- [ ] Multi Branches
-- [ ] Branches CRUD
+- [X] Multi Branches
+- [X] Branches CRUD
 
 ### Employees
 - [ ] Employees CRUD

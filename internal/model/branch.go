@@ -192,3 +192,19 @@ func (u *Branch) Update(ctx context.Context, db *sql.DB, tx *sql.Tx) error {
 
 	return nil
 }
+
+// Delete branch
+func (u *Branch) Delete(ctx context.Context, db *sql.DB) error {
+	stmt, err := db.PrepareContext(ctx, `DELETE FROM branches WHERE id = $1`)
+	if err != nil {
+		return status.Errorf(codes.Internal, "Prepare delete branch: %v", err)
+	}
+	defer stmt.Close()
+
+	_, err = stmt.ExecContext(ctx, u.Pb.GetId())
+	if err != nil {
+		return status.Errorf(codes.Internal, "Exec delete branch: %v", err)
+	}
+
+	return nil
+}
