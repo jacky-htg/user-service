@@ -42,3 +42,19 @@ func (u *BranchesRegion) Create(ctx context.Context, tx *sql.Tx) error {
 
 	return nil
 }
+
+// DeleteAll branchesRegion
+func (u *BranchesRegion) DeleteAll(ctx context.Context, tx *sql.Tx) error {
+	stmt, err := tx.PrepareContext(ctx, `DELETE FROM branches_regions WHERE branch_id = $1`)
+	if err != nil {
+		return status.Errorf(codes.Internal, "Prepare delete all branches_regions by branch: %v", err)
+	}
+	defer stmt.Close()
+
+	_, err = stmt.ExecContext(ctx, u.BranchID)
+	if err != nil {
+		return status.Errorf(codes.Internal, "exec delete all branches_regions by branch: %v", err)
+	}
+
+	return nil
+}

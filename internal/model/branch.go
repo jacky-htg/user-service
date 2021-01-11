@@ -14,16 +14,21 @@ import (
 
 // Branch model
 type Branch struct {
-	Pb users.Branch
+	Pb           users.Branch
+	UpdateRegion bool
 }
 
 // Get func
 func (u *Branch) Get(ctx context.Context, db *sql.DB) error {
-	query := `SELECT id, company_id, region_id, name, code, address, city, province, npwp, phone, pic, pic_phone 
-	FROM branches WHERE id = $1`
+	query := `SELECT branches.id, branches.company_id, regions.id, branches.name, branches.code, branches.address, 
+	branches.city, branches.province, branches.npwp, branches.phone, branches.pic, branches.pic_phone 
+	FROM branches 
+	JOIN branches_regions ON branches.id = branches_regions.branch_id
+	JOIN regions ON branches_regions.region_id = regions.id
+	WHERE branches.id = $1`
 	stmt, err := db.PrepareContext(ctx, query)
 	if err != nil {
-		return status.Errorf(codes.Internal, "Prepare statement: %v", err)
+		return status.Errorf(codes.Internal, "Prepare statement Get branch: %v", err)
 	}
 	defer stmt.Close()
 
@@ -34,11 +39,11 @@ func (u *Branch) Get(ctx context.Context, db *sql.DB) error {
 	)
 
 	if err == sql.ErrNoRows {
-		return status.Errorf(codes.NotFound, "Query Raw: %v", err)
+		return status.Errorf(codes.NotFound, "Query Raw get branch: %v", err)
 	}
 
 	if err != nil {
-		return status.Errorf(codes.Internal, "Query Raw: %v", err)
+		return status.Errorf(codes.Internal, "Query Raw get branch: %v", err)
 	}
 
 	u.Pb.Npwp = npwp.String
@@ -121,6 +126,68 @@ func (u *Branch) Create(ctx context.Context, db *sql.DB, tx *sql.Tx) error {
 	err = branchesRegion.Create(ctx, tx)
 	if err != nil {
 		return err
+	}
+
+	return nil
+}
+
+// Update Branch
+func (u *Branch) Update(ctx context.Context, db *sql.DB, tx *sql.Tx) error {
+	query := `
+		UPDATE branches SET 
+		name = $1,
+		address = $2, 
+		city = $3, 
+		province = $4, 
+		npwp = $5, 
+		phone = $6, 
+		pic = $7, 
+		pic_phone = $8,
+		updated_by = $9,
+		updated_at = $10
+		WHERE id = $11
+	`
+	stmt, err := tx.PrepareContext(ctx, query)
+	if err != nil {
+		return status.Errorf(codes.Internal, "Prepare update branch: %v", err)
+	}
+	defer stmt.Close()
+
+	_, err = stmt.ExecContext(ctx,
+		u.Pb.GetName(),
+		u.Pb.GetAddress(),
+		u.Pb.GetCity(),
+		u.Pb.GetProvince(),
+		u.Pb.GetNpwp(),
+		u.Pb.GetPhone(),
+		u.Pb.GetPic(),
+		u.Pb.GetPicPhone(),
+		ctx.Value(app.Ctx("userID")).(string),
+		time.Now().UTC(),
+		u.Pb.GetId(),
+	)
+	if err != nil {
+		return status.Errorf(codes.Internal, "Exec update branch: %v", err)
+	}
+
+	if u.UpdateRegion && len(u.Pb.GetRegionId()) > 0 {
+		// delete current branchesRegion
+		{
+			branchesRegion := BranchesRegion{BranchID: u.Pb.GetId()}
+			err = branchesRegion.DeleteAll(ctx, tx)
+			if err != nil {
+				return err
+			}
+		}
+
+		// create new branchesRegion
+		{
+			branchesRegion := BranchesRegion{RegionID: u.Pb.GetRegionId(), BranchID: u.Pb.GetId()}
+			err = branchesRegion.Create(ctx, tx)
+			if err != nil {
+				return err
+			}
+		}
 	}
 
 	return nil
