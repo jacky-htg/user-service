@@ -295,8 +295,16 @@ func (u *Region) List(in *users.ListRegionRequest, stream users.RegionService_Li
 		return status.Error(codes.InvalidArgument, "its not your company")
 	}
 
+	// get user login
+	var userLogin model.User
+	userLogin.Pb.Id = ctx.Value(app.Ctx("userID")).(string)
+	err = userLogin.Get(ctx, u.Db)
+	if err != nil {
+		return err
+	}
+
 	var regionModel model.Region
-	query, paramQueries, paginationResponse, err := regionModel.ListQuery(ctx, u.Db, in)
+	query, paramQueries, paginationResponse, err := regionModel.ListQuery(ctx, u.Db, in, userLogin.Pb.GetRegionId())
 
 	rows, err := u.Db.QueryContext(ctx, query, paramQueries...)
 	if err != nil {

@@ -150,11 +150,16 @@ func (u *Region) Delete(ctx context.Context, db *sql.DB) error {
 }
 
 // ListQuery builder
-func (u *Region) ListQuery(ctx context.Context, db *sql.DB, in *users.ListRegionRequest) (string, []interface{}, *users.RegionPaginationResponse, error) {
+func (u *Region) ListQuery(ctx context.Context, db *sql.DB, in *users.ListRegionRequest, regionID string) (string, []interface{}, *users.RegionPaginationResponse, error) {
 	var paginationResponse users.RegionPaginationResponse
 	query := `SELECT id, company_id, name, code FROM regions`
 	where := []string{"company_id = $1"}
 	paramQueries := []interface{}{ctx.Value(app.Ctx("companyID")).(string)}
+
+	if len(regionID) > 0 {
+		paramQueries = append(paramQueries, regionID)
+		where = append(where, fmt.Sprintf(`id = $%d`, len(paramQueries)))
+	}
 
 	if len(in.GetPagination().GetSearch()) > 0 {
 		paramQueries = append(paramQueries, in.GetPagination().GetSearch())

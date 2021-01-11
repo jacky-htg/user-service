@@ -358,5 +358,76 @@ func (u *Branch) Delete(ctx context.Context, in *users.Id) (*users.Boolean, erro
 
 // List branches
 func (u *Branch) List(in *users.ListBranchRequest, stream users.BranchService_ListServer) error {
+	ctx := stream.Context()
+	ctx, err := getMetadata(ctx)
+	if err != nil {
+		return err
+	}
+
+	// get user login
+	var userLogin model.User
+	userLogin.Pb.Id = ctx.Value(app.Ctx("userID")).(string)
+	err = userLogin.Get(ctx, u.Db)
+	if err != nil {
+		return err
+	}
+
+	if len(in.GetRegionId()) > 0 {
+		regionModel := model.Region{}
+		regionModel.Pb.Id = in.GetRegionId()
+		err = regionModel.Get(ctx, u.Db)
+		if err != nil {
+			return err
+		}
+
+		if regionModel.Pb.GetCompanyId() != ctx.Value(app.Ctx("companyID")).(string) {
+			return status.Error(codes.InvalidArgument, "its not your company")
+		}
+	} else {
+		if len(userLogin.Pb.GetRegionId()) > 0 {
+			in.RegionId = userLogin.Pb.GetRegionId()
+		}
+	}
+
+	var branchModel model.Branch
+	query, paramQueries, paginationResponse, err := branchModel.ListQuery(ctx, u.Db, in, userLogin.Pb.GetBranchId())
+
+	rows, err := u.Db.QueryContext(ctx, query, paramQueries...)
+	if err != nil {
+		return status.Error(codes.Internal, err.Error())
+	}
+	defer rows.Close()
+	paginationResponse.RegionId = in.GetRegionId()
+	paginationResponse.Pagination = in.GetPagination()
+
+	for rows.Next() {
+		err := contextError(ctx)
+		if err != nil {
+			return err
+		}
+
+		var pbBranch users.Branch
+		var npwp sql.NullString
+		err = rows.Scan(
+			&pbBranch.Id, &pbBranch.CompanyId, &pbBranch.RegionId, &pbBranch.Name, &pbBranch.Code, &pbBranch.Address,
+			&pbBranch.City, &pbBranch.Province, &npwp, &pbBranch.Phone, &pbBranch.Pic, &pbBranch.PicPhone,
+		)
+		if err != nil {
+			return err
+		}
+
+		pbBranch.Npwp = npwp.String
+
+		res := &users.ListBranchResponse{
+			Pagination: paginationResponse,
+			Branch:     &pbBranch,
+		}
+
+		err = stream.Send(res)
+		if err != nil {
+			return status.Errorf(codes.Unknown, "cannot send stream response: %v", err)
+		}
+	}
+
 	return nil
 }
