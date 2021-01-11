@@ -3,6 +3,7 @@ package service
 import (
 	"context"
 	"database/sql"
+
 	"user-service/internal/model"
 	"user-service/internal/pkg/app"
 	"user-service/internal/pkg/db/redis"

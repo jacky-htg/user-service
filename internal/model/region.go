@@ -25,18 +25,18 @@ func (u *Region) Get(ctx context.Context, db *sql.DB) error {
 	query := `SELECT id, company_id, name, code FROM regions WHERE id = $1`
 	stmt, err := db.PrepareContext(ctx, query)
 	if err != nil {
-		return status.Errorf(codes.Internal, "Prepare statement: %v", err)
+		return status.Errorf(codes.Internal, "Prepare statement get region: %v", err)
 	}
 	defer stmt.Close()
 
 	err = stmt.QueryRowContext(ctx, u.Pb.GetId()).Scan(&u.Pb.Id, &u.Pb.CompanyId, &u.Pb.Name, &u.Pb.Code)
 
 	if err == sql.ErrNoRows {
-		return status.Errorf(codes.NotFound, "Query Raw: %v", err)
+		return status.Errorf(codes.NotFound, "Query Raw get region: %v", err)
 	}
 
 	if err != nil {
-		return status.Errorf(codes.Internal, "Query Raw: %v", err)
+		return status.Errorf(codes.Internal, "Query Raw get region: %v", err)
 	}
 
 	return nil
@@ -47,18 +47,18 @@ func (u *Region) GetByCode(ctx context.Context, db *sql.DB) error {
 	query := `SELECT id, company_id, name, code FROM regions WHERE code = $1`
 	stmt, err := db.PrepareContext(ctx, query)
 	if err != nil {
-		return status.Errorf(codes.Internal, "Prepare statement: %v", err)
+		return status.Errorf(codes.Internal, "Prepare statement get region by code: %v", err)
 	}
 	defer stmt.Close()
 
 	err = stmt.QueryRowContext(ctx, u.Pb.GetCode()).Scan(&u.Pb.Id, &u.Pb.CompanyId, &u.Pb.Name, &u.Pb.Code)
 
 	if err == sql.ErrNoRows {
-		return status.Errorf(codes.NotFound, "Query Raw: %v", err)
+		return status.Errorf(codes.NotFound, "Query Raw get region by code: %v", err)
 	}
 
 	if err != nil {
-		return status.Errorf(codes.Internal, "Query Raw: %v", err)
+		return status.Errorf(codes.Internal, "Query Raw get region by code: %v", err)
 	}
 
 	return nil
@@ -201,23 +201,10 @@ func (u *Region) ListQuery(ctx context.Context, db *sql.DB, in *users.ListRegion
 
 func (u *Region) regionBranches(ctx context.Context, tx *sql.Tx, branches []*users.Branch) error {
 	for _, branch := range branches {
-		query := `INSERT INTO branches_regions (id, region_id, branch_id, created_by, updated_by)
-		VALUES ($1, $2, $3, $4, $4)`
-
-		stmt, err := tx.PrepareContext(ctx, query)
+		branchesRegion := BranchesRegion{RegionID: u.Pb.GetId(), BranchID: branch.GetId()}
+		err := branchesRegion.Create(ctx, tx)
 		if err != nil {
-			return status.Errorf(codes.Internal, "Prepare insert branches_regions: %v", err)
-		}
-		defer stmt.Close()
-
-		_, err = stmt.ExecContext(ctx,
-			uuid.New().String(),
-			u.Pb.GetId(),
-			branch.GetId(),
-			ctx.Value(app.Ctx("userID")).(string),
-		)
-		if err != nil {
-			return status.Errorf(codes.Internal, "exec insert branches_regions: %v", err)
+			return err
 		}
 	}
 
