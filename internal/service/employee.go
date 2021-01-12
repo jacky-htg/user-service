@@ -127,7 +127,97 @@ func (u *Employee) Create(ctx context.Context, in *users.Employee) (*users.Emplo
 
 // Update Employee
 func (u *Employee) Update(ctx context.Context, in *users.Employee) (*users.Employee, error) {
-	return &users.Employee{}, nil
+	var output users.Employee
+	var err error
+	var employeeModel model.Employee
+
+	// basic validation
+	{
+		if len(in.GetId()) == 0 {
+			return &output, status.Error(codes.InvalidArgument, "Please supply valid id")
+		}
+		employeeModel.Pb.Id = in.GetId()
+	}
+
+	employeeModel.Pb.Id = in.GetId()
+	err = employeeModel.Get(ctx, u.Db)
+	if err != nil {
+		return &output, err
+	}
+
+	ctx, err = getMetadata(ctx)
+	if err != nil {
+		return &output, err
+	}
+
+	// get user login
+	var userLogin model.User
+	userLogin.Pb.Id = ctx.Value(app.Ctx("userID")).(string)
+	err = userLogin.Get(ctx, u.Db)
+	if err != nil {
+		return &output, err
+	}
+
+	if len(userLogin.Pb.GetBranchId()) > 0 && userLogin.Pb.GetBranchId() != employeeModel.Pb.GetUser().GetBranchId() {
+		return &output, status.Error(codes.Unauthenticated, "its not your branch")
+	}
+
+	if userLogin.Pb.GetCompanyId() != employeeModel.Pb.GetUser().GetCompanyId() {
+		return &output, status.Error(codes.Unauthenticated, "its not your company")
+	}
+
+	if len(userLogin.Pb.GetRegionId()) > 0 && userLogin.Pb.GetRegionId() != employeeModel.Pb.GetUser().GetRegionId() {
+		return &output, status.Error(codes.Unauthenticated, "its not your region")
+	}
+
+	if len(in.GetUser().GetId()) > 0 && in.GetUser().GetId() != employeeModel.Pb.GetUser().GetId() {
+		var userInput model.User
+		userInput.Pb.Id = in.GetUser().GetId()
+		err = userInput.Get(ctx, u.Db)
+		if err != nil {
+			return &output, err
+		}
+		if userLogin.Pb.GetCompanyId() != userInput.Pb.GetCompanyId() {
+			return &output, status.Error(codes.PermissionDenied, "its not your company")
+		}
+
+		if len(userLogin.Pb.GetRegionId()) > 0 && userLogin.Pb.GetRegionId() != userInput.Pb.GetRegionId() {
+			return &output, status.Error(codes.PermissionDenied, "its not your company")
+		}
+
+		if len(userLogin.Pb.GetBranchId()) > 0 && userLogin.Pb.GetBranchId() != userInput.Pb.GetBranchId() {
+			return &output, status.Error(codes.PermissionDenied, "its not your branch")
+		}
+
+		employeeModel.Pb.User = &userInput.Pb
+	}
+
+	if len(in.GetName()) > 0 {
+		employeeModel.Pb.Name = in.GetName()
+	}
+
+	if len(in.GetAddress()) > 0 {
+		employeeModel.Pb.Address = in.GetAddress()
+	}
+
+	if len(in.GetCity()) > 0 {
+		employeeModel.Pb.City = in.GetCity()
+	}
+
+	if len(in.GetProvince()) > 0 {
+		employeeModel.Pb.Province = in.GetProvince()
+	}
+
+	if len(in.GetJabatan()) > 0 {
+		employeeModel.Pb.Jabatan = in.GetJabatan()
+	}
+
+	err = employeeModel.Update(ctx, u.Db)
+	if err != nil {
+		return &output, err
+	}
+
+	return &employeeModel.Pb, nil
 }
 
 // View Employee
