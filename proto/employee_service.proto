@@ -8,20 +8,20 @@ import "generic_message.proto";
 
 message ListEmployeeRequest {
   Pagination pagination = 1;
-  string company_id = 2;
+  string region_id = 2;
   string branch_id = 3;
 }
 
 message EmployeePaginationResponse {
   Pagination pagination = 1;
-  string company_id = 2;
+  string region_id = 2;
   string branch_id = 3;
   uint32 count = 4;
 }
 
 message ListEmployeeResponse {
   EmployeePaginationResponse pagination = 1;
-  repeated Employee employees = 2; 
+  Employee employee = 2; 
 }
 
 service EmployeeService {
@@ -29,5 +29,5 @@ service EmployeeService {
   rpc Update(Employee) returns (Employee) {}
   rpc View(Id) returns (Employee) {}
   rpc Delete(Id) returns (Boolean) {}
-  rpc List(ListEmployeeRequest) returns (ListEmployeeResponse) {}
+  rpc List(ListEmployeeRequest) returns (stream ListEmployeeResponse) {}
 }

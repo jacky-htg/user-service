@@ -170,9 +170,7 @@ var migrations = []darwin.Migration{
 		Script: `
 			CREATE TABLE employees (
 				id char(36) NOT NULL PRIMARY KEY,
-				company_id char(36) NOT NULL,
-				branch_id char(36) NULL,
-				user_id char(36) NULL,
+				user_id char(36) NOT NULL UNIQUE,
 				name varchar(100) NOT NULL,
 				code char(20) NOT NULL UNIQUE,
 				address varchar NOT NULL,
@@ -183,8 +181,6 @@ var migrations = []darwin.Migration{
 				created_by char(36) NOT NULL,
 				updated_at timestamp NOT NULL DEFAULT NOW(),
 				updated_by char(36) NOT NULL,
-				CONSTRAINT fk_employees_to_companies FOREIGN KEY(company_id) REFERENCES companies(id),
-				CONSTRAINT fk_employees_to_branches FOREIGN KEY(branch_id) REFERENCES branches(id),
 				CONSTRAINT fk_employees_to_users FOREIGN KEY(user_id) REFERENCES users(id)
 			);
 		`,
@@ -207,7 +203,7 @@ var migrations = []darwin.Migration{
 		Script: `
 			CREATE TABLE features (
 				id char(36) NOT NULL PRIMARY KEY,
-				name varchar(100) NOT NULL,
+				name varchar(100) NOT NULL UNIQUE,
 				created_at timestamp NOT NULL DEFAULT NOW(),
 				created_by char(36) NOT NULL,
 				updated_at timestamp NOT NULL DEFAULT NOW(),

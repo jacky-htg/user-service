@@ -34,7 +34,7 @@ type ListFeatureResponse struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Features []*Feature `protobuf:"bytes,1,rep,name=features,proto3" json:"features,omitempty"`
+	Feature *Feature `protobuf:"bytes,1,opt,name=feature,proto3" json:"feature,omitempty"`
 }
 
 func (x *ListFeatureResponse) Reset() {
@@ -69,24 +69,23 @@ func (*ListFeatureResponse) Descriptor() ([]byte, []int) {
 	return file_feature_service_proto_rawDescGZIP(), []int{0}
 }
 
-func (x *ListFeatureResponse) GetFeatures() []*Feature {
+func (x *ListFeatureResponse) GetFeature() *Feature {
 	if x != nil {
-		return x.Features
+		return x.Feature
 	}
 	return nil
 }
 
-type PackageFeatureRequest struct {
+type ListPackageFeatureResponse struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Id        string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
-	FeatureId string `protobuf:"bytes,2,opt,name=feature_id,json=featureId,proto3" json:"feature_id,omitempty"`
+	PackageOfFeature *PackageOfFeature `protobuf:"bytes,1,opt,name=package_of_feature,json=packageOfFeature,proto3" json:"package_of_feature,omitempty"`
 }
 
-func (x *PackageFeatureRequest) Reset() {
-	*x = PackageFeatureRequest{}
+func (x *ListPackageFeatureResponse) Reset() {
+	*x = ListPackageFeatureResponse{}
 	if protoimpl.UnsafeEnabled {
 		mi := &file_feature_service_proto_msgTypes[1]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -94,13 +93,13 @@ func (x *PackageFeatureRequest) Reset() {
 	}
 }
 
-func (x *PackageFeatureRequest) String() string {
+func (x *ListPackageFeatureResponse) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*PackageFeatureRequest) ProtoMessage() {}
+func (*ListPackageFeatureResponse) ProtoMessage() {}
 
-func (x *PackageFeatureRequest) ProtoReflect() protoreflect.Message {
+func (x *ListPackageFeatureResponse) ProtoReflect() protoreflect.Message {
 	mi := &file_feature_service_proto_msgTypes[1]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -112,23 +111,16 @@ func (x *PackageFeatureRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use PackageFeatureRequest.ProtoReflect.Descriptor instead.
-func (*PackageFeatureRequest) Descriptor() ([]byte, []int) {
+// Deprecated: Use ListPackageFeatureResponse.ProtoReflect.Descriptor instead.
+func (*ListPackageFeatureResponse) Descriptor() ([]byte, []int) {
 	return file_feature_service_proto_rawDescGZIP(), []int{1}
 }
 
-func (x *PackageFeatureRequest) GetId() string {
+func (x *ListPackageFeatureResponse) GetPackageOfFeature() *PackageOfFeature {
 	if x != nil {
-		return x.Id
+		return x.PackageOfFeature
 	}
-	return ""
-}
-
-func (x *PackageFeatureRequest) GetFeatureId() string {
-	if x != nil {
-		return x.FeatureId
-	}
-	return ""
+	return nil
 }
 
 var File_feature_service_proto protoreflect.FileDescriptor
@@ -139,53 +131,36 @@ var file_feature_service_proto_rawDesc = []byte{
 	0x61, 0x2e, 0x75, 0x73, 0x65, 0x72, 0x73, 0x1a, 0x15, 0x66, 0x65, 0x61, 0x74, 0x75, 0x72, 0x65,
 	0x5f, 0x6d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x1a, 0x15,
 	0x67, 0x65, 0x6e, 0x65, 0x72, 0x69, 0x63, 0x5f, 0x6d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65, 0x2e,
-	0x70, 0x72, 0x6f, 0x74, 0x6f, 0x22, 0x4a, 0x0a, 0x13, 0x4c, 0x69, 0x73, 0x74, 0x46, 0x65, 0x61,
-	0x74, 0x75, 0x72, 0x65, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x33, 0x0a, 0x08,
-	0x66, 0x65, 0x61, 0x74, 0x75, 0x72, 0x65, 0x73, 0x18, 0x01, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x17,
-	0x2e, 0x77, 0x69, 0x72, 0x61, 0x64, 0x61, 0x74, 0x61, 0x2e, 0x75, 0x73, 0x65, 0x72, 0x73, 0x2e,
-	0x46, 0x65, 0x61, 0x74, 0x75, 0x72, 0x65, 0x52, 0x08, 0x66, 0x65, 0x61, 0x74, 0x75, 0x72, 0x65,
-	0x73, 0x22, 0x46, 0x0a, 0x15, 0x50, 0x61, 0x63, 0x6b, 0x61, 0x67, 0x65, 0x46, 0x65, 0x61, 0x74,
-	0x75, 0x72, 0x65, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x0e, 0x0a, 0x02, 0x69, 0x64,
-	0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x02, 0x69, 0x64, 0x12, 0x1d, 0x0a, 0x0a, 0x66, 0x65,
-	0x61, 0x74, 0x75, 0x72, 0x65, 0x5f, 0x69, 0x64, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x09,
-	0x66, 0x65, 0x61, 0x74, 0x75, 0x72, 0x65, 0x49, 0x64, 0x32, 0xc2, 0x02, 0x0a, 0x0e, 0x46, 0x65,
-	0x61, 0x74, 0x75, 0x72, 0x65, 0x53, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x12, 0x3c, 0x0a, 0x06,
-	0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x12, 0x17, 0x2e, 0x77, 0x69, 0x72, 0x61, 0x64, 0x61, 0x74,
-	0x61, 0x2e, 0x75, 0x73, 0x65, 0x72, 0x73, 0x2e, 0x46, 0x65, 0x61, 0x74, 0x75, 0x72, 0x65, 0x1a,
-	0x17, 0x2e, 0x77, 0x69, 0x72, 0x61, 0x64, 0x61, 0x74, 0x61, 0x2e, 0x75, 0x73, 0x65, 0x72, 0x73,
-	0x2e, 0x46, 0x65, 0x61, 0x74, 0x75, 0x72, 0x65, 0x22, 0x00, 0x12, 0x3c, 0x0a, 0x06, 0x55, 0x70,
-	0x64, 0x61, 0x74, 0x65, 0x12, 0x17, 0x2e, 0x77, 0x69, 0x72, 0x61, 0x64, 0x61, 0x74, 0x61, 0x2e,
-	0x75, 0x73, 0x65, 0x72, 0x73, 0x2e, 0x46, 0x65, 0x61, 0x74, 0x75, 0x72, 0x65, 0x1a, 0x17, 0x2e,
+	0x70, 0x72, 0x6f, 0x74, 0x6f, 0x22, 0x48, 0x0a, 0x13, 0x4c, 0x69, 0x73, 0x74, 0x46, 0x65, 0x61,
+	0x74, 0x75, 0x72, 0x65, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x31, 0x0a, 0x07,
+	0x66, 0x65, 0x61, 0x74, 0x75, 0x72, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x17, 0x2e,
 	0x77, 0x69, 0x72, 0x61, 0x64, 0x61, 0x74, 0x61, 0x2e, 0x75, 0x73, 0x65, 0x72, 0x73, 0x2e, 0x46,
-	0x65, 0x61, 0x74, 0x75, 0x72, 0x65, 0x22, 0x00, 0x12, 0x35, 0x0a, 0x04, 0x56, 0x69, 0x65, 0x77,
-	0x12, 0x12, 0x2e, 0x77, 0x69, 0x72, 0x61, 0x64, 0x61, 0x74, 0x61, 0x2e, 0x75, 0x73, 0x65, 0x72,
-	0x73, 0x2e, 0x49, 0x64, 0x1a, 0x17, 0x2e, 0x77, 0x69, 0x72, 0x61, 0x64, 0x61, 0x74, 0x61, 0x2e,
-	0x75, 0x73, 0x65, 0x72, 0x73, 0x2e, 0x46, 0x65, 0x61, 0x74, 0x75, 0x72, 0x65, 0x22, 0x00, 0x12,
-	0x37, 0x0a, 0x06, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x12, 0x12, 0x2e, 0x77, 0x69, 0x72, 0x61,
-	0x64, 0x61, 0x74, 0x61, 0x2e, 0x75, 0x73, 0x65, 0x72, 0x73, 0x2e, 0x49, 0x64, 0x1a, 0x17, 0x2e,
-	0x77, 0x69, 0x72, 0x61, 0x64, 0x61, 0x74, 0x61, 0x2e, 0x75, 0x73, 0x65, 0x72, 0x73, 0x2e, 0x42,
-	0x6f, 0x6f, 0x6c, 0x65, 0x61, 0x6e, 0x22, 0x00, 0x12, 0x44, 0x0a, 0x04, 0x4c, 0x69, 0x73, 0x74,
-	0x12, 0x15, 0x2e, 0x77, 0x69, 0x72, 0x61, 0x64, 0x61, 0x74, 0x61, 0x2e, 0x75, 0x73, 0x65, 0x72,
-	0x73, 0x2e, 0x45, 0x6d, 0x70, 0x74, 0x79, 0x1a, 0x23, 0x2e, 0x77, 0x69, 0x72, 0x61, 0x64, 0x61,
-	0x74, 0x61, 0x2e, 0x75, 0x73, 0x65, 0x72, 0x73, 0x2e, 0x4c, 0x69, 0x73, 0x74, 0x46, 0x65, 0x61,
-	0x74, 0x75, 0x72, 0x65, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x00, 0x32, 0xee,
-	0x01, 0x0a, 0x15, 0x50, 0x61, 0x63, 0x6b, 0x61, 0x67, 0x65, 0x46, 0x65, 0x61, 0x74, 0x75, 0x72,
-	0x65, 0x53, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x12, 0x3e, 0x0a, 0x04, 0x56, 0x69, 0x65, 0x77,
-	0x12, 0x12, 0x2e, 0x77, 0x69, 0x72, 0x61, 0x64, 0x61, 0x74, 0x61, 0x2e, 0x75, 0x73, 0x65, 0x72,
-	0x73, 0x2e, 0x49, 0x64, 0x1a, 0x20, 0x2e, 0x77, 0x69, 0x72, 0x61, 0x64, 0x61, 0x74, 0x61, 0x2e,
-	0x75, 0x73, 0x65, 0x72, 0x73, 0x2e, 0x50, 0x61, 0x63, 0x6b, 0x61, 0x67, 0x65, 0x4f, 0x66, 0x46,
-	0x65, 0x61, 0x74, 0x75, 0x72, 0x65, 0x22, 0x00, 0x12, 0x4a, 0x0a, 0x06, 0x52, 0x65, 0x76, 0x6f,
-	0x6b, 0x65, 0x12, 0x25, 0x2e, 0x77, 0x69, 0x72, 0x61, 0x64, 0x61, 0x74, 0x61, 0x2e, 0x75, 0x73,
-	0x65, 0x72, 0x73, 0x2e, 0x50, 0x61, 0x63, 0x6b, 0x61, 0x67, 0x65, 0x46, 0x65, 0x61, 0x74, 0x75,
-	0x72, 0x65, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x17, 0x2e, 0x77, 0x69, 0x72, 0x61,
-	0x64, 0x61, 0x74, 0x61, 0x2e, 0x75, 0x73, 0x65, 0x72, 0x73, 0x2e, 0x42, 0x6f, 0x6f, 0x6c, 0x65,
-	0x61, 0x6e, 0x22, 0x00, 0x12, 0x49, 0x0a, 0x05, 0x47, 0x72, 0x61, 0x6e, 0x74, 0x12, 0x25, 0x2e,
+	0x65, 0x61, 0x74, 0x75, 0x72, 0x65, 0x52, 0x07, 0x66, 0x65, 0x61, 0x74, 0x75, 0x72, 0x65, 0x22,
+	0x6c, 0x0a, 0x1a, 0x4c, 0x69, 0x73, 0x74, 0x50, 0x61, 0x63, 0x6b, 0x61, 0x67, 0x65, 0x46, 0x65,
+	0x61, 0x74, 0x75, 0x72, 0x65, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x4e, 0x0a,
+	0x12, 0x70, 0x61, 0x63, 0x6b, 0x61, 0x67, 0x65, 0x5f, 0x6f, 0x66, 0x5f, 0x66, 0x65, 0x61, 0x74,
+	0x75, 0x72, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x20, 0x2e, 0x77, 0x69, 0x72, 0x61,
+	0x64, 0x61, 0x74, 0x61, 0x2e, 0x75, 0x73, 0x65, 0x72, 0x73, 0x2e, 0x50, 0x61, 0x63, 0x6b, 0x61,
+	0x67, 0x65, 0x4f, 0x66, 0x46, 0x65, 0x61, 0x74, 0x75, 0x72, 0x65, 0x52, 0x10, 0x70, 0x61, 0x63,
+	0x6b, 0x61, 0x67, 0x65, 0x4f, 0x66, 0x46, 0x65, 0x61, 0x74, 0x75, 0x72, 0x65, 0x32, 0x58, 0x0a,
+	0x0e, 0x46, 0x65, 0x61, 0x74, 0x75, 0x72, 0x65, 0x53, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x12,
+	0x46, 0x0a, 0x04, 0x4c, 0x69, 0x73, 0x74, 0x12, 0x15, 0x2e, 0x77, 0x69, 0x72, 0x61, 0x64, 0x61,
+	0x74, 0x61, 0x2e, 0x75, 0x73, 0x65, 0x72, 0x73, 0x2e, 0x45, 0x6d, 0x70, 0x74, 0x79, 0x1a, 0x23,
+	0x2e, 0x77, 0x69, 0x72, 0x61, 0x64, 0x61, 0x74, 0x61, 0x2e, 0x75, 0x73, 0x65, 0x72, 0x73, 0x2e,
+	0x4c, 0x69, 0x73, 0x74, 0x46, 0x65, 0x61, 0x74, 0x75, 0x72, 0x65, 0x52, 0x65, 0x73, 0x70, 0x6f,
+	0x6e, 0x73, 0x65, 0x22, 0x00, 0x30, 0x01, 0x32, 0xa6, 0x01, 0x0a, 0x15, 0x50, 0x61, 0x63, 0x6b,
+	0x61, 0x67, 0x65, 0x46, 0x65, 0x61, 0x74, 0x75, 0x72, 0x65, 0x53, 0x65, 0x72, 0x76, 0x69, 0x63,
+	0x65, 0x12, 0x3e, 0x0a, 0x04, 0x56, 0x69, 0x65, 0x77, 0x12, 0x12, 0x2e, 0x77, 0x69, 0x72, 0x61,
+	0x64, 0x61, 0x74, 0x61, 0x2e, 0x75, 0x73, 0x65, 0x72, 0x73, 0x2e, 0x49, 0x64, 0x1a, 0x20, 0x2e,
 	0x77, 0x69, 0x72, 0x61, 0x64, 0x61, 0x74, 0x61, 0x2e, 0x75, 0x73, 0x65, 0x72, 0x73, 0x2e, 0x50,
-	0x61, 0x63, 0x6b, 0x61, 0x67, 0x65, 0x46, 0x65, 0x61, 0x74, 0x75, 0x72, 0x65, 0x52, 0x65, 0x71,
-	0x75, 0x65, 0x73, 0x74, 0x1a, 0x17, 0x2e, 0x77, 0x69, 0x72, 0x61, 0x64, 0x61, 0x74, 0x61, 0x2e,
-	0x75, 0x73, 0x65, 0x72, 0x73, 0x2e, 0x42, 0x6f, 0x6f, 0x6c, 0x65, 0x61, 0x6e, 0x22, 0x00, 0x42,
-	0x0a, 0x5a, 0x08, 0x70, 0x62, 0x3b, 0x75, 0x73, 0x65, 0x72, 0x73, 0x62, 0x06, 0x70, 0x72, 0x6f,
-	0x74, 0x6f, 0x33,
+	0x61, 0x63, 0x6b, 0x61, 0x67, 0x65, 0x4f, 0x66, 0x46, 0x65, 0x61, 0x74, 0x75, 0x72, 0x65, 0x22,
+	0x00, 0x12, 0x4d, 0x0a, 0x04, 0x4c, 0x69, 0x73, 0x74, 0x12, 0x15, 0x2e, 0x77, 0x69, 0x72, 0x61,
+	0x64, 0x61, 0x74, 0x61, 0x2e, 0x75, 0x73, 0x65, 0x72, 0x73, 0x2e, 0x45, 0x6d, 0x70, 0x74, 0x79,
+	0x1a, 0x2a, 0x2e, 0x77, 0x69, 0x72, 0x61, 0x64, 0x61, 0x74, 0x61, 0x2e, 0x75, 0x73, 0x65, 0x72,
+	0x73, 0x2e, 0x4c, 0x69, 0x73, 0x74, 0x50, 0x61, 0x63, 0x6b, 0x61, 0x67, 0x65, 0x46, 0x65, 0x61,
+	0x74, 0x75, 0x72, 0x65, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x00, 0x30, 0x01,
+	0x42, 0x0a, 0x5a, 0x08, 0x70, 0x62, 0x3b, 0x75, 0x73, 0x65, 0x72, 0x73, 0x62, 0x06, 0x70, 0x72,
+	0x6f, 0x74, 0x6f, 0x33,
 }
 
 var (
@@ -202,37 +177,27 @@ func file_feature_service_proto_rawDescGZIP() []byte {
 
 var file_feature_service_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
 var file_feature_service_proto_goTypes = []interface{}{
-	(*ListFeatureResponse)(nil),   // 0: wiradata.users.ListFeatureResponse
-	(*PackageFeatureRequest)(nil), // 1: wiradata.users.PackageFeatureRequest
-	(*Feature)(nil),               // 2: wiradata.users.Feature
-	(*Id)(nil),                    // 3: wiradata.users.Id
-	(*Empty)(nil),                 // 4: wiradata.users.Empty
-	(*Boolean)(nil),               // 5: wiradata.users.Boolean
-	(*PackageOfFeature)(nil),      // 6: wiradata.users.PackageOfFeature
+	(*ListFeatureResponse)(nil),        // 0: wiradata.users.ListFeatureResponse
+	(*ListPackageFeatureResponse)(nil), // 1: wiradata.users.ListPackageFeatureResponse
+	(*Feature)(nil),                    // 2: wiradata.users.Feature
+	(*PackageOfFeature)(nil),           // 3: wiradata.users.PackageOfFeature
+	(*Empty)(nil),                      // 4: wiradata.users.Empty
+	(*Id)(nil),                         // 5: wiradata.users.Id
 }
 var file_feature_service_proto_depIdxs = []int32{
-	2, // 0: wiradata.users.ListFeatureResponse.features:type_name -> wiradata.users.Feature
-	2, // 1: wiradata.users.FeatureService.Create:input_type -> wiradata.users.Feature
-	2, // 2: wiradata.users.FeatureService.Update:input_type -> wiradata.users.Feature
-	3, // 3: wiradata.users.FeatureService.View:input_type -> wiradata.users.Id
-	3, // 4: wiradata.users.FeatureService.Delete:input_type -> wiradata.users.Id
-	4, // 5: wiradata.users.FeatureService.List:input_type -> wiradata.users.Empty
-	3, // 6: wiradata.users.PackageFeatureService.View:input_type -> wiradata.users.Id
-	1, // 7: wiradata.users.PackageFeatureService.Revoke:input_type -> wiradata.users.PackageFeatureRequest
-	1, // 8: wiradata.users.PackageFeatureService.Grant:input_type -> wiradata.users.PackageFeatureRequest
-	2, // 9: wiradata.users.FeatureService.Create:output_type -> wiradata.users.Feature
-	2, // 10: wiradata.users.FeatureService.Update:output_type -> wiradata.users.Feature
-	2, // 11: wiradata.users.FeatureService.View:output_type -> wiradata.users.Feature
-	5, // 12: wiradata.users.FeatureService.Delete:output_type -> wiradata.users.Boolean
-	0, // 13: wiradata.users.FeatureService.List:output_type -> wiradata.users.ListFeatureResponse
-	6, // 14: wiradata.users.PackageFeatureService.View:output_type -> wiradata.users.PackageOfFeature
-	5, // 15: wiradata.users.PackageFeatureService.Revoke:output_type -> wiradata.users.Boolean
-	5, // 16: wiradata.users.PackageFeatureService.Grant:output_type -> wiradata.users.Boolean
-	9, // [9:17] is the sub-list for method output_type
-	1, // [1:9] is the sub-list for method input_type
-	1, // [1:1] is the sub-list for extension type_name
-	1, // [1:1] is the sub-list for extension extendee
-	0, // [0:1] is the sub-list for field type_name
+	2, // 0: wiradata.users.ListFeatureResponse.feature:type_name -> wiradata.users.Feature
+	3, // 1: wiradata.users.ListPackageFeatureResponse.package_of_feature:type_name -> wiradata.users.PackageOfFeature
+	4, // 2: wiradata.users.FeatureService.List:input_type -> wiradata.users.Empty
+	5, // 3: wiradata.users.PackageFeatureService.View:input_type -> wiradata.users.Id
+	4, // 4: wiradata.users.PackageFeatureService.List:input_type -> wiradata.users.Empty
+	0, // 5: wiradata.users.FeatureService.List:output_type -> wiradata.users.ListFeatureResponse
+	3, // 6: wiradata.users.PackageFeatureService.View:output_type -> wiradata.users.PackageOfFeature
+	1, // 7: wiradata.users.PackageFeatureService.List:output_type -> wiradata.users.ListPackageFeatureResponse
+	5, // [5:8] is the sub-list for method output_type
+	2, // [2:5] is the sub-list for method input_type
+	2, // [2:2] is the sub-list for extension type_name
+	2, // [2:2] is the sub-list for extension extendee
+	0, // [0:2] is the sub-list for field type_name
 }
 
 func init() { file_feature_service_proto_init() }
@@ -256,7 +221,7 @@ func file_feature_service_proto_init() {
 			}
 		}
 		file_feature_service_proto_msgTypes[1].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*PackageFeatureRequest); i {
+			switch v := v.(*ListPackageFeatureResponse); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -300,11 +265,7 @@ const _ = grpc.SupportPackageIsVersion6
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type FeatureServiceClient interface {
-	Create(ctx context.Context, in *Feature, opts ...grpc.CallOption) (*Feature, error)
-	Update(ctx context.Context, in *Feature, opts ...grpc.CallOption) (*Feature, error)
-	View(ctx context.Context, in *Id, opts ...grpc.CallOption) (*Feature, error)
-	Delete(ctx context.Context, in *Id, opts ...grpc.CallOption) (*Boolean, error)
-	List(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*ListFeatureResponse, error)
+	List(ctx context.Context, in *Empty, opts ...grpc.CallOption) (FeatureService_ListClient, error)
 }
 
 type featureServiceClient struct {
@@ -315,200 +276,87 @@ func NewFeatureServiceClient(cc grpc.ClientConnInterface) FeatureServiceClient {
 	return &featureServiceClient{cc}
 }
 
-func (c *featureServiceClient) Create(ctx context.Context, in *Feature, opts ...grpc.CallOption) (*Feature, error) {
-	out := new(Feature)
-	err := c.cc.Invoke(ctx, "/wiradata.users.FeatureService/Create", in, out, opts...)
+func (c *featureServiceClient) List(ctx context.Context, in *Empty, opts ...grpc.CallOption) (FeatureService_ListClient, error) {
+	stream, err := c.cc.NewStream(ctx, &_FeatureService_serviceDesc.Streams[0], "/wiradata.users.FeatureService/List", opts...)
 	if err != nil {
 		return nil, err
 	}
-	return out, nil
+	x := &featureServiceListClient{stream}
+	if err := x.ClientStream.SendMsg(in); err != nil {
+		return nil, err
+	}
+	if err := x.ClientStream.CloseSend(); err != nil {
+		return nil, err
+	}
+	return x, nil
 }
 
-func (c *featureServiceClient) Update(ctx context.Context, in *Feature, opts ...grpc.CallOption) (*Feature, error) {
-	out := new(Feature)
-	err := c.cc.Invoke(ctx, "/wiradata.users.FeatureService/Update", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
+type FeatureService_ListClient interface {
+	Recv() (*ListFeatureResponse, error)
+	grpc.ClientStream
 }
 
-func (c *featureServiceClient) View(ctx context.Context, in *Id, opts ...grpc.CallOption) (*Feature, error) {
-	out := new(Feature)
-	err := c.cc.Invoke(ctx, "/wiradata.users.FeatureService/View", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
+type featureServiceListClient struct {
+	grpc.ClientStream
 }
 
-func (c *featureServiceClient) Delete(ctx context.Context, in *Id, opts ...grpc.CallOption) (*Boolean, error) {
-	out := new(Boolean)
-	err := c.cc.Invoke(ctx, "/wiradata.users.FeatureService/Delete", in, out, opts...)
-	if err != nil {
+func (x *featureServiceListClient) Recv() (*ListFeatureResponse, error) {
+	m := new(ListFeatureResponse)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
 		return nil, err
 	}
-	return out, nil
-}
-
-func (c *featureServiceClient) List(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*ListFeatureResponse, error) {
-	out := new(ListFeatureResponse)
-	err := c.cc.Invoke(ctx, "/wiradata.users.FeatureService/List", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
+	return m, nil
 }
 
 // FeatureServiceServer is the server API for FeatureService service.
 type FeatureServiceServer interface {
-	Create(context.Context, *Feature) (*Feature, error)
-	Update(context.Context, *Feature) (*Feature, error)
-	View(context.Context, *Id) (*Feature, error)
-	Delete(context.Context, *Id) (*Boolean, error)
-	List(context.Context, *Empty) (*ListFeatureResponse, error)
+	List(*Empty, FeatureService_ListServer) error
 }
 
 // UnimplementedFeatureServiceServer can be embedded to have forward compatible implementations.
 type UnimplementedFeatureServiceServer struct {
 }
 
-func (*UnimplementedFeatureServiceServer) Create(context.Context, *Feature) (*Feature, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Create not implemented")
-}
-func (*UnimplementedFeatureServiceServer) Update(context.Context, *Feature) (*Feature, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Update not implemented")
-}
-func (*UnimplementedFeatureServiceServer) View(context.Context, *Id) (*Feature, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method View not implemented")
-}
-func (*UnimplementedFeatureServiceServer) Delete(context.Context, *Id) (*Boolean, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Delete not implemented")
-}
-func (*UnimplementedFeatureServiceServer) List(context.Context, *Empty) (*ListFeatureResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method List not implemented")
+func (*UnimplementedFeatureServiceServer) List(*Empty, FeatureService_ListServer) error {
+	return status.Errorf(codes.Unimplemented, "method List not implemented")
 }
 
 func RegisterFeatureServiceServer(s *grpc.Server, srv FeatureServiceServer) {
 	s.RegisterService(&_FeatureService_serviceDesc, srv)
 }
 
-func _FeatureService_Create_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(Feature)
-	if err := dec(in); err != nil {
-		return nil, err
+func _FeatureService_List_Handler(srv interface{}, stream grpc.ServerStream) error {
+	m := new(Empty)
+	if err := stream.RecvMsg(m); err != nil {
+		return err
 	}
-	if interceptor == nil {
-		return srv.(FeatureServiceServer).Create(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/wiradata.users.FeatureService/Create",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(FeatureServiceServer).Create(ctx, req.(*Feature))
-	}
-	return interceptor(ctx, in, info, handler)
+	return srv.(FeatureServiceServer).List(m, &featureServiceListServer{stream})
 }
 
-func _FeatureService_Update_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(Feature)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(FeatureServiceServer).Update(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/wiradata.users.FeatureService/Update",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(FeatureServiceServer).Update(ctx, req.(*Feature))
-	}
-	return interceptor(ctx, in, info, handler)
+type FeatureService_ListServer interface {
+	Send(*ListFeatureResponse) error
+	grpc.ServerStream
 }
 
-func _FeatureService_View_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(Id)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(FeatureServiceServer).View(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/wiradata.users.FeatureService/View",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(FeatureServiceServer).View(ctx, req.(*Id))
-	}
-	return interceptor(ctx, in, info, handler)
+type featureServiceListServer struct {
+	grpc.ServerStream
 }
 
-func _FeatureService_Delete_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(Id)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(FeatureServiceServer).Delete(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/wiradata.users.FeatureService/Delete",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(FeatureServiceServer).Delete(ctx, req.(*Id))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _FeatureService_List_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(Empty)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(FeatureServiceServer).List(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/wiradata.users.FeatureService/List",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(FeatureServiceServer).List(ctx, req.(*Empty))
-	}
-	return interceptor(ctx, in, info, handler)
+func (x *featureServiceListServer) Send(m *ListFeatureResponse) error {
+	return x.ServerStream.SendMsg(m)
 }
 
 var _FeatureService_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "wiradata.users.FeatureService",
 	HandlerType: (*FeatureServiceServer)(nil),
-	Methods: []grpc.MethodDesc{
+	Methods:     []grpc.MethodDesc{},
+	Streams: []grpc.StreamDesc{
 		{
-			MethodName: "Create",
-			Handler:    _FeatureService_Create_Handler,
-		},
-		{
-			MethodName: "Update",
-			Handler:    _FeatureService_Update_Handler,
-		},
-		{
-			MethodName: "View",
-			Handler:    _FeatureService_View_Handler,
-		},
-		{
-			MethodName: "Delete",
-			Handler:    _FeatureService_Delete_Handler,
-		},
-		{
-			MethodName: "List",
-			Handler:    _FeatureService_List_Handler,
+			StreamName:    "List",
+			Handler:       _FeatureService_List_Handler,
+			ServerStreams: true,
 		},
 	},
-	Streams:  []grpc.StreamDesc{},
 	Metadata: "feature_service.proto",
 }
 
@@ -517,8 +365,7 @@ var _FeatureService_serviceDesc = grpc.ServiceDesc{
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type PackageFeatureServiceClient interface {
 	View(ctx context.Context, in *Id, opts ...grpc.CallOption) (*PackageOfFeature, error)
-	Revoke(ctx context.Context, in *PackageFeatureRequest, opts ...grpc.CallOption) (*Boolean, error)
-	Grant(ctx context.Context, in *PackageFeatureRequest, opts ...grpc.CallOption) (*Boolean, error)
+	List(ctx context.Context, in *Empty, opts ...grpc.CallOption) (PackageFeatureService_ListClient, error)
 }
 
 type packageFeatureServiceClient struct {
@@ -538,29 +385,42 @@ func (c *packageFeatureServiceClient) View(ctx context.Context, in *Id, opts ...
 	return out, nil
 }
 
-func (c *packageFeatureServiceClient) Revoke(ctx context.Context, in *PackageFeatureRequest, opts ...grpc.CallOption) (*Boolean, error) {
-	out := new(Boolean)
-	err := c.cc.Invoke(ctx, "/wiradata.users.PackageFeatureService/Revoke", in, out, opts...)
+func (c *packageFeatureServiceClient) List(ctx context.Context, in *Empty, opts ...grpc.CallOption) (PackageFeatureService_ListClient, error) {
+	stream, err := c.cc.NewStream(ctx, &_PackageFeatureService_serviceDesc.Streams[0], "/wiradata.users.PackageFeatureService/List", opts...)
 	if err != nil {
 		return nil, err
 	}
-	return out, nil
+	x := &packageFeatureServiceListClient{stream}
+	if err := x.ClientStream.SendMsg(in); err != nil {
+		return nil, err
+	}
+	if err := x.ClientStream.CloseSend(); err != nil {
+		return nil, err
+	}
+	return x, nil
 }
 
-func (c *packageFeatureServiceClient) Grant(ctx context.Context, in *PackageFeatureRequest, opts ...grpc.CallOption) (*Boolean, error) {
-	out := new(Boolean)
-	err := c.cc.Invoke(ctx, "/wiradata.users.PackageFeatureService/Grant", in, out, opts...)
-	if err != nil {
+type PackageFeatureService_ListClient interface {
+	Recv() (*ListPackageFeatureResponse, error)
+	grpc.ClientStream
+}
+
+type packageFeatureServiceListClient struct {
+	grpc.ClientStream
+}
+
+func (x *packageFeatureServiceListClient) Recv() (*ListPackageFeatureResponse, error) {
+	m := new(ListPackageFeatureResponse)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
 		return nil, err
 	}
-	return out, nil
+	return m, nil
 }
 
 // PackageFeatureServiceServer is the server API for PackageFeatureService service.
 type PackageFeatureServiceServer interface {
 	View(context.Context, *Id) (*PackageOfFeature, error)
-	Revoke(context.Context, *PackageFeatureRequest) (*Boolean, error)
-	Grant(context.Context, *PackageFeatureRequest) (*Boolean, error)
+	List(*Empty, PackageFeatureService_ListServer) error
 }
 
 // UnimplementedPackageFeatureServiceServer can be embedded to have forward compatible implementations.
@@ -570,11 +430,8 @@ type UnimplementedPackageFeatureServiceServer struct {
 func (*UnimplementedPackageFeatureServiceServer) View(context.Context, *Id) (*PackageOfFeature, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method View not implemented")
 }
-func (*UnimplementedPackageFeatureServiceServer) Revoke(context.Context, *PackageFeatureRequest) (*Boolean, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Revoke not implemented")
-}
-func (*UnimplementedPackageFeatureServiceServer) Grant(context.Context, *PackageFeatureRequest) (*Boolean, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Grant not implemented")
+func (*UnimplementedPackageFeatureServiceServer) List(*Empty, PackageFeatureService_ListServer) error {
+	return status.Errorf(codes.Unimplemented, "method List not implemented")
 }
 
 func RegisterPackageFeatureServiceServer(s *grpc.Server, srv PackageFeatureServiceServer) {
@@ -599,40 +456,25 @@ func _PackageFeatureService_View_Handler(srv interface{}, ctx context.Context, d
 	return interceptor(ctx, in, info, handler)
 }
 
-func _PackageFeatureService_Revoke_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(PackageFeatureRequest)
-	if err := dec(in); err != nil {
-		return nil, err
+func _PackageFeatureService_List_Handler(srv interface{}, stream grpc.ServerStream) error {
+	m := new(Empty)
+	if err := stream.RecvMsg(m); err != nil {
+		return err
 	}
-	if interceptor == nil {
-		return srv.(PackageFeatureServiceServer).Revoke(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/wiradata.users.PackageFeatureService/Revoke",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PackageFeatureServiceServer).Revoke(ctx, req.(*PackageFeatureRequest))
-	}
-	return interceptor(ctx, in, info, handler)
+	return srv.(PackageFeatureServiceServer).List(m, &packageFeatureServiceListServer{stream})
 }
 
-func _PackageFeatureService_Grant_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(PackageFeatureRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(PackageFeatureServiceServer).Grant(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/wiradata.users.PackageFeatureService/Grant",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PackageFeatureServiceServer).Grant(ctx, req.(*PackageFeatureRequest))
-	}
-	return interceptor(ctx, in, info, handler)
+type PackageFeatureService_ListServer interface {
+	Send(*ListPackageFeatureResponse) error
+	grpc.ServerStream
+}
+
+type packageFeatureServiceListServer struct {
+	grpc.ServerStream
+}
+
+func (x *packageFeatureServiceListServer) Send(m *ListPackageFeatureResponse) error {
+	return x.ServerStream.SendMsg(m)
 }
 
 var _PackageFeatureService_serviceDesc = grpc.ServiceDesc{
@@ -643,15 +485,13 @@ var _PackageFeatureService_serviceDesc = grpc.ServiceDesc{
 			MethodName: "View",
 			Handler:    _PackageFeatureService_View_Handler,
 		},
+	},
+	Streams: []grpc.StreamDesc{
 		{
-			MethodName: "Revoke",
-			Handler:    _PackageFeatureService_Revoke_Handler,
-		},
-		{
-			MethodName: "Grant",
-			Handler:    _PackageFeatureService_Grant_Handler,
+			StreamName:    "List",
+			Handler:       _PackageFeatureService_List_Handler,
+			ServerStreams: true,
 		},
 	},
-	Streams:  []grpc.StreamDesc{},
 	Metadata: "feature_service.proto",
 }

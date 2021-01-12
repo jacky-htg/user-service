@@ -27,4 +27,7 @@ func GrpcRoute(grpcServer *grpc.Server, db *sql.DB, log *logrus.Entry, cache *re
 
 	branchServer := service.Branch{Db: db, Cache: cache}
 	users.RegisterBranchServiceServer(grpcServer, &branchServer)
+
+	employeeServer := service.Employee{Db: db, Cache: cache}
+	users.RegisterEmployeeServiceServer(grpcServer, &employeeServer)
 }

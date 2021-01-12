@@ -6,25 +6,14 @@ option go_package = "pb;users";
 import "feature_message.proto";
 import "generic_message.proto";
 
-message ListFeatureResponse {
-  repeated Feature features = 1;
-}
-
-message PackageFeatureRequest {
-  string id = 1;
-  string feature_id = 2;
-}
+message ListFeatureResponse {Feature feature = 1;}
+message ListPackageFeatureResponse {PackageOfFeature package_of_feature = 1;}
 
 service FeatureService {
-  rpc Create(Feature) returns (Feature) {}
-  rpc Update(Feature) returns (Feature) {}
-  rpc View(Id) returns (Feature) {}
-  rpc Delete(Id) returns (Boolean) {}
-  rpc List(Empty) returns (ListFeatureResponse) {}
+  rpc List(Empty) returns (stream ListFeatureResponse) {}
 }
 
 service PackageFeatureService {
   rpc View(Id) returns (PackageOfFeature) {}
-  rpc Revoke(PackageFeatureRequest) returns (Boolean) {}
-  rpc Grant(PackageFeatureRequest) returns (Boolean) {}
+  rpc List(Empty) returns (stream ListPackageFeatureResponse) {} 
 }

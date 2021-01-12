@@ -4,20 +4,19 @@ package wiradata.users;
 option go_package = "pb;users";
 
 import "google/protobuf/timestamp.proto";
+import "user_message.proto";
 
 message Employee {
   string id = 1;
-  string company_id = 2;
-  string branch_id = 3;
-  string user_id = 4;
-  string name = 5;
-  string code = 6;
-  string address = 7;
-  string city = 8;
-  string province = 9;
-  string jabatan = 10;
-  google.protobuf.Timestamp created_at =  11;
-  string created_by = 12;
-  google.protobuf.Timestamp updated_at = 13;
-  string updated_by = 14;
+  User user = 2;
+  string name = 3;
+  string code = 4;
+  string address = 5;
+  string city = 6;
+  string province = 7;
+  string jabatan = 8;
+  google.protobuf.Timestamp created_at =  9;
+  string created_by = 10;
+  google.protobuf.Timestamp updated_at = 11;
+  string updated_by = 12;
 }

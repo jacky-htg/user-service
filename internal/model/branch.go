@@ -9,6 +9,8 @@ import (
 	"user-service/internal/pkg/app"
 	users "user-service/pb"
 
+	"github.com/golang/protobuf/ptypes"
+
 	"github.com/google/uuid"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -99,7 +101,7 @@ func (u *Branch) Create(ctx context.Context, db *sql.DB, tx *sql.Tx) error {
 	`
 	stmt, err := tx.PrepareContext(ctx, query)
 	if err != nil {
-		return status.Errorf(codes.Internal, "Prepare insert region: %v", err)
+		return status.Errorf(codes.Internal, "Prepare insert branch: %v", err)
 	}
 	defer stmt.Close()
 
@@ -123,6 +125,13 @@ func (u *Branch) Create(ctx context.Context, db *sql.DB, tx *sql.Tx) error {
 	if err != nil {
 		return status.Errorf(codes.Internal, "Exec insert branch: %v", err)
 	}
+
+	u.Pb.CreatedAt, err = ptypes.TimestampProto(now)
+	if err != nil {
+		return status.Errorf(codes.Internal, "convert created by: %v", err)
+	}
+
+	u.Pb.UpdatedAt = u.Pb.CreatedAt
 
 	branchesRegion := BranchesRegion{RegionID: u.Pb.GetRegionId(), BranchID: u.Pb.GetId()}
 	err = branchesRegion.Create(ctx, tx)
