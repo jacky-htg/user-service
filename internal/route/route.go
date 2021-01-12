@@ -30,4 +30,10 @@ func GrpcRoute(grpcServer *grpc.Server, db *sql.DB, log *logrus.Entry, cache *re
 
 	employeeServer := service.Employee{Db: db, Cache: cache}
 	users.RegisterEmployeeServiceServer(grpcServer, &employeeServer)
+
+	featureServer := service.Feature{Db: db, Cache: cache}
+	users.RegisterFeatureServiceServer(grpcServer, &featureServer)
+
+	packageFeatureServer := service.PackageFeature{Db: db, Cache: cache}
+	users.RegisterPackageFeatureServiceServer(grpcServer, &packageFeatureServer)
 }
