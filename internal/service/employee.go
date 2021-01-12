@@ -323,5 +323,102 @@ func (u *Employee) Delete(ctx context.Context, in *users.Id) (*users.Boolean, er
 
 // List Employee
 func (u *Employee) List(in *users.ListEmployeeRequest, stream users.EmployeeService_ListServer) error {
+	ctx := stream.Context()
+	ctx, err := getMetadata(ctx)
+	if err != nil {
+		return err
+	}
+
+	// get user login
+	var userLogin model.User
+	userLogin.Pb.Id = ctx.Value(app.Ctx("userID")).(string)
+	err = userLogin.Get(ctx, u.Db)
+	if err != nil {
+		return err
+	}
+
+	if len(in.GetRegionId()) > 0 {
+		regionModel := model.Region{}
+		regionModel.Pb.Id = in.GetRegionId()
+		err = regionModel.Get(ctx, u.Db)
+		if err != nil {
+			return err
+		}
+
+		if regionModel.Pb.GetCompanyId() != ctx.Value(app.Ctx("companyID")).(string) {
+			return status.Error(codes.InvalidArgument, "its not your company")
+		}
+	} else {
+		if len(userLogin.Pb.GetRegionId()) > 0 {
+			in.RegionId = userLogin.Pb.GetRegionId()
+		}
+	}
+
+	if len(in.GetBranchId()) > 0 {
+		branchModel := model.Branch{}
+		branchModel.Pb.Id = in.GetBranchId()
+		err = branchModel.Get(ctx, u.Db)
+		if err != nil {
+			return err
+		}
+
+		if branchModel.Pb.GetCompanyId() != ctx.Value(app.Ctx("companyID")).(string) {
+			return status.Error(codes.InvalidArgument, "its not your company")
+		}
+
+		if branchModel.Pb.GetRegionId() != userLogin.Pb.GetRegionId() {
+			return status.Error(codes.InvalidArgument, "its not your region")
+		}
+	} else {
+		if len(userLogin.Pb.GetBranchId()) > 0 {
+			in.BranchId = userLogin.Pb.GetBranchId()
+		}
+	}
+
+	var employeeModel model.Employee
+	query, paramQueries, paginationResponse, err := employeeModel.ListQuery(ctx, u.Db, in, &userLogin.Pb)
+
+	rows, err := u.Db.QueryContext(ctx, query, paramQueries...)
+	if err != nil {
+		return status.Error(codes.Internal, err.Error())
+	}
+	defer rows.Close()
+	paginationResponse.RegionId = in.GetRegionId()
+	paginationResponse.BranchId = in.GetBranchId()
+	paginationResponse.Pagination = in.GetPagination()
+
+	for rows.Next() {
+		err := contextError(ctx)
+		if err != nil {
+			return err
+		}
+
+		var pbEmployee users.Employee
+		var pbUser users.User
+		var regionID, branchID sql.NullString
+		err = rows.Scan(
+			&pbEmployee.Id, &pbEmployee.Name, &pbEmployee.Code, &pbEmployee.Address,
+			&pbEmployee.City, &pbEmployee.Province, &pbEmployee.Jabatan,
+			&pbUser.Id, &pbUser.CompanyId, &regionID, &branchID, &pbUser.Name, &pbUser.Email,
+		)
+		if err != nil {
+			return err
+		}
+
+		pbUser.RegionId = regionID.String
+		pbUser.BranchId = branchID.String
+		pbEmployee.User = &pbUser
+
+		res := &users.ListEmployeeResponse{
+			Pagination: paginationResponse,
+			Employee:   &pbEmployee,
+		}
+
+		err = stream.Send(res)
+		if err != nil {
+			return status.Errorf(codes.Unknown, "cannot send stream response: %v", err)
+		}
+	}
+
 	return nil
 }

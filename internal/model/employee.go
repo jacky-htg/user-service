@@ -3,6 +3,8 @@ package model
 import (
 	"context"
 	"database/sql"
+	"fmt"
+	"strings"
 	"time"
 	"user-service/internal/pkg/app"
 	users "user-service/pb"
@@ -196,4 +198,73 @@ func (u *Employee) Delete(ctx context.Context, db *sql.DB) error {
 	}
 
 	return nil
+}
+
+// ListQuery builder
+func (u *Employee) ListQuery(ctx context.Context, db *sql.DB, in *users.ListEmployeeRequest, userLogin *users.User) (string, []interface{}, *users.EmployeePaginationResponse, error) {
+	var paginationResponse users.EmployeePaginationResponse
+	query := `
+		SELECT employees.id, employees.name, employees.code, employees.address, 
+			employees.city, employees.province, employees.jabatan,
+			users.id, users.company_id, users.region_id, users.branch_id, users.name, users.email 
+		FROM employees 
+		JOIN users ON employees.user_id = users.id
+	`
+	where := []string{"users.company_id = $1"}
+	paramQueries := []interface{}{userLogin.GetCompanyId()}
+
+	if len(userLogin.GetRegionId()) > 0 {
+		paramQueries = append(paramQueries, userLogin.GetRegionId())
+		where = append(where, fmt.Sprintf(`users.region_id = $%d`, len(paramQueries)))
+	}
+
+	if len(userLogin.GetBranchId()) > 0 {
+		paramQueries = append(paramQueries, userLogin.GetBranchId())
+		where = append(where, fmt.Sprintf(`users.branch_id = $%d`, len(paramQueries)))
+	}
+
+	if len(in.GetPagination().GetSearch()) > 0 {
+		paramQueries = append(paramQueries, in.GetPagination().GetSearch())
+		where = append(where, fmt.Sprintf(`(employees.name ILIKE $%d OR employees.code ILIKE $%d 
+			OR employees.address ILIKE $%d OR employees.city ILIKE $%d OR employees.province ILIKE $%d 
+			OR employees.jabatan ILIKE $%d OR users.name ILIKE $%d OR users.email ILIKE $%d)`,
+			len(paramQueries), len(paramQueries), len(paramQueries), len(paramQueries),
+			len(paramQueries), len(paramQueries), len(paramQueries), len(paramQueries)))
+	}
+
+	{
+		qCount := `SELECT COUNT(*) FROM employees JOIN users ON employees.user_id = users.id`
+		if len(where) > 0 {
+			qCount += " WHERE " + strings.Join(where, " AND ")
+		}
+		var count int
+		err := db.QueryRowContext(ctx, qCount, paramQueries...).Scan(&count)
+		if err != nil && err != sql.ErrNoRows {
+			return query, paramQueries, &paginationResponse, status.Error(codes.Internal, err.Error())
+		}
+
+		paginationResponse.Count = uint32(count)
+	}
+
+	if len(where) > 0 {
+		query += ` WHERE ` + strings.Join(where, " AND ")
+	}
+
+	if len(in.GetPagination().GetOrderBy()) == 0 || !(in.GetPagination().GetOrderBy() == "employees.name" ||
+		in.GetPagination().GetOrderBy() == "employees.code") {
+		if in.GetPagination() == nil {
+			in.Pagination = &users.Pagination{OrderBy: "employees.created_at"}
+		} else {
+			in.GetPagination().OrderBy = "employees.created_at"
+		}
+	}
+
+	query += ` ORDER BY ` + in.GetPagination().GetOrderBy() + ` ` + in.GetPagination().GetSort().String()
+
+	if in.GetPagination().GetLimit() > 0 {
+		query += fmt.Sprintf(` LIMIT $%d OFFSET $%d`, (len(paramQueries) + 1), (len(paramQueries) + 2))
+		paramQueries = append(paramQueries, in.GetPagination().GetLimit(), in.GetPagination().GetOffset())
+	}
+
+	return query, paramQueries, &paginationResponse, nil
 }
