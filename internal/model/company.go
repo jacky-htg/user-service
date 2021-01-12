@@ -124,7 +124,7 @@ func (u *CompanyRegister) Registration(ctx context.Context, db *sql.DB, tx *sql.
 	// grant access
 	{
 		var accessModel Access
-		err := accessModel.GetRoot(ctx, tx)
+		err := accessModel.GetRoot(ctx, tx, false)
 		if err != nil {
 			return err
 		}

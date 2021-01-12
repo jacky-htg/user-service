@@ -36,41 +36,24 @@ var file_access_service_proto_rawDesc = []byte{
 	0x2e, 0x75, 0x73, 0x65, 0x72, 0x73, 0x1a, 0x14, 0x61, 0x63, 0x63, 0x65, 0x73, 0x73, 0x5f, 0x6d,
 	0x65, 0x73, 0x73, 0x61, 0x67, 0x65, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x1a, 0x15, 0x67, 0x65,
 	0x6e, 0x65, 0x72, 0x69, 0x63, 0x5f, 0x6d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65, 0x2e, 0x70, 0x72,
-	0x6f, 0x74, 0x6f, 0x32, 0xf6, 0x01, 0x0a, 0x0d, 0x41, 0x63, 0x63, 0x65, 0x73, 0x73, 0x53, 0x65,
-	0x72, 0x76, 0x69, 0x63, 0x65, 0x12, 0x3a, 0x0a, 0x06, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x12,
-	0x16, 0x2e, 0x77, 0x69, 0x72, 0x61, 0x64, 0x61, 0x74, 0x61, 0x2e, 0x75, 0x73, 0x65, 0x72, 0x73,
-	0x2e, 0x41, 0x63, 0x63, 0x65, 0x73, 0x73, 0x1a, 0x16, 0x2e, 0x77, 0x69, 0x72, 0x61, 0x64, 0x61,
-	0x74, 0x61, 0x2e, 0x75, 0x73, 0x65, 0x72, 0x73, 0x2e, 0x41, 0x63, 0x63, 0x65, 0x73, 0x73, 0x22,
-	0x00, 0x12, 0x3a, 0x0a, 0x06, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x12, 0x16, 0x2e, 0x77, 0x69,
-	0x72, 0x61, 0x64, 0x61, 0x74, 0x61, 0x2e, 0x75, 0x73, 0x65, 0x72, 0x73, 0x2e, 0x41, 0x63, 0x63,
-	0x65, 0x73, 0x73, 0x1a, 0x16, 0x2e, 0x77, 0x69, 0x72, 0x61, 0x64, 0x61, 0x74, 0x61, 0x2e, 0x75,
-	0x73, 0x65, 0x72, 0x73, 0x2e, 0x41, 0x63, 0x63, 0x65, 0x73, 0x73, 0x22, 0x00, 0x12, 0x34, 0x0a,
-	0x04, 0x56, 0x69, 0x65, 0x77, 0x12, 0x12, 0x2e, 0x77, 0x69, 0x72, 0x61, 0x64, 0x61, 0x74, 0x61,
-	0x2e, 0x75, 0x73, 0x65, 0x72, 0x73, 0x2e, 0x49, 0x64, 0x1a, 0x16, 0x2e, 0x77, 0x69, 0x72, 0x61,
-	0x64, 0x61, 0x74, 0x61, 0x2e, 0x75, 0x73, 0x65, 0x72, 0x73, 0x2e, 0x41, 0x63, 0x63, 0x65, 0x73,
-	0x73, 0x22, 0x00, 0x12, 0x37, 0x0a, 0x06, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x12, 0x12, 0x2e,
-	0x77, 0x69, 0x72, 0x61, 0x64, 0x61, 0x74, 0x61, 0x2e, 0x75, 0x73, 0x65, 0x72, 0x73, 0x2e, 0x49,
-	0x64, 0x1a, 0x17, 0x2e, 0x77, 0x69, 0x72, 0x61, 0x64, 0x61, 0x74, 0x61, 0x2e, 0x75, 0x73, 0x65,
-	0x72, 0x73, 0x2e, 0x42, 0x6f, 0x6f, 0x6c, 0x65, 0x61, 0x6e, 0x22, 0x00, 0x42, 0x0a, 0x5a, 0x08,
-	0x70, 0x62, 0x3b, 0x75, 0x73, 0x65, 0x72, 0x73, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
+	0x6f, 0x74, 0x6f, 0x32, 0x48, 0x0a, 0x0d, 0x41, 0x63, 0x63, 0x65, 0x73, 0x73, 0x53, 0x65, 0x72,
+	0x76, 0x69, 0x63, 0x65, 0x12, 0x37, 0x0a, 0x04, 0x4c, 0x69, 0x73, 0x74, 0x12, 0x15, 0x2e, 0x77,
+	0x69, 0x72, 0x61, 0x64, 0x61, 0x74, 0x61, 0x2e, 0x75, 0x73, 0x65, 0x72, 0x73, 0x2e, 0x45, 0x6d,
+	0x70, 0x74, 0x79, 0x1a, 0x16, 0x2e, 0x77, 0x69, 0x72, 0x61, 0x64, 0x61, 0x74, 0x61, 0x2e, 0x75,
+	0x73, 0x65, 0x72, 0x73, 0x2e, 0x41, 0x63, 0x63, 0x65, 0x73, 0x73, 0x22, 0x00, 0x42, 0x0a, 0x5a,
+	0x08, 0x70, 0x62, 0x3b, 0x75, 0x73, 0x65, 0x72, 0x73, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f,
+	0x33,
 }
 
 var file_access_service_proto_goTypes = []interface{}{
-	(*Access)(nil),  // 0: wiradata.users.Access
-	(*Id)(nil),      // 1: wiradata.users.Id
-	(*Boolean)(nil), // 2: wiradata.users.Boolean
+	(*Empty)(nil),  // 0: wiradata.users.Empty
+	(*Access)(nil), // 1: wiradata.users.Access
 }
 var file_access_service_proto_depIdxs = []int32{
-	0, // 0: wiradata.users.AccessService.Create:input_type -> wiradata.users.Access
-	0, // 1: wiradata.users.AccessService.Update:input_type -> wiradata.users.Access
-	1, // 2: wiradata.users.AccessService.View:input_type -> wiradata.users.Id
-	1, // 3: wiradata.users.AccessService.Delete:input_type -> wiradata.users.Id
-	0, // 4: wiradata.users.AccessService.Create:output_type -> wiradata.users.Access
-	0, // 5: wiradata.users.AccessService.Update:output_type -> wiradata.users.Access
-	0, // 6: wiradata.users.AccessService.View:output_type -> wiradata.users.Access
-	2, // 7: wiradata.users.AccessService.Delete:output_type -> wiradata.users.Boolean
-	4, // [4:8] is the sub-list for method output_type
-	0, // [0:4] is the sub-list for method input_type
+	0, // 0: wiradata.users.AccessService.List:input_type -> wiradata.users.Empty
+	1, // 1: wiradata.users.AccessService.List:output_type -> wiradata.users.Access
+	1, // [1:2] is the sub-list for method output_type
+	0, // [0:1] is the sub-list for method input_type
 	0, // [0:0] is the sub-list for extension type_name
 	0, // [0:0] is the sub-list for extension extendee
 	0, // [0:0] is the sub-list for field type_name
@@ -114,10 +97,7 @@ const _ = grpc.SupportPackageIsVersion6
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type AccessServiceClient interface {
-	Create(ctx context.Context, in *Access, opts ...grpc.CallOption) (*Access, error)
-	Update(ctx context.Context, in *Access, opts ...grpc.CallOption) (*Access, error)
-	View(ctx context.Context, in *Id, opts ...grpc.CallOption) (*Access, error)
-	Delete(ctx context.Context, in *Id, opts ...grpc.CallOption) (*Boolean, error)
+	List(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*Access, error)
 }
 
 type accessServiceClient struct {
@@ -128,36 +108,9 @@ func NewAccessServiceClient(cc grpc.ClientConnInterface) AccessServiceClient {
 	return &accessServiceClient{cc}
 }
 
-func (c *accessServiceClient) Create(ctx context.Context, in *Access, opts ...grpc.CallOption) (*Access, error) {
+func (c *accessServiceClient) List(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*Access, error) {
 	out := new(Access)
-	err := c.cc.Invoke(ctx, "/wiradata.users.AccessService/Create", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *accessServiceClient) Update(ctx context.Context, in *Access, opts ...grpc.CallOption) (*Access, error) {
-	out := new(Access)
-	err := c.cc.Invoke(ctx, "/wiradata.users.AccessService/Update", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *accessServiceClient) View(ctx context.Context, in *Id, opts ...grpc.CallOption) (*Access, error) {
-	out := new(Access)
-	err := c.cc.Invoke(ctx, "/wiradata.users.AccessService/View", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *accessServiceClient) Delete(ctx context.Context, in *Id, opts ...grpc.CallOption) (*Boolean, error) {
-	out := new(Boolean)
-	err := c.cc.Invoke(ctx, "/wiradata.users.AccessService/Delete", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/wiradata.users.AccessService/List", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -166,101 +119,35 @@ func (c *accessServiceClient) Delete(ctx context.Context, in *Id, opts ...grpc.C
 
 // AccessServiceServer is the server API for AccessService service.
 type AccessServiceServer interface {
-	Create(context.Context, *Access) (*Access, error)
-	Update(context.Context, *Access) (*Access, error)
-	View(context.Context, *Id) (*Access, error)
-	Delete(context.Context, *Id) (*Boolean, error)
+	List(context.Context, *Empty) (*Access, error)
 }
 
 // UnimplementedAccessServiceServer can be embedded to have forward compatible implementations.
 type UnimplementedAccessServiceServer struct {
 }
 
-func (*UnimplementedAccessServiceServer) Create(context.Context, *Access) (*Access, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Create not implemented")
-}
-func (*UnimplementedAccessServiceServer) Update(context.Context, *Access) (*Access, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Update not implemented")
-}
-func (*UnimplementedAccessServiceServer) View(context.Context, *Id) (*Access, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method View not implemented")
-}
-func (*UnimplementedAccessServiceServer) Delete(context.Context, *Id) (*Boolean, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Delete not implemented")
+func (*UnimplementedAccessServiceServer) List(context.Context, *Empty) (*Access, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method List not implemented")
 }
 
 func RegisterAccessServiceServer(s *grpc.Server, srv AccessServiceServer) {
 	s.RegisterService(&_AccessService_serviceDesc, srv)
 }
 
-func _AccessService_Create_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(Access)
+func _AccessService_List_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Empty)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(AccessServiceServer).Create(ctx, in)
+		return srv.(AccessServiceServer).List(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/wiradata.users.AccessService/Create",
+		FullMethod: "/wiradata.users.AccessService/List",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AccessServiceServer).Create(ctx, req.(*Access))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _AccessService_Update_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(Access)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(AccessServiceServer).Update(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/wiradata.users.AccessService/Update",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AccessServiceServer).Update(ctx, req.(*Access))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _AccessService_View_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(Id)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(AccessServiceServer).View(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/wiradata.users.AccessService/View",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AccessServiceServer).View(ctx, req.(*Id))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _AccessService_Delete_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(Id)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(AccessServiceServer).Delete(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/wiradata.users.AccessService/Delete",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AccessServiceServer).Delete(ctx, req.(*Id))
+		return srv.(AccessServiceServer).List(ctx, req.(*Empty))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -270,20 +157,8 @@ var _AccessService_serviceDesc = grpc.ServiceDesc{
 	HandlerType: (*AccessServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "Create",
-			Handler:    _AccessService_Create_Handler,
-		},
-		{
-			MethodName: "Update",
-			Handler:    _AccessService_Update_Handler,
-		},
-		{
-			MethodName: "View",
-			Handler:    _AccessService_View_Handler,
-		},
-		{
-			MethodName: "Delete",
-			Handler:    _AccessService_Delete_Handler,
+			MethodName: "List",
+			Handler:    _AccessService_List_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

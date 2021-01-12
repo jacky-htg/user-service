@@ -7,8 +7,5 @@ import "access_message.proto";
 import "generic_message.proto";
 
 service AccessService {
-  rpc Create(Access) returns (Access) {}
-  rpc Update(Access) returns (Access) {}
-  rpc View(Id) returns (Access) {}
-  rpc Delete(Id) returns (Boolean) {}
+  rpc List(Empty) returns (Access) {}
 }

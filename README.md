@@ -14,7 +14,7 @@ user service using grpc go, postgresql and redis. The service is designed to be 
 - [X] Regions
 - [X] Branches
 - [X] Employees
-- [ ] Company Features
+- [X] Company Features
 - [X] Users
 - [ ] Groups
 - [X] Auths
@@ -47,14 +47,15 @@ user service using grpc go, postgresql and redis. The service is designed to be 
 ### Users, Groups, Access and RBAC
 - [X] Users CRUD
 - [ ] Group CRUD
-- [ ] Access CRUD
+- [X] List Access
 - [ ] Multi users, multi roles and multi access
 - [ ] One role can be assigned multi access
 - [ ] Role Base Access Control (RBAC)
 
 ### Features
-- [ ] CRUD Features
-- [ ] CRUD Pacakage Feature
+- [X] List Features
+- [X] List Package Feature
+- [X] View Package Feature
 - [X] Company Feature Setting : The company can use the whole of features, or cherry pick part of features.
 
 ## License
