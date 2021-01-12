@@ -181,3 +181,19 @@ func (u *Employee) Update(ctx context.Context, db *sql.DB) error {
 
 	return nil
 }
+
+// Delete employee
+func (u *Employee) Delete(ctx context.Context, db *sql.DB) error {
+	stmt, err := db.PrepareContext(ctx, `DELETE FROM employees WHERE id = $1`)
+	if err != nil {
+		return status.Errorf(codes.Internal, "Prepare delete employee: %v", err)
+	}
+	defer stmt.Close()
+
+	_, err = stmt.ExecContext(ctx, u.Pb.GetId())
+	if err != nil {
+		return status.Errorf(codes.Internal, "Exec delete employee: %v", err)
+	}
+
+	return nil
+}

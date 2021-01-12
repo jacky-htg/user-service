@@ -222,12 +222,103 @@ func (u *Employee) Update(ctx context.Context, in *users.Employee) (*users.Emplo
 
 // View Employee
 func (u *Employee) View(ctx context.Context, in *users.Id) (*users.Employee, error) {
-	return &users.Employee{}, nil
+	var output users.Employee
+	var err error
+	var employeeModel model.Employee
+
+	// basic validation
+	{
+		if len(in.GetId()) == 0 {
+			return &output, status.Error(codes.InvalidArgument, "Please supply valid id")
+		}
+		employeeModel.Pb.Id = in.GetId()
+	}
+
+	ctx, err = getMetadata(ctx)
+	if err != nil {
+		return &output, err
+	}
+
+	// get user login
+	var userLogin model.User
+	userLogin.Pb.Id = ctx.Value(app.Ctx("userID")).(string)
+	err = userLogin.Get(ctx, u.Db)
+	if err != nil {
+		return &output, err
+	}
+
+	err = employeeModel.Get(ctx, u.Db)
+	if err != nil {
+		return &output, err
+	}
+
+	if userLogin.Pb.GetCompanyId() != employeeModel.Pb.GetUser().GetCompanyId() {
+		return &output, status.Error(codes.Unauthenticated, "its not your company")
+	}
+
+	if len(userLogin.Pb.GetRegionId()) > 0 && userLogin.Pb.GetRegionId() != employeeModel.Pb.GetUser().GetRegionId() {
+		return &output, status.Error(codes.Unauthenticated, "its not your region")
+	}
+
+	if len(userLogin.Pb.GetBranchId()) > 0 && userLogin.Pb.GetBranchId() != employeeModel.Pb.GetUser().GetBranchId() {
+		return &output, status.Error(codes.Unauthenticated, "its not your branch")
+	}
+
+	return &employeeModel.Pb, nil
 }
 
 // Delete Employee
 func (u *Employee) Delete(ctx context.Context, in *users.Id) (*users.Boolean, error) {
-	return &users.Boolean{}, nil
+	var output users.Boolean
+	output.Boolean = false
+	var err error
+	var employeeModel model.Employee
+
+	// basic validation
+	{
+		if len(in.GetId()) == 0 {
+			return &output, status.Error(codes.InvalidArgument, "Please supply valid id")
+		}
+		employeeModel.Pb.Id = in.GetId()
+	}
+
+	ctx, err = getMetadata(ctx)
+	if err != nil {
+		return &output, err
+	}
+
+	// get user login
+	var userLogin model.User
+	userLogin.Pb.Id = ctx.Value(app.Ctx("userID")).(string)
+	err = userLogin.Get(ctx, u.Db)
+	if err != nil {
+		return &output, err
+	}
+
+	err = employeeModel.Get(ctx, u.Db)
+	if err != nil {
+		return &output, err
+	}
+
+	if userLogin.Pb.GetCompanyId() != employeeModel.Pb.GetUser().GetCompanyId() {
+		return &output, status.Error(codes.Unauthenticated, "its not your company")
+	}
+
+	if len(userLogin.Pb.GetRegionId()) > 0 && userLogin.Pb.GetRegionId() != employeeModel.Pb.GetUser().GetRegionId() {
+		return &output, status.Error(codes.Unauthenticated, "its not your region")
+	}
+
+	if len(userLogin.Pb.GetBranchId()) > 0 && userLogin.Pb.GetBranchId() != employeeModel.Pb.GetUser().GetBranchId() {
+		return &output, status.Error(codes.Unauthenticated, "its not your branch")
+	}
+
+	err = employeeModel.Delete(ctx, u.Db)
+	if err != nil {
+		return &output, err
+	}
+
+	output.Boolean = true
+	return &output, nil
 }
 
 // List Employee
