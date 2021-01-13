@@ -16,7 +16,7 @@ import (
 
 // Group model
 type Group struct {
-	Pb *users.Group
+	Pb users.Group
 }
 
 // Get func
@@ -77,6 +77,43 @@ func (u *Group) Create(ctx context.Context, db *sql.DB) error {
 	)
 	if err != nil {
 		return status.Errorf(codes.Internal, "Exec insert group: %v", err)
+	}
+
+	return nil
+}
+
+// Update Group
+func (u *Group) Update(ctx context.Context, db *sql.DB) error {
+	var err error
+	now := time.Now().UTC()
+	u.Pb.UpdatedBy = ctx.Value(app.Ctx("userID")).(string)
+
+	u.Pb.UpdatedAt, err = ptypes.TimestampProto(now)
+	if err != nil {
+		return err
+	}
+
+	query := `
+		UPDATE groups SET
+		name = $1, 
+		updated_at = $2, 
+		updated_by = $3
+		WHERE id = $4
+	`
+	stmt, err := db.PrepareContext(ctx, query)
+	if err != nil {
+		return status.Errorf(codes.Internal, "Prepare update group: %v", err)
+	}
+	defer stmt.Close()
+
+	_, err = stmt.ExecContext(ctx,
+		u.Pb.GetName(),
+		now,
+		u.Pb.GetUpdatedBy(),
+		u.Pb.GetId(),
+	)
+	if err != nil {
+		return status.Errorf(codes.Internal, "Exec update group: %v", err)
 	}
 
 	return nil

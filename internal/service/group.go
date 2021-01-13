@@ -26,44 +26,87 @@ func (u *Group) Create(ctx context.Context, in *users.Group) (*users.Group, erro
 	// basic validation
 	{
 		if len(in.GetName()) == 0 {
-			return groupModel.Pb, status.Error(codes.InvalidArgument, "Please supply valid name")
+			return &groupModel.Pb, status.Error(codes.InvalidArgument, "Please supply valid name")
 		}
 	}
 
 	ctx, err = getMetadata(ctx)
 	if err != nil {
-		return groupModel.Pb, err
+		return &groupModel.Pb, err
 	}
 
 	// company validation
 	{
 		if len(in.GetCompanyId()) > 0 && in.GetCompanyId() != ctx.Value(app.Ctx("companyID")).(string) {
-			return groupModel.Pb, status.Error(codes.PermissionDenied, "Please supply valid company id")
+			return &groupModel.Pb, status.Error(codes.PermissionDenied, "Please supply valid company id")
 		}
 		in.CompanyId = ctx.Value(app.Ctx("companyID")).(string)
 	}
 
-	groupModel.Pb = in
+	groupModel.Pb = users.Group{
+		CompanyId: in.GetCompanyId(),
+		Name:      in.GetName(),
+	}
 	err = groupModel.Create(ctx, u.Db)
 	if err != nil {
-		return groupModel.Pb, err
+		return &groupModel.Pb, err
 	}
 
-	return groupModel.Pb, nil
+	return &groupModel.Pb, nil
 }
 
 // Update Group
 func (u *Group) Update(ctx context.Context, in *users.Group) (*users.Group, error) {
 	var groupModel model.Group
+	var err error
 
-	return groupModel.Pb, nil
+	// basic validation
+	{
+		if len(in.GetId()) == 0 {
+			return &groupModel.Pb, status.Error(codes.InvalidArgument, "Please supply valid id")
+		}
+		groupModel.Pb.Id = in.GetId()
+	}
+
+	ctx, err = getMetadata(ctx)
+	if err != nil {
+		return &groupModel.Pb, err
+	}
+
+	// get user login
+	var userLogin model.User
+	userLogin.Pb.Id = ctx.Value(app.Ctx("userID")).(string)
+	err = userLogin.Get(ctx, u.Db)
+	if err != nil {
+		return &groupModel.Pb, err
+	}
+
+	if len(in.GetCompanyId()) > 0 && userLogin.Pb.GetCompanyId() != in.GetCompanyId() {
+		return &groupModel.Pb, status.Error(codes.Unauthenticated, "its not your company")
+	}
+
+	err = groupModel.Get(ctx, u.Db)
+	if err != nil {
+		return &groupModel.Pb, err
+	}
+
+	if len(in.GetName()) > 0 {
+		groupModel.Pb.Name = in.GetName()
+	}
+
+	err = groupModel.Update(ctx, u.Db)
+	if err != nil {
+		return &groupModel.Pb, err
+	}
+
+	return &groupModel.Pb, nil
 }
 
 // View Group
 func (u *Group) View(ctx context.Context, in *users.Id) (*users.Group, error) {
 	var groupModel model.Group
 
-	return groupModel.Pb, nil
+	return &groupModel.Pb, nil
 }
 
 // Delete Group
