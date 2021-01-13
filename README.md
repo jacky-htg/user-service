@@ -59,5 +59,16 @@ user service using grpc go, postgresql and redis. The service is designed to be 
 - [X] View Package Feature
 - [X] Company Feature Setting : The company can use the whole of features, or cherry pick part of features.
 
+## How To Contrubute
+- Give star or clone and fork the repository
+- Report the bug
+- Submit issue for request of enhancement
+- Pull Request for fixing bug or enhancement module 
+
 ## License
 [The license of application is GPL-3.0](https://github.com/jacky-htg/user-service/blob/main/LICENSE), You can use this apllication for commercial use, distribution or modification. But there is no liability and warranty. Please read the license details carefully.
+
+## Link Repository
+- [API Gateway for Inventory](https://github.com/jacky-htg/api-gateway-service)
+- [Inventory App](https://github.com/jacky-htg/inventory-app)
+- [Simple gRPC Skeleton](https://github.com/jacky-htg/grpc-skeleton)
