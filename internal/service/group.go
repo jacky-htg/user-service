@@ -242,6 +242,65 @@ func (u *Group) GrantAccess(ctx context.Context, in *users.GrantAccessRequest) (
 	var output users.Message
 	output.Message = "Failed"
 
+	var err error
+
+	// basic validation
+	{
+		if len(in.GetGroupId()) == 0 {
+			return &output, status.Error(codes.InvalidArgument, "Please supply valid group")
+		}
+
+		if len(in.GetAccessId()) == 0 {
+			return &output, status.Error(codes.InvalidArgument, "Please supply valid access")
+		}
+	}
+
+	ctx, err = getMetadata(ctx)
+	if err != nil {
+		return &output, err
+	}
+
+	// group validation
+	{
+		groupModel := model.Group{}
+		groupModel.Pb.Id = in.GetGroupId()
+		err = groupModel.Get(ctx, u.Db)
+		if err != nil {
+			return &output, err
+		}
+
+		if groupModel.Pb.GetCompanyId() != ctx.Value(app.Ctx("companyID")).(string) {
+			return &output, status.Error(codes.PermissionDenied, "its not your company")
+		}
+	}
+
+	// access validation
+	{
+		accessModel := model.Access{}
+		accessModel.Pb.Id = in.GetAccessId()
+		err = accessModel.Get(ctx, u.Db)
+		if err != nil {
+			return &output, err
+		}
+	}
+
+	accessGroup := model.AccessGroup{}
+	accessGroup.AccessID = in.GetAccessId()
+	accessGroup.GroupID = in.GetGroupId()
+	err = accessGroup.Get(ctx, u.Db)
+	if err != nil {
+		if st, ok := status.FromError(err); ok && st.Code() != codes.NotFound {
+			return &output, err
+		}
+	} else {
+		return &output, status.Error(codes.AlreadyExists, "Already grant access")
+	}
+
+	err = accessGroup.Grant(ctx, u.Db)
+	if err != nil {
+		return &output, err
+	}
+
 	output.Message = "Success"
 	return &output, nil
 }
@@ -250,6 +309,61 @@ func (u *Group) GrantAccess(ctx context.Context, in *users.GrantAccessRequest) (
 func (u *Group) RevokeAccess(ctx context.Context, in *users.GrantAccessRequest) (*users.Message, error) {
 	var output users.Message
 	output.Message = "Failed"
+
+	var err error
+
+	// basic validation
+	{
+		if len(in.GetGroupId()) == 0 {
+			return &output, status.Error(codes.InvalidArgument, "Please supply valid group")
+		}
+
+		if len(in.GetAccessId()) == 0 {
+			return &output, status.Error(codes.InvalidArgument, "Please supply valid access")
+		}
+	}
+
+	ctx, err = getMetadata(ctx)
+	if err != nil {
+		return &output, err
+	}
+
+	// group validation
+	{
+		groupModel := model.Group{}
+		groupModel.Pb.Id = in.GetGroupId()
+		err = groupModel.Get(ctx, u.Db)
+		if err != nil {
+			return &output, err
+		}
+
+		if groupModel.Pb.GetCompanyId() != ctx.Value(app.Ctx("companyID")).(string) {
+			return &output, status.Error(codes.PermissionDenied, "its not your company")
+		}
+	}
+
+	// access validation
+	{
+		accessModel := model.Access{}
+		accessModel.Pb.Id = in.GetAccessId()
+		err = accessModel.Get(ctx, u.Db)
+		if err != nil {
+			return &output, err
+		}
+	}
+
+	accessGroup := model.AccessGroup{}
+	accessGroup.AccessID = in.GetAccessId()
+	accessGroup.GroupID = in.GetGroupId()
+	err = accessGroup.Get(ctx, u.Db)
+	if err != nil {
+		return &output, err
+	}
+
+	err = accessGroup.Revoke(ctx, u.Db)
+	if err != nil {
+		return &output, err
+	}
 
 	output.Message = "Success"
 	return &output, nil

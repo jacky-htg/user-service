@@ -14,6 +14,21 @@ type Access struct {
 	Pb users.Access
 }
 
+// Get Access
+func (u *Access) Get(ctx context.Context, db *sql.DB) error {
+	err := db.QueryRowContext(ctx, `SELECT id, name FROM access WHERE id = $1`, u.Pb.GetId()).Scan(&u.Pb.Id, &u.Pb.Name)
+
+	if err == sql.ErrNoRows {
+		return status.Errorf(codes.NotFound, "Query Raw: %v", err)
+	}
+
+	if err != nil {
+		return status.Errorf(codes.Internal, "Query Raw: %v", err)
+	}
+
+	return nil
+}
+
 // GetRoot Access
 func (u *Access) GetRoot(ctx context.Context, tx *sql.Tx, withChildren bool) error {
 	err := tx.QueryRowContext(ctx, `SELECT id, name FROM access WHERE name = 'root'`).Scan(&u.Pb.Id, &u.Pb.Name)

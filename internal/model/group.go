@@ -34,7 +34,8 @@ func (u *Group) Get(ctx context.Context, db *sql.DB) error {
 		FROM groups 
 		LEFT JOIN access_groups ON groups.id = access_groups.group_id
 		LEFT JOIN access ON access_groups.access_id = access.id 
-		WHERE groups.id = $1`
+		WHERE groups.id = $1
+		GROUP BY groups.id, groups.company_id, groups.name, groups.is_mutable`
 	stmt, err := db.PrepareContext(ctx, query)
 	if err != nil {
 		return status.Errorf(codes.Internal, "Prepare statement: %v", err)
