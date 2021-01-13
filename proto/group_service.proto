@@ -8,11 +8,12 @@ import "generic_message.proto";
 
 message ListGroupRequest {
   Pagination pagination = 1;
+  string company_id = 2;
 }
 
 message GroupPaginationResponse {
   Pagination pagination = 1;
-  uint32 count = 2;
+  uint32 count = 3;
 }
 
 message ListGroupResponse {

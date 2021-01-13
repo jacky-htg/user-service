@@ -3,6 +3,7 @@ package service
 import (
 	"context"
 	"database/sql"
+	"encoding/json"
 	"user-service/internal/model"
 	"user-service/internal/pkg/app"
 	"user-service/internal/pkg/db/redis"
@@ -189,6 +190,50 @@ func (u *Group) Delete(ctx context.Context, in *users.Id) (*users.Boolean, error
 
 // List Group
 func (u *Group) List(in *users.ListGroupRequest, stream users.GroupService_ListServer) error {
+	ctx := stream.Context()
+	ctx, err := getMetadata(ctx)
+	if err != nil {
+		return err
+	}
+
+	var groupModel model.Group
+	query, paramQueries, paginationResponse, err := groupModel.ListQuery(ctx, u.Db, in)
+
+	rows, err := u.Db.QueryContext(ctx, query, paramQueries...)
+	if err != nil {
+		return status.Error(codes.Internal, err.Error())
+	}
+	defer rows.Close()
+	paginationResponse.Pagination = in.GetPagination()
+
+	for rows.Next() {
+		err := contextError(ctx)
+		if err != nil {
+			return err
+		}
+
+		var tmpAccess string
+		var pbGroup users.Group
+		err = rows.Scan(&pbGroup.Id, &pbGroup.CompanyId, &pbGroup.Name, &pbGroup.IsMutable, &tmpAccess)
+		if err != nil {
+			return err
+		}
+
+		err = json.Unmarshal([]byte(tmpAccess), &pbGroup.Access)
+		if err != nil {
+			return status.Errorf(codes.Internal, "unmarshal access: %v", err)
+		}
+
+		res := &users.ListGroupResponse{
+			Pagination: paginationResponse,
+			Group:      &pbGroup,
+		}
+
+		err = stream.Send(res)
+		if err != nil {
+			return status.Errorf(codes.Unknown, "cannot send stream response: %v", err)
+		}
+	}
 	return nil
 }
 
