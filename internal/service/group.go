@@ -105,6 +105,37 @@ func (u *Group) Update(ctx context.Context, in *users.Group) (*users.Group, erro
 // View Group
 func (u *Group) View(ctx context.Context, in *users.Id) (*users.Group, error) {
 	var groupModel model.Group
+	var err error
+
+	// basic validation
+	{
+		if len(in.GetId()) == 0 {
+			return &groupModel.Pb, status.Error(codes.InvalidArgument, "Please supply valid id")
+		}
+		groupModel.Pb.Id = in.GetId()
+	}
+
+	ctx, err = getMetadata(ctx)
+	if err != nil {
+		return &groupModel.Pb, err
+	}
+
+	// get user login
+	var userLogin model.User
+	userLogin.Pb.Id = ctx.Value(app.Ctx("userID")).(string)
+	err = userLogin.Get(ctx, u.Db)
+	if err != nil {
+		return &groupModel.Pb, err
+	}
+
+	err = groupModel.Get(ctx, u.Db)
+	if err != nil {
+		return &groupModel.Pb, err
+	}
+
+	if userLogin.Pb.GetCompanyId() != groupModel.Pb.GetCompanyId() {
+		return &groupModel.Pb, status.Error(codes.Unauthenticated, "its not your company")
+	}
 
 	return &groupModel.Pb, nil
 }
@@ -113,6 +144,44 @@ func (u *Group) View(ctx context.Context, in *users.Id) (*users.Group, error) {
 func (u *Group) Delete(ctx context.Context, in *users.Id) (*users.Boolean, error) {
 	var output users.Boolean
 	output.Boolean = false
+
+	var groupModel model.Group
+	var err error
+
+	// basic validation
+	{
+		if len(in.GetId()) == 0 {
+			return &output, status.Error(codes.InvalidArgument, "Please supply valid id")
+		}
+		groupModel.Pb.Id = in.GetId()
+	}
+
+	ctx, err = getMetadata(ctx)
+	if err != nil {
+		return &output, err
+	}
+
+	// get user login
+	var userLogin model.User
+	userLogin.Pb.Id = ctx.Value(app.Ctx("userID")).(string)
+	err = userLogin.Get(ctx, u.Db)
+	if err != nil {
+		return &output, err
+	}
+
+	err = groupModel.Get(ctx, u.Db)
+	if err != nil {
+		return &output, err
+	}
+
+	if userLogin.Pb.GetCompanyId() != groupModel.Pb.GetCompanyId() {
+		return &output, status.Error(codes.Unauthenticated, "its not your company")
+	}
+
+	err = groupModel.Delete(ctx, u.Db)
+	if err != nil {
+		return &output, err
+	}
 
 	output.Boolean = true
 	return &output, nil
