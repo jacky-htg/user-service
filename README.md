@@ -16,7 +16,7 @@ user service using grpc go, postgresql and redis. The service is designed to be 
 - [X] Employees
 - [X] Company Features
 - [X] Users
-- [ ] Groups
+- [X] Groups
 - [X] Auths
 - [ ] Role Base Access Control (RBAC)
 
@@ -46,9 +46,9 @@ user service using grpc go, postgresql and redis. The service is designed to be 
 
 ### Users, Groups, Access and RBAC
 - [X] Users CRUD
-- [ ] Group CRUD
+- [X] Group CRUD
 - [X] List Access
-- [ ] Multi users, multi roles and multi access
+- [X] Multi users
 - [ ] One role can be assigned multi access
 - [ ] Role Base Access Control (RBAC)
 

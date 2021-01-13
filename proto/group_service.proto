@@ -17,7 +17,7 @@ message GroupPaginationResponse {
 
 message ListGroupResponse {
   GroupPaginationResponse pagination = 1;
-  repeated Group groups = 2; 
+  Group group = 2; 
 }
 
 message GrantAccessRequest {
@@ -30,7 +30,7 @@ service GroupService {
   rpc Update(Group) returns (Group) {}
   rpc View(Id) returns (Group) {}
   rpc Delete(Id) returns (Boolean) {}
-  rpc List(ListGroupRequest) returns (ListGroupResponse) {}
+  rpc List(ListGroupRequest) returns (stream ListGroupResponse) {}
   rpc GrantAccess(GrantAccessRequest) returns (Message) {}
   rpc RevokeAccess(GrantAccessRequest) returns (Message) {}
 }

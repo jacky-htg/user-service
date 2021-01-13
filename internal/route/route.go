@@ -40,4 +40,6 @@ func GrpcRoute(grpcServer *grpc.Server, db *sql.DB, log *logrus.Entry, cache *re
 	accessServer := service.Access{Db: db, Cache: cache}
 	users.RegisterAccessServiceServer(grpcServer, &accessServer)
 
+	groupServer := service.Group{Db: db, Cache: cache}
+	users.RegisterGroupServiceServer(grpcServer, &groupServer)
 }
