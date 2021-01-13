@@ -8,6 +8,7 @@ user service using grpc go, postgresql and redis. The service is designed to be 
 - make migrate
 - make seed
 - make server
+- You can test the service using `go run client/main.go` and select the test case on file client/main.go
 
 ## Features
 - [X] Companies
