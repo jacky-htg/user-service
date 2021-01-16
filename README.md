@@ -1,5 +1,5 @@
 # user-service
-user service using grpc go, postgresql and redis. The service is designed to be accessed by the internal network so that the grpc connection used is an insecure connection.
+user service using grpc go, postgresql and redis. The service is designed to be accessed by the internal network so that the grpc connection used is an insecure connection. This service is part of ERP Microservices.
 
 ## Get Started
 - git clone git@github.com:jacky-htg/user-service.git
@@ -69,5 +69,5 @@ user service using grpc go, postgresql and redis. The service is designed to be 
 [The license of application is GPL-3.0](https://github.com/jacky-htg/user-service/blob/main/LICENSE), You can use this apllication for commercial use, distribution or modification. But there is no liability and warranty. Please read the license details carefully.
 
 ## Link Repository
-- [API Gateway for Inventory](https://github.com/jacky-htg/api-gateway-service)
+- [API Gateway for ERP](https://github.com/jacky-htg/api-gateway-service)
 - [Simple gRPC Skeleton](https://github.com/jacky-htg/grpc-skeleton)
