@@ -53,7 +53,7 @@ user service using grpc go, postgresql and redis. The service is designed to be 
 - [X] One role can be assigned multi access
 - [X] Role Base Access Control (RBAC)
 
-### Features
+### Company Features
 - [X] List Features
 - [X] List Package Feature
 - [X] View Package Feature
