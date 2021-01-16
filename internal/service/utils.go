@@ -3,6 +3,7 @@ package service
 import (
 	"context"
 	"math/rand"
+	"regexp"
 	"time"
 	"user-service/internal/pkg/app"
 
@@ -81,4 +82,30 @@ func generateRandomPassword() string {
 	str := string(buf)
 
 	return str
+}
+
+func checkStrongPassword(password string) error {
+	if len(password) < 10 {
+		return status.Error(codes.InvalidArgument, "password min 10 character")
+	}
+
+	num := `[0-9]{1}`
+	az := `[a-z]{1}`
+	AZ := `[A-Z]{1}`
+	symbol := `[!@#~$%^&*()+|_]{1}`
+
+	if b, err := regexp.MatchString(num, password); !b || err != nil {
+		return status.Errorf(codes.InvalidArgument, "password need num :%v", err)
+	}
+	if b, err := regexp.MatchString(az, password); !b || err != nil {
+		return status.Errorf(codes.InvalidArgument, "password need a_z :%v", err)
+	}
+	if b, err := regexp.MatchString(AZ, password); !b || err != nil {
+		return status.Errorf(codes.InvalidArgument, "password need A_Z :%v", err)
+	}
+	if b, err := regexp.MatchString(symbol, password); !b || err != nil {
+		return status.Errorf(codes.InvalidArgument, "password need symbol :%v", err)
+	}
+
+	return nil
 }

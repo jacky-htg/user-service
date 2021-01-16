@@ -98,11 +98,14 @@ func (u *Auth) ResetPassword(ctx context.Context, in *users.ResetPasswordRequest
 		return &output, status.Error(codes.InvalidArgument, "new password not match with re password")
 	}
 
-	// TODO : check strong password
+	err := checkStrongPassword(in.GetNewPassword())
+	if err != nil {
+		return &output, err
+	}
 
 	var requestPasswordModel model.RequestPassword
 	requestPasswordModel.Pb.Id = in.GetToken()
-	err := requestPasswordModel.Get(ctx, u.Db)
+	err = requestPasswordModel.Get(ctx, u.Db)
 	if err != nil {
 		return &output, err
 	}
@@ -173,7 +176,10 @@ func (u *Auth) ChangePassword(ctx context.Context, in *users.ChangePasswordReque
 		return &output, status.Error(codes.InvalidArgument, "new password not match with re password")
 	}
 
-	// TODO : check strong password
+	err = checkStrongPassword(in.GetNewPassword())
+	if err != nil {
+		return &output, err
+	}
 
 	var userModel model.User
 	userModel.Pb.Id = ctx.Value(app.Ctx("userID")).(string)
