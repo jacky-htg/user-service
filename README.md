@@ -59,7 +59,7 @@ user service using grpc go, postgresql and redis. The service is designed to be 
 - [X] View Package Feature
 - [X] Company Feature Setting : The company can use the whole of features, or cherry pick part of features.
 
-## How To Contrubute
+## How To Contribute
 - Give star or clone and fork the repository
 - Report the bug
 - Submit issue for request of enhancement
