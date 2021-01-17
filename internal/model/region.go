@@ -44,14 +44,14 @@ func (u *Region) Get(ctx context.Context, db *sql.DB) error {
 
 // GetByCode Region
 func (u *Region) GetByCode(ctx context.Context, db *sql.DB) error {
-	query := `SELECT id, company_id, name, code FROM regions WHERE code = $1`
+	query := `SELECT id, company_id, name, code FROM regions WHERE company_id = $1 AND code = $2`
 	stmt, err := db.PrepareContext(ctx, query)
 	if err != nil {
 		return status.Errorf(codes.Internal, "Prepare statement get region by code: %v", err)
 	}
 	defer stmt.Close()
 
-	err = stmt.QueryRowContext(ctx, u.Pb.GetCode()).Scan(&u.Pb.Id, &u.Pb.CompanyId, &u.Pb.Name, &u.Pb.Code)
+	err = stmt.QueryRowContext(ctx, ctx.Value(app.Ctx("companyID")).(string), u.Pb.GetCode()).Scan(&u.Pb.Id, &u.Pb.CompanyId, &u.Pb.Name, &u.Pb.Code)
 
 	if err == sql.ErrNoRows {
 		return status.Errorf(codes.NotFound, "Query Raw get region by code: %v", err)

@@ -32,12 +32,16 @@ func (u *Region) Create(ctx context.Context, in *users.Region) (*users.Region, e
 		}
 	}
 
+	ctx, err = getMetadata(ctx)
+	if err != nil {
+		return &output, err
+	}
+
 	// code validation
 	{
 		if len(in.GetCode()) == 0 {
 			return &output, status.Error(codes.InvalidArgument, "Please supply valid code")
 		}
-
 		regionModel = model.Region{}
 		regionModel.Pb.Code = in.GetCode()
 		err = regionModel.GetByCode(ctx, u.Db)
@@ -50,11 +54,6 @@ func (u *Region) Create(ctx context.Context, in *users.Region) (*users.Region, e
 		if len(regionModel.Pb.GetId()) > 0 {
 			return &output, status.Error(codes.AlreadyExists, "code must be unique")
 		}
-	}
-
-	ctx, err = getMetadata(ctx)
-	if err != nil {
-		return &output, err
 	}
 
 	// company validation

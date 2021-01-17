@@ -56,6 +56,11 @@ func (u *Branch) Create(ctx context.Context, in *users.Branch) (*users.Branch, e
 		}
 	}
 
+	ctx, err = getMetadata(ctx)
+	if err != nil {
+		return &output, err
+	}
+
 	// code validation
 	{
 		if len(in.GetCode()) == 0 {
@@ -74,11 +79,6 @@ func (u *Branch) Create(ctx context.Context, in *users.Branch) (*users.Branch, e
 		if len(branchModel.Pb.GetId()) > 0 {
 			return &output, status.Error(codes.AlreadyExists, "code must be unique")
 		}
-	}
-
-	ctx, err = getMetadata(ctx)
-	if err != nil {
-		return &output, err
 	}
 
 	// company validation

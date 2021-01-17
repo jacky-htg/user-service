@@ -38,11 +38,12 @@ var migrations = []darwin.Migration{
 				id char(36) NOT NULL PRIMARY KEY,
 				company_id char(36) NOT NULL,
 				name varchar(100) NOT NULL,
-				code char(4) NOT NULL UNIQUE,
+				code char(4) NOT NULL,
 				created_at timestamp NOT NULL DEFAULT NOW(),
 				created_by char(36) NOT NULL,
 				updated_at timestamp NOT NULL DEFAULT NOW(),
 				updated_by char(36) NOT NULL,
+				UNIQUE(company_id, code),
 				CONSTRAINT fk_regions_to_companies FOREIGN KEY(company_id) REFERENCES companies(id)
 			);
 		`,
@@ -55,7 +56,7 @@ var migrations = []darwin.Migration{
 				id char(36) NOT NULL PRIMARY KEY,
 				company_id char(36) NOT NULL,
 				name varchar(100) NOT NULL,
-				code char(4) NOT NULL UNIQUE,
+				code char(4) NOT NULL,
 				address varchar NOT NULL,
 				city varchar(100) NOT NULL,
 				province varchar(100) NOT NULL,
@@ -67,6 +68,7 @@ var migrations = []darwin.Migration{
 				created_by char(36) NOT NULL,
 				updated_at timestamp NOT NULL DEFAULT NOW(),
 				updated_by char(36) NOT NULL,
+				UNIQUE(company_id, code),
 				CONSTRAINT fk_branches_to_companies FOREIGN KEY(company_id) REFERENCES companies(id)
 			);
 		`,

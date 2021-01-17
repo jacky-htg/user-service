@@ -62,7 +62,7 @@ func (u *Branch) GetByCode(ctx context.Context, db *sql.DB) error {
 	FROM branches 
 	JOIN branches_regions ON branches.id = branches_regions.branch_id
 	JOIN regions ON branches_regions.region_id = regions.id
-	WHERE branches.code = $1`
+	WHERE branches.company_id = $1 AND branches.code = $2`
 	stmt, err := db.PrepareContext(ctx, query)
 	if err != nil {
 		return status.Errorf(codes.Internal, "Prepare statement get branch by code: %v", err)
@@ -70,7 +70,7 @@ func (u *Branch) GetByCode(ctx context.Context, db *sql.DB) error {
 	defer stmt.Close()
 
 	var npwp sql.NullString
-	err = stmt.QueryRowContext(ctx, u.Pb.GetCode()).Scan(
+	err = stmt.QueryRowContext(ctx, ctx.Value(app.Ctx("companyID")).(string), u.Pb.GetCode()).Scan(
 		&u.Pb.Id, &u.Pb.CompanyId, &u.Pb.RegionId, &u.Pb.Name, &u.Pb.Code, &u.Pb.Address, &u.Pb.City, &u.Pb.Province,
 		&npwp, &u.Pb.Phone, &u.Pb.Pic, &u.Pb.PicPhone,
 	)
