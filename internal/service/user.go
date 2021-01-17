@@ -3,13 +3,16 @@ package service
 import (
 	"context"
 	"database/sql"
+	"os"
 	"regexp"
 	"user-service/internal/model"
 	"user-service/internal/pkg/app"
 	"user-service/internal/pkg/db/redis"
+	"user-service/internal/pkg/email"
 	"user-service/internal/pkg/token"
 	users "user-service/pb"
 
+	"github.com/sendgrid/sendgrid-go/helpers/mail"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
@@ -200,7 +203,25 @@ func (u *User) Create(ctx context.Context, in *users.User) (*users.User, error) 
 		return &output, err
 	}
 
-	// TODO : send email to inform username and password
+	// send email registration info
+	from := mail.NewEmail(os.Getenv("SENDGRID_FROM_NAME"), os.Getenv("SENDGRID_FROM_EMAIL"))
+	p := mail.NewPersonalization()
+	tos := []*mail.Email{
+		mail.NewEmail(userModel.Pb.GetName(), userModel.Pb.GetEmail()),
+	}
+	p.AddTos(tos...)
+
+	p.SetDynamicTemplateData("name", userModel.Pb.GetName())
+	p.SetDynamicTemplateData("username", userModel.Pb.GetUsername())
+	p.SetDynamicTemplateData("password", userModel.Password)
+	p.SetDynamicTemplateData("app_name", os.Getenv("APP_NAME"))
+	p.SetDynamicTemplateData("cs_email", os.Getenv("CUSTOMERSERVICE_EMAIL"))
+	p.SetDynamicTemplateData("cs_phone", os.Getenv("CUSTOMERSERVICE_PHONE"))
+
+	err = email.SendMailV3(from, p, os.Getenv("SENDGRID_TEMPLATE_NEW_USER"))
+	if err != nil {
+		return &output, status.Errorf(codes.Internal, "send new account email: %v", err)
+	}
 
 	return &userModel.Pb, nil
 }

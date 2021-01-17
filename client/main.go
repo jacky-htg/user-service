@@ -21,9 +21,9 @@ func main() {
 
 	ctx := context.Background()
 
-	auth := users.NewAuthServiceClient(conn)
+	// auth := users.NewAuthServiceClient(conn)
 	// user := users.NewUserServiceClient(conn)
-	// company := users.NewCompanyServiceClient(conn)
+	company := users.NewCompanyServiceClient(conn)
 	// region := users.NewRegionServiceClient(conn)
 	// branch := users.NewBranchServiceClient(conn)
 	// employee := users.NewEmployeeServiceClient(conn)
@@ -33,7 +33,7 @@ func main() {
 	// group := users.NewGroupServiceClient(conn)
 
 	// ctx = service.Login(ctx, auth)
-	service.ForgotPassword(ctx, auth)
+	// service.ForgotPassword(ctx, auth)
 	// service.ResetPassword(ctx, auth)
 	// service.ChangePassword(ctx, auth)
 	// service.IsAuth(ctx, auth)
@@ -43,7 +43,7 @@ func main() {
 	// service.DeleteUser(ctx, user)
 	// service.GetUserByToken(ctx, user)
 	// service.ListUser(ctx, user)
-	// service.Registration(ctx, company)
+	service.Registration(ctx, company)
 	// service.UpdateCompany(ctx, company)
 	// service.ViewCompany(ctx, company)
 	// service.CreateRegion(ctx, region)

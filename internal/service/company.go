@@ -3,13 +3,16 @@ package service
 import (
 	"context"
 	"database/sql"
+	"os"
 	"regexp"
 	users "user-service/pb"
 
 	"user-service/internal/model"
 	"user-service/internal/pkg/app"
 	"user-service/internal/pkg/db/redis"
+	"user-service/internal/pkg/email"
 
+	"github.com/sendgrid/sendgrid-go/helpers/mail"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
@@ -192,7 +195,27 @@ func (u *Company) Registration(ctx context.Context, in *users.CompanyRegistratio
 	tx.Commit()
 
 	// TODO : currenly we accept logo url, next we should accept logo file and process to upload log
-	// TODO : send email to inform username and password
+
+	// send email registration info
+	from := mail.NewEmail(os.Getenv("SENDGRID_FROM_NAME"), os.Getenv("SENDGRID_FROM_EMAIL"))
+	p := mail.NewPersonalization()
+	tos := []*mail.Email{
+		mail.NewEmail(companyRegisterModel.Pb.GetUser().GetName(), companyRegisterModel.Pb.GetUser().GetEmail()),
+	}
+	p.AddTos(tos...)
+
+	p.SetDynamicTemplateData("name", companyRegisterModel.Pb.GetUser().GetName())
+	p.SetDynamicTemplateData("username", companyRegisterModel.Pb.GetUser().GetUsername())
+	p.SetDynamicTemplateData("password", companyRegisterModel.Password)
+	p.SetDynamicTemplateData("app_name", os.Getenv("APP_NAME"))
+	p.SetDynamicTemplateData("cs_email", os.Getenv("CUSTOMERSERVICE_EMAIL"))
+	p.SetDynamicTemplateData("cs_phone", os.Getenv("CUSTOMERSERVICE_PHONE"))
+
+	err = email.SendMailV3(from, p, os.Getenv("SENDGRID_TEMPLATE_REGISTRATION"))
+	if err != nil {
+		return &output, status.Errorf(codes.Internal, "send registration email: %v", err)
+	}
+
 	return &companyRegisterModel.Pb, err
 }
 
