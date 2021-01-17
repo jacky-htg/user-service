@@ -3,15 +3,18 @@ package service
 import (
 	"context"
 	"database/sql"
+	"os"
 	"time"
 
 	"github.com/golang/protobuf/ptypes"
+	"github.com/sendgrid/sendgrid-go/helpers/mail"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
 	"user-service/internal/model"
 	"user-service/internal/pkg/app"
 	"user-service/internal/pkg/db/redis"
+	"user-service/internal/pkg/email"
 	"user-service/internal/pkg/token"
 	users "user-service/pb"
 )
@@ -72,7 +75,24 @@ func (u *Auth) ForgotPassword(ctx context.Context, in *users.ForgotPasswordReque
 		return &output, err
 	}
 
-	// TODO : send email change password
+	// send email link forgot password
+	from := mail.NewEmail(os.Getenv("SENDGRID_FROM_NAME"), os.Getenv("SENDGRID_FROM_EMAIL"))
+	p := mail.NewPersonalization()
+	tos := []*mail.Email{
+		mail.NewEmail(userModel.Pb.GetName(), userModel.Pb.GetEmail()),
+	}
+	p.AddTos(tos...)
+
+	p.SetDynamicTemplateData("name", userModel.Pb.GetName())
+	p.SetDynamicTemplateData("url", os.Getenv("APP_HOST")+"/change-password/"+requestPasswordModel.Pb.GetId())
+	p.SetDynamicTemplateData("app_name", os.Getenv("APP_NAME"))
+	p.SetDynamicTemplateData("cs_email", os.Getenv("CUSTOMERSERVICE_EMAIL"))
+	p.SetDynamicTemplateData("cs_phone", os.Getenv("CUSTOMERSERVICE_PHONE"))
+
+	err = email.SendMailV3(from, p, os.Getenv("SENDGRID_TEMPLATE_FORGOT_PASSWORD"))
+	if err != nil {
+		return &output, status.Errorf(codes.Internal, "send link forgot password: %v", err)
+	}
 
 	output.Message = "Success"
 	return &output, nil

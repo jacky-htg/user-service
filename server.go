@@ -16,7 +16,7 @@ import (
 	"user-service/internal/route"
 )
 
-const defaultPort = "9001"
+const defaultPort = "8000"
 
 func main() {
 	// lookup and setup env

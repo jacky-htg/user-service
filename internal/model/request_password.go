@@ -20,14 +20,14 @@ type RequestPassword struct {
 
 // Create func
 func (u *RequestPassword) Create(ctx context.Context, db *sql.DB) error {
-
+	u.Pb.Id = uuid.New().String()
 	stmt, err := db.PrepareContext(ctx, `INSERT INTO request_passwords (id, user_id, created_at) VALUES ($1, $2, $3)`)
 	if err != nil {
 		return status.Errorf(codes.Internal, "prepare insert: %v", err)
 	}
 	defer stmt.Close()
 
-	_, err = stmt.ExecContext(ctx, uuid.New().String(), u.Pb.GetUserId(), time.Now().UTC())
+	_, err = stmt.ExecContext(ctx, u.Pb.GetId(), u.Pb.GetUserId(), time.Now().UTC())
 	if err != nil {
 		return status.Errorf(codes.Internal, "exec insert: %v", err)
 	}
