@@ -3,7 +3,7 @@ package service
 import (
 	"context"
 	"database/sql"
-	users "user-service/pb"
+	"user-service/pb/users"
 
 	"user-service/internal/model"
 	"user-service/internal/pkg/app"

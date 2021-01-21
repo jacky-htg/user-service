@@ -16,7 +16,7 @@ import (
 	"user-service/internal/pkg/db/redis"
 	"user-service/internal/pkg/email"
 	"user-service/internal/pkg/token"
-	users "user-service/pb"
+	"user-service/pb/users"
 )
 
 // Auth struct

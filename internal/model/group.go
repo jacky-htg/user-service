@@ -8,7 +8,7 @@ import (
 	"strings"
 	"time"
 	"user-service/internal/pkg/app"
-	users "user-service/pb"
+	"user-service/pb/users"
 
 	"github.com/golang/protobuf/ptypes"
 

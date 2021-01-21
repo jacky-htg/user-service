@@ -1,0 +1,31 @@
+syntax = "proto3";
+package wiradata.users;
+
+option go_package = "pb/users;users";
+
+import "users/region_message.proto";
+import "users/generic_message.proto";
+
+message ListRegionRequest {
+  Pagination pagination = 1;
+  string company_id = 2;
+}
+
+message RegionPaginationResponse {
+  Pagination pagination = 1;
+  string company_id = 2;
+  uint32 count = 3;
+}
+
+message ListRegionResponse {
+  RegionPaginationResponse pagination = 1;
+  Region region = 2; 
+}
+
+service RegionService {
+  rpc Create(Region) returns (Region) {}
+  rpc Update(Region) returns (Region) {}
+  rpc View(Id) returns (Region) {}
+  rpc Delete(Id) returns (Boolean) {}
+  rpc List(ListRegionRequest) returns (stream ListRegionResponse) {}
+}

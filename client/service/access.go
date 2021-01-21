@@ -3,7 +3,7 @@ package service
 import (
 	"context"
 	"log"
-	users "user-service/pb"
+	"user-service/pb/users"
 )
 
 // ViewAccessTree service client

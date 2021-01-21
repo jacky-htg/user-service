@@ -10,7 +10,7 @@ import (
 	"user-service/internal/pkg/db/redis"
 	"user-service/internal/pkg/email"
 	"user-service/internal/pkg/token"
-	users "user-service/pb"
+	"user-service/pb/users"
 
 	"github.com/sendgrid/sendgrid-go/helpers/mail"
 	"google.golang.org/grpc/codes"

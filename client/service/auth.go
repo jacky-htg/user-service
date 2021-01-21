@@ -4,7 +4,7 @@ import (
 	"context"
 	"log"
 	"user-service/internal/pkg/app"
-	users "user-service/pb"
+	"user-service/pb/users"
 )
 
 // Login service client

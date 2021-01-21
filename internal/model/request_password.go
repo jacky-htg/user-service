@@ -4,7 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"time"
-	users "user-service/pb"
+	"user-service/pb/users"
 
 	"github.com/golang/protobuf/ptypes"
 

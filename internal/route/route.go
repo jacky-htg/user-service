@@ -8,7 +8,7 @@ import (
 
 	"user-service/internal/pkg/db/redis"
 	"user-service/internal/service"
-	users "user-service/pb"
+	"user-service/pb/users"
 )
 
 // GrpcRoute func

@@ -1,0 +1,31 @@
+syntax = "proto3";
+package wiradata.users;
+
+option go_package = "pb/users;users";
+
+import "users/branch_message.proto";
+import "users/generic_message.proto";
+
+message ListBranchRequest {
+  Pagination pagination = 1;
+  string region_id = 2;
+}
+
+message BranchPaginationResponse {
+  Pagination pagination = 1;
+  string region_id = 2;
+  uint32 count = 3;
+}
+
+message ListBranchResponse {
+  BranchPaginationResponse pagination = 1;
+  Branch branch = 2; 
+}
+
+service BranchService {
+  rpc Create(Branch) returns (Branch) {}
+  rpc Update(Branch) returns (Branch) {}
+  rpc View(Id) returns (Branch) {}
+  rpc Delete(Id) returns (Boolean) {}
+  rpc List(ListBranchRequest) returns (stream ListBranchResponse) {}
+}

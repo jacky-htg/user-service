@@ -1,0 +1,26 @@
+syntax = "proto3";
+package wiradata.users;
+
+option go_package = "pb/users;users";
+
+import "google/protobuf/timestamp.proto";
+import "users/feature_message.proto";
+
+message Company {
+  string id = 1;
+  string name = 2;
+  string code = 3;
+  string address = 4;
+  string city = 5;
+  string province = 6;
+  string npwp = 7;
+  string phone = 8;
+  string pic = 9;
+  string pic_phone = 10;
+  string logo = 11;
+  EnumPackageOfFeature package_of_feature = 12;
+  repeated Feature features = 13;
+  google.protobuf.Timestamp created_at =  14;
+  google.protobuf.Timestamp updated_at = 15;
+  string updated_by = 16;
+}

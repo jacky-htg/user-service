@@ -4,7 +4,7 @@ import (
 	"context"
 	"io"
 	"log"
-	users "user-service/pb"
+	"user-service/pb/users"
 )
 
 // CreateEmployee service client

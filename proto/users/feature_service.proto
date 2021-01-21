@@ -1,0 +1,19 @@
+syntax = "proto3";
+package wiradata.users;
+
+option go_package = "pb/users;users";
+
+import "users/feature_message.proto";
+import "users/generic_message.proto";
+
+message ListFeatureResponse {Feature feature = 1;}
+message ListPackageFeatureResponse {PackageOfFeature package_of_feature = 1;}
+
+service FeatureService {
+  rpc List(Empty) returns (stream ListFeatureResponse) {}
+}
+
+service PackageFeatureService {
+  rpc View(Id) returns (PackageOfFeature) {}
+  rpc List(Empty) returns (stream ListPackageFeatureResponse) {} 
+}

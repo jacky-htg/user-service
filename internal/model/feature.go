@@ -3,7 +3,7 @@ package model
 import (
 	"context"
 	"database/sql"
-	users "user-service/pb"
+	"user-service/pb/users"
 
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"

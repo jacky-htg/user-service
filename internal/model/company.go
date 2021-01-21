@@ -5,7 +5,7 @@ import (
 	"database/sql"
 	"time"
 	"user-service/internal/pkg/app"
-	users "user-service/pb"
+	"user-service/pb/users"
 
 	"github.com/google/uuid"
 	"golang.org/x/crypto/bcrypt"

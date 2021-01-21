@@ -1,0 +1,11 @@
+syntax = "proto3";
+package wiradata.users;
+
+option go_package = "pb/users;users";
+
+import "users/access_message.proto";
+import "users/generic_message.proto";
+
+service AccessService {
+  rpc List(Empty) returns (Access) {}
+}

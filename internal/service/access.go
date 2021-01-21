@@ -5,7 +5,7 @@ import (
 	"database/sql"
 	"user-service/internal/model"
 	"user-service/internal/pkg/db/redis"
-	users "user-service/pb"
+	"user-service/pb/users"
 
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"

@@ -7,7 +7,7 @@ import (
 	"strings"
 	"time"
 	"user-service/internal/pkg/app"
-	users "user-service/pb"
+	"user-service/pb/users"
 
 	"github.com/google/uuid"
 	"google.golang.org/grpc/codes"

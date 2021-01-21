@@ -1,0 +1,19 @@
+syntax = "proto3";
+package wiradata.users;
+
+option go_package = "pb/users;users";
+
+import "users/company_message.proto";
+import "users/generic_message.proto";
+import "users/user_message.proto";
+
+message CompanyRegistration {
+  Company company = 1;
+  User user = 2;
+}
+ 
+service CompanyService {
+  rpc Registration(CompanyRegistration) returns (CompanyRegistration) {}
+  rpc Update(Company) returns (Company) {}
+  rpc View(Id) returns (Company) {}
+}

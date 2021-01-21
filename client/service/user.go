@@ -3,7 +3,7 @@ package service
 import (
 	"io"
 	"log"
-	users "user-service/pb"
+	"user-service/pb/users"
 
 	"golang.org/x/net/context"
 )

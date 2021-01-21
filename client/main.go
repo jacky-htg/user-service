@@ -7,7 +7,7 @@ import (
 	"google.golang.org/grpc"
 
 	"user-service/client/service"
-	users "user-service/pb"
+	"user-service/pb/users"
 )
 
 func main() {

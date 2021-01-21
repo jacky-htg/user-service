@@ -1,0 +1,34 @@
+syntax = "proto3";
+package wiradata.users;
+
+option go_package = "pb/users;users";
+
+import "users/user_message.proto";
+import "users/generic_message.proto";
+
+message ListUserRequest {
+  Pagination pagination = 1;
+  string company_id = 2;
+  string branch_id = 3;
+}
+
+message UserPaginationResponse {
+  Pagination pagination = 1;
+  string company_id = 2;
+  string branch_id = 3;
+  uint32 count = 4;
+}
+
+message ListUserResponse {
+  UserPaginationResponse pagination = 1;
+  User user = 2; 
+}
+
+service UserService {
+  rpc Create(User) returns (User) {}
+  rpc Update(User) returns (User) {}
+  rpc View(Id) returns (User) {}
+  rpc Delete(Id) returns (Boolean) {}
+  rpc List(ListUserRequest) returns (stream ListUserResponse) {}
+  rpc GetByToken(Empty) returns (User) {}
+}

@@ -5,7 +5,7 @@ import (
 	"database/sql"
 	"os"
 	"regexp"
-	users "user-service/pb"
+	"user-service/pb/users"
 
 	"user-service/internal/model"
 	"user-service/internal/pkg/app"
