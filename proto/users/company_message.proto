@@ -2,8 +2,9 @@ syntax = "proto3";
 package wiradata.users;
 
 option go_package = "pb/users;users";
+option java_package = "com.wiradata.erpapplication.users";
+option java_multiple_files = true;
 
-import "google/protobuf/timestamp.proto";
 import "users/feature_message.proto";
 
 message Company {
@@ -20,7 +21,7 @@ message Company {
   string logo = 11;
   EnumPackageOfFeature package_of_feature = 12;
   repeated Feature features = 13;
-  google.protobuf.Timestamp created_at =  14;
-  google.protobuf.Timestamp updated_at = 15;
+  string created_at =  14;
+  string updated_at = 15;
   string updated_by = 16;
 }

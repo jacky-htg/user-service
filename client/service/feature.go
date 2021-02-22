@@ -9,7 +9,7 @@ import (
 
 // ListFeature service client
 func ListFeature(ctx context.Context, feature users.FeatureServiceClient) {
-	stream, err := feature.List(setMetadata(ctx), &users.Empty{})
+	stream, err := feature.List(setMetadata(ctx), &users.MyEmpty{})
 	if err != nil {
 		log.Fatalf("Error when calling grpc service: %s", err)
 	}
@@ -29,7 +29,7 @@ func ListFeature(ctx context.Context, feature users.FeatureServiceClient) {
 
 // ListPackageFeature service client
 func ListPackageFeature(ctx context.Context, packageFeature users.PackageFeatureServiceClient) {
-	stream, err := packageFeature.List(setMetadata(ctx), &users.Empty{})
+	stream, err := packageFeature.List(setMetadata(ctx), &users.MyEmpty{})
 	if err != nil {
 		log.Fatalf("Error when calling grpc service: %s", err)
 	}

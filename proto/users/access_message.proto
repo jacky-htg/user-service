@@ -2,15 +2,15 @@ syntax = "proto3";
 package wiradata.users;
 
 option go_package = "pb/users;users";
-
-import "google/protobuf/timestamp.proto";
+option java_package = "com.wiradata.erpapplication.users";
+option java_multiple_files = true;
 
 message Access {
   string id = 1;
   string name = 2;
   repeated Access childrens = 3;
-  google.protobuf.Timestamp created_at =  4;
+  string created_at =  4;
   string created_by = 5;
-  google.protobuf.Timestamp updated_at = 6;
+  string updated_at = 6;
   string updated_by = 7;
 }

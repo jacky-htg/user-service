@@ -61,7 +61,7 @@ func ChangePassword(ctx context.Context, auth users.AuthServiceClient) {
 
 // IsAuth service client
 func IsAuth(ctx context.Context, auth users.AuthServiceClient) {
-	response, err := auth.IsAuth(setMetadata(ctx), &users.String{String_: "asal"})
+	response, err := auth.IsAuth(setMetadata(ctx), &users.MyString{String_: "asal"})
 
 	if err != nil {
 		log.Fatalf("Error when calling grpc service: %s", err)

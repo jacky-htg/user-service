@@ -2,10 +2,12 @@ syntax = "proto3";
 package wiradata.users;
 
 option go_package = "pb/users;users";
+option java_package = "com.wiradata.erpapplication.users";
+option java_multiple_files = true;
 
 import "users/access_message.proto";
 import "users/generic_message.proto";
 
 service AccessService {
-  rpc List(Empty) returns (Access) {}
+  rpc List(MyEmpty) returns (Access) {}
 }

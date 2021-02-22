@@ -9,7 +9,6 @@ import (
 	"user-service/internal/pkg/app"
 	"user-service/pb/users"
 
-	"github.com/golang/protobuf/ptypes"
 	"github.com/google/uuid"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -129,11 +128,7 @@ func (u *Employee) Create(ctx context.Context, db *sql.DB) error {
 		return status.Errorf(codes.Internal, "Exec insert employee: %v", err)
 	}
 
-	u.Pb.CreatedAt, err = ptypes.TimestampProto(now)
-	if err != nil {
-		return status.Errorf(codes.Internal, "convert created by: %v", err)
-	}
-
+	u.Pb.CreatedAt = now.String()
 	u.Pb.UpdatedAt = u.Pb.CreatedAt
 
 	return nil
@@ -176,10 +171,7 @@ func (u *Employee) Update(ctx context.Context, db *sql.DB) error {
 		return status.Errorf(codes.Internal, "Exec update employee: %v", err)
 	}
 
-	u.Pb.UpdatedAt, err = ptypes.TimestampProto(now)
-	if err != nil {
-		return status.Errorf(codes.Internal, "convert updated by: %v", err)
-	}
+	u.Pb.UpdatedAt = now.String()
 
 	return nil
 }

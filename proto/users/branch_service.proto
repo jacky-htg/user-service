@@ -2,6 +2,8 @@ syntax = "proto3";
 package wiradata.users;
 
 option go_package = "pb/users;users";
+option java_package = "com.wiradata.erpapplication.users";
+option java_multiple_files = true;
 
 import "users/branch_message.proto";
 import "users/generic_message.proto";
@@ -26,6 +28,6 @@ service BranchService {
   rpc Create(Branch) returns (Branch) {}
   rpc Update(Branch) returns (Branch) {}
   rpc View(Id) returns (Branch) {}
-  rpc Delete(Id) returns (Boolean) {}
+  rpc Delete(Id) returns (MyBoolean) {}
   rpc List(ListBranchRequest) returns (stream ListBranchResponse) {}
 }

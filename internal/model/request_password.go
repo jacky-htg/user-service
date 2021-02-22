@@ -6,8 +6,6 @@ import (
 	"time"
 	"user-service/pb/users"
 
-	"github.com/golang/protobuf/ptypes"
-
 	"github.com/google/uuid"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -55,10 +53,7 @@ func (u *RequestPassword) Get(ctx context.Context, db *sql.DB) error {
 		return status.Errorf(codes.Internal, "Query Raw: %v", err)
 	}
 
-	u.Pb.CreatedAt, err = ptypes.TimestampProto(createdAt)
-	if err != nil {
-		return status.Errorf(codes.Internal, "convert TimestampProto: %v", err)
-	}
+	u.Pb.CreatedAt = createdAt.String()
 
 	return nil
 }

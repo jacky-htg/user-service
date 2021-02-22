@@ -142,8 +142,8 @@ func (u *Group) View(ctx context.Context, in *users.Id) (*users.Group, error) {
 }
 
 // Delete Group
-func (u *Group) Delete(ctx context.Context, in *users.Id) (*users.Boolean, error) {
-	var output users.Boolean
+func (u *Group) Delete(ctx context.Context, in *users.Id) (*users.MyBoolean, error) {
+	var output users.MyBoolean
 	output.Boolean = false
 
 	var groupModel model.Group

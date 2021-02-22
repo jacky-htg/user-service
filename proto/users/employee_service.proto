@@ -2,6 +2,8 @@ syntax = "proto3";
 package wiradata.users;
 
 option go_package = "pb/users;users";
+option java_package = "com.wiradata.erpapplication.users";
+option java_multiple_files = true;
 
 import "users/employee_message.proto";
 import "users/generic_message.proto";
@@ -28,6 +30,6 @@ service EmployeeService {
   rpc Create(Employee) returns (Employee) {}
   rpc Update(Employee) returns (Employee) {}
   rpc View(Id) returns (Employee) {}
-  rpc Delete(Id) returns (Boolean) {}
+  rpc Delete(Id) returns (MyBoolean) {}
   rpc List(ListEmployeeRequest) returns (stream ListEmployeeResponse) {}
 }

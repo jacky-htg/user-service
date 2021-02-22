@@ -6,7 +6,6 @@ import (
 	"os"
 	"time"
 
-	"github.com/golang/protobuf/ptypes"
 	"github.com/sendgrid/sendgrid-go/helpers/mail"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -134,9 +133,9 @@ func (u *Auth) ResetPassword(ctx context.Context, in *users.ResetPasswordRequest
 		return &output, status.Error(codes.PermissionDenied, "token has been used")
 	}
 
-	createdAt, err := ptypes.Timestamp(requestPasswordModel.Pb.GetCreatedAt())
+	createdAt, err := time.Parse("2006-01-02T15:04:05.000Z", requestPasswordModel.Pb.GetCreatedAt())
 	if err != nil {
-		return &output, status.Errorf(codes.Internal, "ptypes timestamp: %v", err)
+		return &output, status.Errorf(codes.Internal, "parse timestamp: %v", err)
 	}
 
 	if time.Now().UTC().After(createdAt.Add(time.Hour * 2 * 24)) {
@@ -228,8 +227,8 @@ func (u *Auth) ChangePassword(ctx context.Context, in *users.ChangePasswordReque
 }
 
 // IsAuth service
-func (u *Auth) IsAuth(ctx context.Context, in *users.String) (*users.Boolean, error) {
-	output := users.Boolean{Boolean: false}
+func (u *Auth) IsAuth(ctx context.Context, in *users.MyString) (*users.MyBoolean, error) {
+	output := users.MyBoolean{Boolean: false}
 
 	ctx, err := getMetadata(ctx)
 	if err != nil {

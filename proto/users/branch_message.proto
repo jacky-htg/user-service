@@ -2,8 +2,8 @@ syntax = "proto3";
 package wiradata.users;
 
 option go_package = "pb/users;users";
-
-import "google/protobuf/timestamp.proto";
+option java_package = "com.wiradata.erpapplication.users";
+option java_multiple_files = true;
 
 message Branch {
   string id = 1;
@@ -18,8 +18,8 @@ message Branch {
   string phone = 10;
   string pic = 11;
   string pic_phone = 12;
-  google.protobuf.Timestamp created_at =  13;
+  string created_at =  13;
   string created_by = 14;
-  google.protobuf.Timestamp updated_at = 15;
+  string updated_at = 15;
   string updated_by = 16;
 }

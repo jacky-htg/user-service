@@ -80,7 +80,7 @@ func ListUser(ctx context.Context, user users.UserServiceClient) {
 
 // GetUserByToken service client
 func GetUserByToken(ctx context.Context, user users.UserServiceClient) {
-	response, err := user.GetByToken(setMetadataToken(ctx), &users.Empty{})
+	response, err := user.GetByToken(setMetadataToken(ctx), &users.MyEmpty{})
 
 	if err != nil {
 		log.Fatalf("Error when calling grpc service: %s", err)

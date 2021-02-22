@@ -16,7 +16,7 @@ type Feature struct {
 }
 
 // List feature
-func (u *Feature) List(in *users.Empty, stream users.FeatureService_ListServer) error {
+func (u *Feature) List(in *users.MyEmpty, stream users.FeatureService_ListServer) error {
 	ctx := stream.Context()
 	rows, err := u.Db.QueryContext(ctx, `SELECT id, name from features`)
 	if err != nil {

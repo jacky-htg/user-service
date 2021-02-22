@@ -393,8 +393,8 @@ func (u *User) View(ctx context.Context, in *users.Id) (*users.User, error) {
 }
 
 // Delete func
-func (u *User) Delete(ctx context.Context, in *users.Id) (*users.Boolean, error) {
-	var output users.Boolean
+func (u *User) Delete(ctx context.Context, in *users.Id) (*users.MyBoolean, error) {
+	var output users.MyBoolean
 	output.Boolean = false
 	var err error
 	var userModel model.User
@@ -487,7 +487,7 @@ func (u *User) List(in *users.ListUserRequest, stream users.UserService_ListServ
 }
 
 // GetByToken func
-func (u *User) GetByToken(ctx context.Context, in *users.Empty) (*users.User, error) {
+func (u *User) GetByToken(ctx context.Context, in *users.MyEmpty) (*users.User, error) {
 	var output users.User
 	var err error
 	var userModel model.User

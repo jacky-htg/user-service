@@ -268,8 +268,8 @@ func (u *Employee) View(ctx context.Context, in *users.Id) (*users.Employee, err
 }
 
 // Delete Employee
-func (u *Employee) Delete(ctx context.Context, in *users.Id) (*users.Boolean, error) {
-	var output users.Boolean
+func (u *Employee) Delete(ctx context.Context, in *users.Id) (*users.MyBoolean, error) {
+	var output users.MyBoolean
 	output.Boolean = false
 	var err error
 	var employeeModel model.Employee

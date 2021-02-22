@@ -39,7 +39,7 @@ func (u *PackageFeature) View(ctx context.Context, in *users.Id) (*users.Package
 }
 
 // List PackageFeature
-func (u *PackageFeature) List(in *users.Empty, stream users.PackageFeatureService_ListServer) error {
+func (u *PackageFeature) List(in *users.MyEmpty, stream users.PackageFeatureService_ListServer) error {
 	ctx := stream.Context()
 	rows, err := u.Db.QueryContext(ctx, `SELECT id, name from package_features`)
 	if err != nil {

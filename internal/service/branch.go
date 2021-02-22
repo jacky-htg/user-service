@@ -307,8 +307,8 @@ func (u *Branch) View(ctx context.Context, in *users.Id) (*users.Branch, error) 
 }
 
 // Delete branch
-func (u *Branch) Delete(ctx context.Context, in *users.Id) (*users.Boolean, error) {
-	var output users.Boolean
+func (u *Branch) Delete(ctx context.Context, in *users.Id) (*users.MyBoolean, error) {
+	var output users.MyBoolean
 	output.Boolean = false
 	var err error
 	var branchModel model.Branch

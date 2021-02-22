@@ -9,8 +9,6 @@ import (
 	"user-service/internal/pkg/app"
 	"user-service/pb/users"
 
-	"github.com/golang/protobuf/ptypes"
-
 	"github.com/google/uuid"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -126,11 +124,7 @@ func (u *Branch) Create(ctx context.Context, db *sql.DB, tx *sql.Tx) error {
 		return status.Errorf(codes.Internal, "Exec insert branch: %v", err)
 	}
 
-	u.Pb.CreatedAt, err = ptypes.TimestampProto(now)
-	if err != nil {
-		return status.Errorf(codes.Internal, "convert created by: %v", err)
-	}
-
+	u.Pb.CreatedAt = now.String()
 	u.Pb.UpdatedAt = u.Pb.CreatedAt
 
 	branchesRegion := BranchesRegion{RegionID: u.Pb.GetRegionId(), BranchID: u.Pb.GetId()}

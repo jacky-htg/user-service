@@ -18,7 +18,7 @@ type Access struct {
 }
 
 // List access
-func (u *Access) List(ctx context.Context, in *users.Empty) (*users.Access, error) {
+func (u *Access) List(ctx context.Context, in *users.MyEmpty) (*users.Access, error) {
 	var accessModel model.Access
 
 	tx, err := u.Db.BeginTx(ctx, nil)

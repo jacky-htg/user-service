@@ -10,8 +10,6 @@ import (
 	"user-service/internal/pkg/app"
 	"user-service/pb/users"
 
-	"github.com/golang/protobuf/ptypes"
-
 	"github.com/google/uuid"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -69,11 +67,7 @@ func (u *Group) Create(ctx context.Context, db *sql.DB) error {
 	u.Pb.CreatedBy = ctx.Value(app.Ctx("userID")).(string)
 	u.Pb.UpdatedBy = ctx.Value(app.Ctx("userID")).(string)
 
-	u.Pb.CreatedAt, err = ptypes.TimestampProto(now)
-	if err != nil {
-		return err
-	}
-
+	u.Pb.CreatedAt = now.String()
 	u.Pb.UpdatedAt = u.Pb.CreatedAt
 
 	query := `
@@ -107,11 +101,7 @@ func (u *Group) Update(ctx context.Context, db *sql.DB) error {
 	var err error
 	now := time.Now().UTC()
 	u.Pb.UpdatedBy = ctx.Value(app.Ctx("userID")).(string)
-
-	u.Pb.UpdatedAt, err = ptypes.TimestampProto(now)
-	if err != nil {
-		return err
-	}
+	u.Pb.UpdatedAt = now.String()
 
 	query := `
 		UPDATE groups SET

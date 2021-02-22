@@ -2,6 +2,8 @@ syntax = "proto3";
 package wiradata.users;
 
 option go_package = "pb/users;users";
+option java_package = "com.wiradata.erpapplication.users";
+option java_multiple_files = true;
 
 import "users/group_message.proto";
 import "users/generic_message.proto";
@@ -30,7 +32,7 @@ service GroupService {
   rpc Create(Group) returns (Group) {}
   rpc Update(Group) returns (Group) {}
   rpc View(Id) returns (Group) {}
-  rpc Delete(Id) returns (Boolean) {}
+  rpc Delete(Id) returns (MyBoolean) {}
   rpc List(ListGroupRequest) returns (stream ListGroupResponse) {}
   rpc GrantAccess(GrantAccessRequest) returns (Message) {}
   rpc RevokeAccess(GrantAccessRequest) returns (Message) {}

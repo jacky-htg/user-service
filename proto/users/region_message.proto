@@ -2,8 +2,9 @@ syntax = "proto3";
 package wiradata.users;
 
 option go_package = "pb/users;users";
+option java_package = "com.wiradata.erpapplication.users";
+option java_multiple_files = true;
 
-import "google/protobuf/timestamp.proto";
 import "users/branch_message.proto";
 
 message Region {
@@ -12,8 +13,8 @@ message Region {
   string name = 3;
   string code = 4;
   repeated Branch branches = 5;
-  google.protobuf.Timestamp created_at =  6;
+  string created_at =  6;
   string created_by = 7;
-  google.protobuf.Timestamp updated_at = 8;
+  string updated_at = 8;
   string updated_by = 9;
 }

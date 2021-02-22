@@ -232,8 +232,8 @@ func (u *Region) View(ctx context.Context, in *users.Id) (*users.Region, error) 
 }
 
 // Delete Region
-func (u *Region) Delete(ctx context.Context, in *users.Id) (*users.Boolean, error) {
-	var output users.Boolean
+func (u *Region) Delete(ctx context.Context, in *users.Id) (*users.MyBoolean, error) {
+	var output users.MyBoolean
 	output.Boolean = false
 
 	var err error
