@@ -28,7 +28,7 @@ func Init() *logrus.Entry {
 
 	log := logrus.New()
 
-	logLocation := filepath.Join("./log/fluent-bit", os.Getenv("SERVICE_NAME"), fmt.Sprintf("%s.log", os.Getenv("SERVICE_NAME")))
+	logLocation := filepath.Join(os.Getenv("LOG_PATH")+"/log/fluent-bit", os.Getenv("SERVICE_NAME"), fmt.Sprintf("%s.log", os.Getenv("SERVICE_NAME")))
 
 	writer, _ := rotatelogs.New(
 		logLocation+".%Y%m%d",
