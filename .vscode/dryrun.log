@@ -1,5 +1,0 @@
-make --dry-run --always-make --keep-going --print-directory
-make: Entering directory `/Users/rijal/jackyhtg/erp-micro-services/user-service'
-protoc --proto_path=proto proto/users/*.proto --go_out=plugins=grpc:. 
-make: Leaving directory `/Users/rijal/jackyhtg/erp-micro-services/user-service'
- 
