@@ -17,6 +17,7 @@ import (
 type Branch struct {
 	Db    *sql.DB
 	Cache *redis.Cache
+	users.UnimplementedBranchServiceServer
 }
 
 // Create new branch

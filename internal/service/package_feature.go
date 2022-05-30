@@ -15,6 +15,7 @@ import (
 type PackageFeature struct {
 	Db    *sql.DB
 	Cache *redis.Cache
+	users.UnimplementedPackageFeatureServiceServer
 }
 
 // View Package Feature

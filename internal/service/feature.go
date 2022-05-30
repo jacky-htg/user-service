@@ -13,6 +13,7 @@ import (
 type Feature struct {
 	Db    *sql.DB
 	Cache *redis.Cache
+	users.UnimplementedFeatureServiceServer
 }
 
 // List feature

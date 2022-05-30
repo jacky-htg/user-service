@@ -17,6 +17,7 @@ import (
 type Region struct {
 	Db    *sql.DB
 	Cache *redis.Cache
+	users.UnimplementedRegionServiceServer
 }
 
 // Create new region

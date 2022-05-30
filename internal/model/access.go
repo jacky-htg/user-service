@@ -41,12 +41,12 @@ func (u *Access) GetRoot(ctx context.Context, tx *sql.Tx, withChildren bool) err
 		return status.Errorf(codes.Internal, "Query Raw: %v", err)
 	}
 
-	if withChildren {
+	/*if withChildren {
 		u.Pb.Childrens, err = u.GetByParent(ctx, tx, u.Pb.GetId())
 		if err != nil {
 			return err
 		}
-	}
+	}*/
 
 	return nil
 }
@@ -68,10 +68,11 @@ func (u *Access) GetByParent(ctx context.Context, tx *sql.Tx, parent string) ([]
 			return list, status.Error(codes.Internal, err.Error())
 		}
 
-		pbAccess.Childrens, err = u.GetByParent(ctx, tx, pbAccess.GetId())
+		/*pbAccess.Childrens, err = u.GetByParent(ctx, tx, pbAccess.GetId())
 		if err != nil {
 			return list, err
-		}
+		}*/
+		pbAccess.ParentId = parent
 
 		list = append(list, &pbAccess)
 	}

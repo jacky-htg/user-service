@@ -22,6 +22,7 @@ import (
 type Auth struct {
 	Db    *sql.DB
 	Cache *redis.Cache
+	users.UnimplementedAuthServiceServer
 }
 
 // Login service

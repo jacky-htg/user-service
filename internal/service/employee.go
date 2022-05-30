@@ -16,6 +16,7 @@ import (
 type Employee struct {
 	Db    *sql.DB
 	Cache *redis.Cache
+	users.UnimplementedEmployeeServiceServer
 }
 
 // Create Employee

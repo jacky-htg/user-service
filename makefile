@@ -1,5 +1,5 @@
 gen:
-	protoc --proto_path=proto proto/users/*.proto --go_out=plugins=grpc:. 
+	protoc --proto_path=proto proto/users/*.proto --go_out=. --go-grpc_out=. 
 
 init:
 	go mod init user-service

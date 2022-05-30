@@ -17,6 +17,7 @@ import (
 type Group struct {
 	Db    *sql.DB
 	Cache *redis.Cache
+	users.UnimplementedGroupServiceServer
 }
 
 // Create Group

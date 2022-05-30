@@ -15,6 +15,7 @@ import (
 type Access struct {
 	Db    *sql.DB
 	Cache *redis.Cache
+	users.UnimplementedAccessServiceServer
 }
 
 // List access

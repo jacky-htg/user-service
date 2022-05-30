@@ -21,6 +21,7 @@ import (
 type Company struct {
 	Db    *sql.DB
 	Cache *redis.Cache
+	users.UnimplementedCompanyServiceServer
 }
 
 // Registration new company

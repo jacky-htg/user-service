@@ -21,6 +21,7 @@ import (
 type User struct {
 	Db    *sql.DB
 	Cache *redis.Cache
+	users.UnimplementedUserServiceServer
 }
 
 // Create func

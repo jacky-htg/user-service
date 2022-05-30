@@ -8,7 +8,7 @@ option java_multiple_files = true;
 message Access {
   string id = 1;
   string name = 2;
-  repeated Access childrens = 3;
+  string parent_id = 3;
   string created_at =  4;
   string created_by = 5;
   string updated_at = 6;
