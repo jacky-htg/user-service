@@ -15,6 +15,7 @@
 # vendor/
 
 .DS_Store
+.vscode
 .env
 go.mod
 go.sum
