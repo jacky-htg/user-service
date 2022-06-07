@@ -71,4 +71,7 @@ user service using grpc go, postgresql and redis. The service is designed to be 
 ## Link Repository
 - [API Gateway for ERP](https://github.com/jacky-htg/api-gateway-service)
 - [Inventory Service](https://github.com/jacky-htg/inventory-service)
+- [Purchase Service](https://github.com/jacky-htg/purchase-service)
+- [Sales Service](https://github.com/jacky-htg/sales-service)
+- [Ledger Service](https://github.com/jacky-htg/ledger-service)
 - [Simple gRPC Skeleton](https://github.com/jacky-htg/grpc-skeleton)
