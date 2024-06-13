@@ -410,7 +410,7 @@ func (u *Branch) List(in *users.ListBranchRequest, stream users.BranchService_Li
 		var pbBranch users.Branch
 		var npwp sql.NullString
 		err = rows.Scan(
-			&pbBranch.Id, &pbBranch.CompanyId, &pbBranch.RegionId, &pbBranch.Name, &pbBranch.Code, &pbBranch.Address,
+			&pbBranch.Id, &pbBranch.CompanyId, &pbBranch.RegionId, &pbBranch.RegionName, &pbBranch.Name, &pbBranch.Code, &pbBranch.Address,
 			&pbBranch.City, &pbBranch.Province, &npwp, &pbBranch.Phone, &pbBranch.Pic, &pbBranch.PicPhone,
 		)
 		if err != nil {

@@ -217,7 +217,7 @@ func (u *Branch) Delete(ctx context.Context, db *sql.DB) error {
 // ListQuery builder
 func (u *Branch) ListQuery(ctx context.Context, db *sql.DB, in *users.ListBranchRequest, branchID string) (string, []interface{}, *users.BranchPaginationResponse, error) {
 	var paginationResponse users.BranchPaginationResponse
-	query := `SELECT branches.id, branches.company_id, regions.id, branches.name, branches.code, branches.address, 
+	query := `SELECT branches.id, branches.company_id, regions.id, regions.name region_name, branches.name, branches.code, branches.address, 
 	branches.city, branches.province, branches.npwp, branches.phone, branches.pic, branches.pic_phone 
 	FROM branches 
 	JOIN branches_regions ON branches.id = branches_regions.branch_id
@@ -230,8 +230,13 @@ func (u *Branch) ListQuery(ctx context.Context, db *sql.DB, in *users.ListBranch
 		where = append(where, fmt.Sprintf(`branches.id = $%d`, len(paramQueries)))
 	}
 
+	if len(in.GetRegionId()) > 0 {
+		paramQueries = append(paramQueries, in.GetRegionId())
+		where = append(where, fmt.Sprintf(`regions.id = $%d`, len(paramQueries)))
+	}
+
 	if len(in.GetPagination().GetSearch()) > 0 {
-		paramQueries = append(paramQueries, in.GetPagination().GetSearch())
+		paramQueries = append(paramQueries, in.GetPagination().GetSearch()+"%")
 		where = append(where, fmt.Sprintf(`(branches.name ILIKE $%d OR branches.code ILIKE $%d 
 			OR branches.address ILIKE $%d OR branches.city ILIKE $%d OR branches.province ILIKE $%d 
 			OR branches.npwp ILIKE $%d OR branches.phone ILIKE $%d OR branches.pic ILIKE $%d
