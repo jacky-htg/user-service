@@ -75,7 +75,7 @@ func (u *CompanyRegister) Registration(ctx context.Context, db *sql.DB, tx *sql.
 	{
 		query := `
 			INSERT INTO groups (id, company_id, is_mutable, name, created_by, updated_by)
-			VALUES ($1, $2, true, 'Super Admin', $3, $3)
+			VALUES ($1, $2, false, 'Super Admin', $3, $3)
 		`
 
 		stmt, err := tx.PrepareContext(ctx, query)

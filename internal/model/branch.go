@@ -236,7 +236,7 @@ func (u *Branch) ListQuery(ctx context.Context, db *sql.DB, in *users.ListBranch
 	}
 
 	if len(in.GetPagination().GetSearch()) > 0 {
-		paramQueries = append(paramQueries, in.GetPagination().GetSearch()+"%")
+		paramQueries = append(paramQueries, "%"+in.GetPagination().GetSearch()+"%")
 		where = append(where, fmt.Sprintf(`(branches.name ILIKE $%d OR branches.code ILIKE $%d 
 			OR branches.address ILIKE $%d OR branches.city ILIKE $%d OR branches.province ILIKE $%d 
 			OR branches.npwp ILIKE $%d OR branches.phone ILIKE $%d OR branches.pic ILIKE $%d

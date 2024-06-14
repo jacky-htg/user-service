@@ -408,7 +408,7 @@ func (u *User) ListQuery(ctx context.Context, db *sql.DB, in *users.ListUserRequ
 	}
 
 	if len(in.GetPagination().GetSearch()) > 0 {
-		paramQueries = append(paramQueries, in.GetPagination().GetSearch())
+		paramQueries = append(paramQueries, "%"+in.GetPagination().GetSearch()+"%")
 		where = append(where, fmt.Sprintf(`(users.name ILIKE $%d OR users.email ILIKE $%d OR groups.name ILIKE $%d)`,
 			len(paramQueries), len(paramQueries), len(paramQueries)))
 	}

@@ -92,6 +92,10 @@ func (u *Group) Update(ctx context.Context, in *users.Group) (*users.Group, erro
 		return &groupModel.Pb, err
 	}
 
+	if !groupModel.Pb.IsMutable {
+		return &groupModel.Pb, status.Error(codes.FailedPrecondition, "data is not imutable")
+	}
+
 	if len(in.GetName()) > 0 {
 		groupModel.Pb.Name = in.GetName()
 	}
@@ -174,6 +178,10 @@ func (u *Group) Delete(ctx context.Context, in *users.Id) (*users.MyBoolean, err
 	err = groupModel.Get(ctx, u.Db)
 	if err != nil {
 		return &output, err
+	}
+
+	if !groupModel.Pb.IsMutable {
+		return &output, status.Error(codes.FailedPrecondition, "data is not imutable")
 	}
 
 	if userLogin.Pb.GetCompanyId() != groupModel.Pb.GetCompanyId() {
@@ -273,6 +281,10 @@ func (u *Group) GrantAccess(ctx context.Context, in *users.GrantAccessRequest) (
 		if groupModel.Pb.GetCompanyId() != ctx.Value(app.Ctx("companyID")).(string) {
 			return &output, status.Error(codes.PermissionDenied, "its not your company")
 		}
+
+		if !groupModel.Pb.IsMutable {
+			return &output, status.Error(codes.FailedPrecondition, "data is not imutable")
+		}
 	}
 
 	// access validation
@@ -340,6 +352,10 @@ func (u *Group) RevokeAccess(ctx context.Context, in *users.GrantAccessRequest) 
 
 		if groupModel.Pb.GetCompanyId() != ctx.Value(app.Ctx("companyID")).(string) {
 			return &output, status.Error(codes.PermissionDenied, "its not your company")
+		}
+
+		if !groupModel.Pb.IsMutable {
+			return &output, status.Error(codes.FailedPrecondition, "data is not imutable")
 		}
 	}
 

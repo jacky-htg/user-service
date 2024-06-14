@@ -99,7 +99,7 @@ var migrations = []darwin.Migration{
 				id char(36) NOT NULL PRIMARY KEY,
 				company_id char(36) NOT NULL,
 				name varchar(100) NOT NULL,
-				is_mutable bool NOT NULL DEFAULT false,
+				is_mutable bool NOT NULL DEFAULT true,
 				created_at timestamp NOT NULL DEFAULT NOW(),
 				created_by char(36) NOT NULL,
 				updated_at timestamp NOT NULL DEFAULT NOW(),

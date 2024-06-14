@@ -162,7 +162,7 @@ func (u *Group) ListQuery(ctx context.Context, db *sql.DB, in *users.ListGroupRe
 	paramQueries := []interface{}{ctx.Value(app.Ctx("companyID")).(string)}
 
 	if len(in.GetPagination().GetSearch()) > 0 {
-		paramQueries = append(paramQueries, in.GetPagination().GetSearch())
+		paramQueries = append(paramQueries, "%"+in.GetPagination().GetSearch()+"%")
 		where = append(where, fmt.Sprintf(`(groups.name ILIKE $%d)`, len(paramQueries)))
 	}
 

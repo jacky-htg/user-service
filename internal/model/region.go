@@ -162,7 +162,7 @@ func (u *Region) ListQuery(ctx context.Context, db *sql.DB, in *users.ListRegion
 	}
 
 	if len(in.GetPagination().GetSearch()) > 0 {
-		paramQueries = append(paramQueries, in.GetPagination().GetSearch()+"%")
+		paramQueries = append(paramQueries, "%"+in.GetPagination().GetSearch()+"%")
 		where = append(where, fmt.Sprintf(`(name ILIKE $%d OR code ILIKE $%d)`,
 			len(paramQueries), len(paramQueries)))
 	}
