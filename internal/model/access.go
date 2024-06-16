@@ -3,6 +3,7 @@ package model
 import (
 	"context"
 	"database/sql"
+	"encoding/json"
 	"user-service/pb/users"
 
 	"google.golang.org/grpc/codes"
@@ -72,10 +73,88 @@ func (u *Access) GetByParent(ctx context.Context, tx *sql.Tx, parent string) ([]
 		if err != nil {
 			return list, err
 		}*/
-		pbAccess.ParentId = parent
+		//pbAccess.ParentId = parent
 
 		list = append(list, &pbAccess)
 	}
 
 	return list, nil
+}
+
+func (u *Access) List(ctx context.Context, db *sql.DB) (*users.ListAccessResponse, error) {
+	var output users.ListAccessResponse
+	rows, err := db.QueryContext(ctx, `SELECT id, name FROM access WHERE level = 1`)
+
+	if err == sql.ErrNoRows {
+		return &output, status.Errorf(codes.NotFound, "Query Raw: %v", err)
+	}
+
+	if err != nil {
+		return &output, status.Errorf(codes.Internal, "Query Raw: %v", err)
+	}
+
+	defer rows.Close()
+
+	for rows.Next() {
+		var pbAccess users.AccessLevel1
+		err = rows.Scan(&pbAccess.Id, &pbAccess.Name)
+		if err != nil {
+			return &output, status.Errorf(codes.Internal, "Scan: %v", err)
+		}
+
+		pbAccess.Children, err = u.ListChildren(ctx, db, pbAccess.Id)
+		if err != nil {
+			return nil, err
+		}
+		output.Access = append(output.Access, &pbAccess)
+	}
+
+	if rows.Err() != nil {
+		return nil, status.Error(codes.Internal, rows.Err().Error())
+	}
+
+	return &output, nil
+}
+
+func (u *Access) ListChildren(ctx context.Context, db *sql.DB, parentId string) ([]*users.AccessLevel2, error) {
+	var err error
+	var output []*users.AccessLevel2
+
+	query := `
+	SELECT access2.id, access2.name,
+	JSON_AGG(DISTINCT JSONB_BUILD_OBJECT(
+		'id', access3.id,
+		'name', access3.name
+	)) as json
+	FROM access access2
+	LEFT JOIN access access3 ON access3.level = 3 and access3.parent_id = access2.id
+	WHERE access2.parent_id  = $1 AND access2.level = 2
+	GROUP BY access2.id
+	`
+	rows, err := db.QueryContext(ctx, query, parentId)
+	if err != nil {
+		return output, status.Error(codes.Internal, err.Error())
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var pbAccess users.AccessLevel2
+		var tempJson string
+		err = rows.Scan(&pbAccess.Id, &pbAccess.Name, &tempJson)
+		if err != nil {
+			return output, status.Errorf(codes.Internal, "scan data: %v", err)
+		}
+		err = json.Unmarshal([]byte(tempJson), &pbAccess.Children)
+		if err != nil {
+			return output, status.Errorf(codes.Internal, "unmarshal access: %v", err)
+		}
+
+		output = append(output, &pbAccess)
+	}
+
+	if rows.Err() != nil {
+		return output, status.Error(codes.Internal, rows.Err().Error())
+	}
+
+	return output, nil
 }

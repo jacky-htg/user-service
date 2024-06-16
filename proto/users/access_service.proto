@@ -9,5 +9,5 @@ import "users/access_message.proto";
 import "users/generic_message.proto";
 
 service AccessService {
-  rpc List(MyEmpty) returns (Access) {}
+  rpc List(MyEmpty) returns (ListAccessResponse) {}
 }

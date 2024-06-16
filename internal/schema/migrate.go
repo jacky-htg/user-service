@@ -140,6 +140,8 @@ var migrations = []darwin.Migration{
 				id char(36) NOT NULL PRIMARY KEY,
 				parent_id char(36) NULL,
 				name varchar(100) NOT NULL UNIQUE,
+				route varchar(100) NOT NULL UNIQUE,
+				level smallint NOT NULL,
 				created_at timestamp NOT NULL DEFAULT NOW(),
 				created_by char(36) NOT NULL,
 				updated_at timestamp NOT NULL DEFAULT NOW(),

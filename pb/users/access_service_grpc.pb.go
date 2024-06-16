@@ -26,7 +26,7 @@ const (
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type AccessServiceClient interface {
-	List(ctx context.Context, in *MyEmpty, opts ...grpc.CallOption) (*Access, error)
+	List(ctx context.Context, in *MyEmpty, opts ...grpc.CallOption) (*ListAccessResponse, error)
 }
 
 type accessServiceClient struct {
@@ -37,8 +37,8 @@ func NewAccessServiceClient(cc grpc.ClientConnInterface) AccessServiceClient {
 	return &accessServiceClient{cc}
 }
 
-func (c *accessServiceClient) List(ctx context.Context, in *MyEmpty, opts ...grpc.CallOption) (*Access, error) {
-	out := new(Access)
+func (c *accessServiceClient) List(ctx context.Context, in *MyEmpty, opts ...grpc.CallOption) (*ListAccessResponse, error) {
+	out := new(ListAccessResponse)
 	err := c.cc.Invoke(ctx, AccessService_List_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -50,7 +50,7 @@ func (c *accessServiceClient) List(ctx context.Context, in *MyEmpty, opts ...grp
 // All implementations must embed UnimplementedAccessServiceServer
 // for forward compatibility
 type AccessServiceServer interface {
-	List(context.Context, *MyEmpty) (*Access, error)
+	List(context.Context, *MyEmpty) (*ListAccessResponse, error)
 	mustEmbedUnimplementedAccessServiceServer()
 }
 
@@ -58,7 +58,7 @@ type AccessServiceServer interface {
 type UnimplementedAccessServiceServer struct {
 }
 
-func (UnimplementedAccessServiceServer) List(context.Context, *MyEmpty) (*Access, error) {
+func (UnimplementedAccessServiceServer) List(context.Context, *MyEmpty) (*ListAccessResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method List not implemented")
 }
 func (UnimplementedAccessServiceServer) mustEmbedUnimplementedAccessServiceServer() {}
