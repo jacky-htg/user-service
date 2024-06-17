@@ -398,12 +398,12 @@ func (u *User) ListQuery(ctx context.Context, db *sql.DB, in *users.ListUserRequ
 	paramQueries := []interface{}{}
 
 	if len(in.GetBranchId()) > 0 {
-		paramQueries = append(paramQueries, in.GetBranchId)
+		paramQueries = append(paramQueries, in.GetBranchId())
 		where = append(where, fmt.Sprintf(`users.branch_id = $%d`, len(paramQueries)))
 	}
 
 	if len(in.GetCompanyId()) > 0 {
-		paramQueries = append(paramQueries, in.GetCompanyId)
+		paramQueries = append(paramQueries, in.GetCompanyId())
 		where = append(where, fmt.Sprintf(`users.company_id = $%d`, len(paramQueries)))
 	}
 

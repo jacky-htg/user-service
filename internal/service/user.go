@@ -246,6 +246,14 @@ func (u *User) Update(ctx context.Context, in *users.User) (*users.User, error) 
 		return &output, err
 	}
 
+	// company validation
+	{
+		if len(in.GetCompanyId()) > 0 && in.GetCompanyId() != ctx.Value(app.Ctx("companyID")).(string) {
+			return &output, status.Error(codes.PermissionDenied, "Please supply valid company id")
+		}
+		in.CompanyId = ctx.Value(app.Ctx("companyID")).(string)
+	}
+
 	// get user login
 	var userLogin model.User
 	userLogin.Pb.Id = ctx.Value(app.Ctx("userID")).(string)
@@ -266,12 +274,12 @@ func (u *User) Update(ctx context.Context, in *users.User) (*users.User, error) 
 					return &output, err
 				}
 
-				if regionModel.Pb.GetCompanyId() != in.GetCompanyId() {
-					return &output, status.Error(codes.PermissionDenied, "Please supply valid region id")
+				if regionModel.Pb.GetCompanyId() != ctx.Value(app.Ctx("companyID")).(string) {
+					return &output, status.Error(codes.PermissionDenied, "itu Please supply valid region id")
 				}
 			} else {
 				if in.GetRegionId() != userLogin.Pb.GetRegionId() {
-					return &output, status.Error(codes.PermissionDenied, "Please supply valid region id")
+					return &output, status.Error(codes.PermissionDenied, "ini Please supply valid region id")
 				}
 			}
 		} else {
@@ -338,14 +346,18 @@ func (u *User) Update(ctx context.Context, in *users.User) (*users.User, error) 
 
 	if len(in.GetRegionId()) > 0 {
 		userModel.Pb.RegionId = in.GetRegionId()
+	} else {
+		userModel.Pb.RegionId = ""
 	}
 
 	if len(in.GetBranchId()) > 0 {
 		userModel.Pb.BranchId = in.GetBranchId()
+	} else {
+		userModel.Pb.BranchId = ""
 	}
 
 	if len(in.GetGroup().GetId()) > 0 {
-		userModel.Pb.Name = in.GetGroup().GetId()
+		userModel.Pb.Group = in.GetGroup()
 	}
 
 	err = userModel.Update(ctx, u.Db)
