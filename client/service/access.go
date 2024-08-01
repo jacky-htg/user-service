@@ -3,7 +3,8 @@ package service
 import (
 	"context"
 	"log"
-	"user-service/pb/users"
+
+	"github.com/jacky-htg/erp-proto/go/pb/users"
 )
 
 // ViewAccessTree service client

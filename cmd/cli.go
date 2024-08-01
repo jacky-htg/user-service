@@ -3,15 +3,14 @@ package main
 import (
 	"flag"
 	"fmt"
+	"log"
 	"os"
 
 	_ "github.com/lib/pq"
-	"github.com/sirupsen/logrus"
 
-	"user-service/internal/config"
-	"user-service/internal/pkg/db/postgres"
-	"user-service/internal/pkg/log/logruslog"
-	"user-service/internal/schema"
+	"github.com/jacky-htg/erp-pkg/db/postgres"
+	"github.com/jacky-htg/user-service/internal/config"
+	"github.com/jacky-htg/user-service/internal/schema"
 )
 
 func main() {
@@ -26,14 +25,14 @@ func main() {
 
 	// =========================================================================
 	// Logging
-	log := logruslog.Init()
+	log := log.New(os.Stdout, "ERROR : ", log.LstdFlags|log.Lmicroseconds|log.Lshortfile)
 	if err := run(log); err != nil {
 		log.Printf("error: shutting down: %s", err)
 		os.Exit(1)
 	}
 }
 
-func run(log *logrus.Entry) error {
+func run(log *log.Logger) error {
 	// =========================================================================
 	// App Starting
 

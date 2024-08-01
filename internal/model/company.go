@@ -4,10 +4,10 @@ import (
 	"context"
 	"database/sql"
 	"time"
-	"user-service/internal/pkg/app"
-	"user-service/pb/users"
 
 	"github.com/google/uuid"
+	"github.com/jacky-htg/erp-pkg/app"
+	"github.com/jacky-htg/erp-proto/go/pb/users"
 	"golang.org/x/crypto/bcrypt"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"

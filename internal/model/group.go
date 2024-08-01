@@ -7,10 +7,10 @@ import (
 	"fmt"
 	"strings"
 	"time"
-	"user-service/internal/pkg/app"
-	"user-service/pb/users"
 
 	"github.com/google/uuid"
+	"github.com/jacky-htg/erp-pkg/app"
+	"github.com/jacky-htg/erp-proto/go/pb/users"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )

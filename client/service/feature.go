@@ -4,7 +4,8 @@ import (
 	"context"
 	"io"
 	"log"
-	"user-service/pb/users"
+
+	"github.com/jacky-htg/erp-proto/go/pb/users"
 )
 
 // ListFeature service client

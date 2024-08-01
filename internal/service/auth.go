@@ -6,16 +6,15 @@ import (
 	"os"
 	"time"
 
+	"github.com/jacky-htg/erp-pkg/app"
+	"github.com/jacky-htg/erp-pkg/db/redis"
+	"github.com/jacky-htg/erp-pkg/email"
+	"github.com/jacky-htg/erp-pkg/token"
+	"github.com/jacky-htg/erp-proto/go/pb/users"
+	"github.com/jacky-htg/user-service/internal/model"
 	"github.com/sendgrid/sendgrid-go/helpers/mail"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
-
-	"user-service/internal/model"
-	"user-service/internal/pkg/app"
-	"user-service/internal/pkg/db/redis"
-	"user-service/internal/pkg/email"
-	"user-service/internal/pkg/token"
-	"user-service/pb/users"
 )
 
 // Auth struct

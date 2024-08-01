@@ -2,8 +2,8 @@ package service
 
 import (
 	"context"
-	"user-service/internal/pkg/app"
 
+	"github.com/jacky-htg/erp-pkg/app"
 	"google.golang.org/grpc/metadata"
 )
 

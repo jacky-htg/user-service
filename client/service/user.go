@@ -3,8 +3,8 @@ package service
 import (
 	"io"
 	"log"
-	"user-service/pb/users"
 
+	"github.com/jacky-htg/erp-proto/go/pb/users"
 	"golang.org/x/net/context"
 )
 

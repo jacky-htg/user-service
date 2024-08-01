@@ -3,8 +3,8 @@ package model
 import (
 	"context"
 	"database/sql"
-	"user-service/pb/users"
 
+	"github.com/jacky-htg/erp-proto/go/pb/users"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )

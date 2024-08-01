@@ -5,13 +5,12 @@ import (
 	"database/sql"
 	"os"
 	"regexp"
-	"user-service/pb/users"
 
-	"user-service/internal/model"
-	"user-service/internal/pkg/app"
-	"user-service/internal/pkg/db/redis"
-	"user-service/internal/pkg/email"
-
+	"github.com/jacky-htg/erp-pkg/app"
+	"github.com/jacky-htg/erp-pkg/db/redis"
+	"github.com/jacky-htg/erp-pkg/email"
+	"github.com/jacky-htg/erp-proto/go/pb/users"
+	"github.com/jacky-htg/user-service/internal/model"
 	"github.com/sendgrid/sendgrid-go/helpers/mail"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"

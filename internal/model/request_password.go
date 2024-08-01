@@ -4,9 +4,9 @@ import (
 	"context"
 	"database/sql"
 	"time"
-	"user-service/pb/users"
 
 	"github.com/google/uuid"
+	"github.com/jacky-htg/erp-proto/go/pb/users"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )

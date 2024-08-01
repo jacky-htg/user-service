@@ -3,10 +3,10 @@ package service
 import (
 	"context"
 	"database/sql"
-	"user-service/internal/model"
-	"user-service/internal/pkg/db/redis"
-	"user-service/pb/users"
 
+	"github.com/jacky-htg/erp-pkg/db/redis"
+	"github.com/jacky-htg/erp-proto/go/pb/users"
+	"github.com/jacky-htg/user-service/internal/model"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )

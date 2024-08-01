@@ -3,8 +3,9 @@ package service
 import (
 	"context"
 	"log"
-	"user-service/internal/pkg/app"
-	"user-service/pb/users"
+
+	"github.com/jacky-htg/erp-pkg/app"
+	"github.com/jacky-htg/erp-proto/go/pb/users"
 )
 
 // Login service client

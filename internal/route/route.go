@@ -2,17 +2,16 @@ package route
 
 import (
 	"database/sql"
+	"log"
 
-	"github.com/sirupsen/logrus"
+	"github.com/jacky-htg/erp-pkg/db/redis"
+	"github.com/jacky-htg/erp-proto/go/pb/users"
+	"github.com/jacky-htg/user-service/internal/service"
 	"google.golang.org/grpc"
-
-	"user-service/internal/pkg/db/redis"
-	"user-service/internal/service"
-	"user-service/pb/users"
 )
 
 // GrpcRoute func
-func GrpcRoute(grpcServer *grpc.Server, db *sql.DB, log *logrus.Entry, cache *redis.Cache) {
+func GrpcRoute(grpcServer *grpc.Server, db *sql.DB, log *log.Logger, cache *redis.Cache) {
 	authServer := service.Auth{Db: db, Cache: cache}
 	users.RegisterAuthServiceServer(grpcServer, &authServer)
 

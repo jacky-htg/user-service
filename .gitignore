@@ -19,5 +19,6 @@
 .env
 go.mod
 go.sum
-log/*
+user-service
+cmd/cmd-user-service
 # client

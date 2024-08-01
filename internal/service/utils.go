@@ -5,8 +5,8 @@ import (
 	"math/rand"
 	"regexp"
 	"time"
-	"user-service/internal/pkg/app"
 
+	"github.com/jacky-htg/erp-pkg/app"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/metadata"
 	"google.golang.org/grpc/status"
