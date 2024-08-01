@@ -14,6 +14,6 @@ server:
 	go run server.go
 
 build:
-	env GOOS=linux GOARCH=amd64 go build user-service
+	env GOOS=linux GOARCH=amd64 go build -o user-service
 
 .PHONY: gen init migrate seed server build
